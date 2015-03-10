@@ -1,0 +1,10 @@
+---
+
+- name: Install ar-web-api package
+  yum: name=ar-web-api state=latest
+  notify: updated ar-web-api package
+  tags: api
+
+- name: Start web api service
+  service: name=ar-web-api state=started
+  tags: api

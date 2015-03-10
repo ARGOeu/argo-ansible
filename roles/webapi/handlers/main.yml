@@ -1,0 +1,4 @@
+---
+
+- name: updated ar-web-api package
+  service: name=ar-web-api state=restarted

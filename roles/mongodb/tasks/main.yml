@@ -1,0 +1,20 @@
+---
+
+- name: Install mongoDB packages
+  tags: mongoDB-packages
+  yum: name={{ item }} state=present
+  with_items:
+    - mongodb-org
+    - mongodb-org-server
+
+- name: Bind mongod processes to any interface
+  lineinfile: dest=/etc/mongod.conf
+              regexp="^bind_ip="
+              insertafter=EOF
+              line="bind_ip=0.0.0.0"
+              state=present
+              backup=yes
+  notify: restart mongo
+
+- name: Enable and start mongoDB
+  service: name=mongod enabled=yes state=started

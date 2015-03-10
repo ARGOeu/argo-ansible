@@ -1,0 +1,7 @@
+---
+
+- name: Copy host x509 certificate onto host
+  tags: certificate
+  copy: src=hostcert.pem
+        dest={{ cert_path }} backup=yes
+        owner=root group=root mode=0644

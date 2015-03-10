@@ -1,0 +1,9 @@
+---
+
+- hosts: webapi
+  user: root
+  roles:
+    - repos
+    - has_certificate
+    - mongodb
+    - webapi
