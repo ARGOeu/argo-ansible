@@ -9,6 +9,12 @@
   command: yum install -y /tmp/{{ epel_release_name }}
            creates=/etc/yum.repos.d/epel.repo
 
+- name: Install EGI-trustanchors repository definitions
+  tags: ca_bundle_repo
+  copy: src=etc/yum.repos.d/EGI-trustanchors.repo
+        dest=/etc/yum.repos.d/EGI-trustanchors.repo backup=no
+        owner=root group=root mode=0644
+
 - name: Download arstats package
   tags: arstats_prod_repo
   get_url: url={{ arstats_release_url }}/{{ arstats_release_name }} dest=/tmp/{{ arstats_release_name }} mode=0644
