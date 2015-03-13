@@ -1,0 +1,12 @@
+---
+
+- hosts: standalone
+  user: root
+  roles:
+    - repos
+    - ca_bundle
+    - has_certificate
+    - consumer
+    - hadoop_client
+    - mongodb
+    - webapi
