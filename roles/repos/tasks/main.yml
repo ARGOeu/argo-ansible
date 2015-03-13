@@ -23,3 +23,10 @@
   copy: src=etc/yum.repos.d/mongodb.repo
         dest=/etc/yum.repos.d/mongodb.repo backup=no
         owner=root group=root mode=0644
+
+- name: Install EGI-trustanchors repository definitions
+  tags: ca_bundle_repo
+  copy: src=etc/yum.repos.d/EGI-trustanchors.repo
+        dest=/etc/yum.repos.d/EGI-trustanchors.repo backup=no
+        owner=root group=root mode=0644
+  when: inventory_hostname in groups.standalone

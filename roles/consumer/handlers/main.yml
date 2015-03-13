@@ -1,0 +1,5 @@
+---
+
+- name: restart consumer
+  service: name=ar-consumer state=restarted
+
