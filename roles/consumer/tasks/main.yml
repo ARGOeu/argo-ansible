@@ -1,0 +1,68 @@
+---
+
+- name: Install consumer from ar project
+  tags: ar-packages
+  yum: name=ar-consumer state=latest
+  notify: restart consumer
+
+- name: Install packages from ar project
+  tags: ar-packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - ar-sync
+    - ar-compute
+
+- name: Configure ar-compute stuff 1
+  tags: compute_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^mongo_host="
+              line="mongo_host=127.0.0.1"
+              state=present
+              backup=yes
+
+- name: Configure ar-compute stuff 2
+  tags: compute_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^mode="
+              line="mode=local"
+              state=present
+              backup=yes
+
+- name: Configure ar-compute job cycle daily cron 
+  tags: compute_config
+  cron: cron_file=ar_job_cycle_daily
+        user=root
+        name=job_cycle_daily
+        state=present
+        minute=0
+        hour=0
+        job="/usr/libexec/ar-compute/standalone/job_cycle.py -d $(/bin/date --utc --date '-1 day' +\%Y-\%m-\%d)"
+
+- name: Configure ar-compute job cycle hourly cron 
+  tags: compute_config
+  cron: cron_file=ar_job_cycle_hourly
+        user=root
+        name=ar_job_cycle_hourly
+        state=present
+        minute=55
+        hour=*
+        job="/usr/libexec/ar-compute/standalone/job_cycle.py -d $(/bin/date --utc  +\%Y-\%m-\%d)"
+
+- name: Create job directories
+  tags: sync_config
+  file: path={{ item }} owner=root group=root mode=0755 state=directory
+  with_items:
+    - /var/lib/ar-sync/EGI/Cloudmon
+    - /var/lib/ar-sync/EGI/Critical
+
+- name: Make sure ownerships are OK
+  tags: consumer_config
+  file: path={{ item }} owner=root group=arstats mode=0775 state=directory
+  with_items:
+    - /var/lib/ar-sync
+    - /var/lib/ar-consumer
+
+- name: Enable and start consumer service
+  tags: consumer_config
+  service: name=ar-consumer enabled=yes state=started
+
