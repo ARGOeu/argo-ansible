@@ -3,10 +3,10 @@
 - hosts: standalone
   user: root
   roles:
-    - repos
-    - ca_bundle
-    - has_certificate
-    - consumer
-    - hadoop_client
-    - mongodb
-    - webapi
+    - { role: repos           , tags: repos           }
+    - { role: ca_bundle       , tags: ca_bundle       }
+    - { role: has_certificate , tags: has_certificate }
+    - { role: consumer        , tags: consumer        }
+    - { role: hadoop_client   , tags: hadoop_client   }
+    - { role: mongodb         , tags: mongodb         }
+    - { role: webapi          , tags: webapi          }
