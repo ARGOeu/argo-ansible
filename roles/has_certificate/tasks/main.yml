@@ -5,3 +5,9 @@
   copy: src=hostcert.pem
         dest={{ cert_path }} backup=yes
         owner=root group=root mode=0644
+
+- name: Copy host x509 key onto host
+  tags: certificate
+  copy: src=hostkey.pem
+        dest={{ key_path }} backup=yes
+        owner=root group=root mode=0400
