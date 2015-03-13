@@ -2,3 +2,5 @@
 .DS_Store
 setup.sh
 .*.sw?
+hostcert.pem
+hostkey.pem
