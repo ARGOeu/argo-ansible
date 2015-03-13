@@ -9,7 +9,7 @@ Contains Ansible playbook for the deployment of the ARGO datastore and API servi
 ### Things to do before deployment
 
 - Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files.
-- Edit inventory and replace =webapi.node= with the hostname that you intend to deploy the API onto. 
+- Edit inventory and replace `webapi.node` with the hostname that you intend to deploy the API onto. 
 
 ### Prerequisites
 
