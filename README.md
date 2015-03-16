@@ -1,17 +1,15 @@
-# ARGO via Ansible
+## ARGO Ansible
 
-## WebAPI deployment
-
-Contains Ansible playbook for the deployment of the ARGO datastore and API service. The play is split into four roles:
-- repos (includes tasks for the installation of the required repository definitions)
+Contains Ansible playbook for the deployment of the ARGO datastore and API services. The play is split into four roles:
+- repos (includes tasks for the installation of the required repository definitions
 - has_certificate (task for uploading the certificate file onto the host under the appropriate path)
 - mongodb (installation and configuration of mongodb datastore)
 - webapi (installation and bootstrap of ARGO api service)
 
 ### Things to do before deployment
 
-- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files. The two filenames to use are `hostkey.pem` and `hostcert.pem` respectively. 
-- Edit inventory and replace `webapi.node` with the hostname that you intend to deploy the API onto. 
+- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files.
+- Edit inventory and replace =webapi.node= with the hostname that you intend to deploy the API onto. 
 
 ### Prerequisites
 
@@ -22,30 +20,4 @@ Contains Ansible playbook for the deployment of the ARGO datastore and API servi
 
 ```bash
 $ ansible-playbook -v webapi.yml
-```
-
-## Full standalone deployment
-
-Contains Ansible playbook for the deployment of all ARGO components. The play is split into four roles:
-- repos (includes tasks for the installation of the required repository definitions)
-- ca_bundle (includes a task for the installation of the egi-ca-policy-core bundle)
-- has_certificate (task for uploading the certificate file onto the host under the appropriate path)
-- consumer (includes tasks for the installation of the ARGO consumer and feed components)
-- mongodb (installation and configuration of mongodb datastore)
-- webapi (installation and bootstrap of ARGO api service)
-
-### Things to do before deployment
-
-- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files. The two filenames to use are `hostkey.pem` and `hostcert.pem` respectively. 
-- Edit inventory and replace `standalone.node` with the hostname that you intend to deploy the complete ARGO stack onto. 
-
-### Prerequisites
-
-- Deploy against CentOS 6.x node
-- Ansible version used is `1.7.2`
-
-### How to deploy
-
-```bash
-$ ansible-playbook -v standalone.yml
 ```
