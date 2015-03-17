@@ -16,6 +16,7 @@ Contains Ansible playbook for the deployment of the ARGO datastore and API servi
 ### Prerequisites
 
 - Deploy against CentOS 6.x node
+- Make sure `libselinux-python` is installed on the target node
 - Ansible version used is `1.7.2`
 
 ### How to deploy
@@ -42,6 +43,7 @@ Contains Ansible playbook for the deployment of all ARGO components. The play is
 ### Prerequisites
 
 - Deploy against CentOS 6.x node
+- Make sure `libselinux-python` is installed on the target node
 - Ansible version used is `1.7.2`
 
 ### How to deploy
