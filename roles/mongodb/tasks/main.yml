@@ -16,5 +16,10 @@
               backup=yes
   notify: restart mongo
 
+- name: Increase soft nproc limits
+  copy: src=etc/security/limits.d/99-mongodb-nproc.conf
+        dest=/etc/security/limits.d/99-mongodb-nproc.conf backup=no
+        owner=root group=root mode=0644
+
 - name: Enable and start mongoDB
   service: name=mongod enabled=yes state=started
