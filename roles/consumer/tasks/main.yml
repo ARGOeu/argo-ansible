@@ -28,6 +28,14 @@
               state=present
               backup=yes
 
+- name: Configure ar-compute stuff 3
+  tags: compute_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^prefilter_clean="
+              line="prefilter_clean=false"
+              state=present
+              backup=yes
+
 - name: Configure ar-compute job cycle daily cron 
   tags: compute_config
   cron: cron_file=ar_job_cycle_daily
