@@ -10,6 +10,6 @@
 
 - name: Install mongodb repo
   tags: mongodb_repo
-  copy: src=etc/yum.repos.d/mongodb.repo
-        dest=/etc/yum.repos.d/mongodb.repo backup=no
+  copy: src=etc/yum.repos.d/mongodb_3.repo
+        dest=/etc/yum.repos.d/mongodb_3.repo backup=no
         owner=root group=root mode=0644
