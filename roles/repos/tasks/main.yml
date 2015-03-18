@@ -1,22 +1,12 @@
 ---
 
-- name: Download epel-release package
-  tags: epel_repo
-  get_url: url={{ epel_release_url }}/{{ epel_release_name }} dest=/tmp/{{ epel_release_name }} mode=0644
+- name: Install epel repo files
+  yum: name={{ epel_release_url }}{{ epel_release_name }}
+       state=present
 
-- name: Install epel-release package
-  tags: epel_repo
-  command: yum install -y /tmp/{{ epel_release_name }}
-           creates=/etc/yum.repos.d/epel.repo
-
-- name: Download arstats package
-  tags: arstats_prod_repo
-  get_url: url={{ arstats_release_url }}/{{ arstats_release_name }} dest=/tmp/{{ arstats_release_name }} mode=0644
-
-- name: Install ar-release package
-  tags: arstats_prod_repo
-  command: yum install -y /tmp/{{ arstats_release_name }}
-           creates=/etc/yum.repos.d/arstats.repo
+- name: Install arstats repo files
+  yum: name={{ arstats_release_url }}{{ arstats_release_name }}
+       state=present
 
 - name: Install mongodb repo
   tags: mongodb_repo
