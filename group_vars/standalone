@@ -2,3 +2,9 @@
 
 cert_path: /etc/grid-security/hostcert.pem
 key_path: /etc/grid-security/hostkey.pem
+
+hive_retention_in_days: 900
+mongo_retention_in_days: 900
+files_retention_in_days: 900
+
+

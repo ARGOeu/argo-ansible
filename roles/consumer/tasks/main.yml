@@ -74,3 +74,13 @@
   tags: consumer_config
   service: name=ar-consumer enabled=yes state=started
 
+- name: Install ar-data-retention from ar project
+  tags: ar-data-retention
+  yum: name=ar-data-retention state=latest
+
+- name: Parametrize data retention policies
+  tags: data_retention
+  template: src=ar-data-retention.conf.j2
+            dest=/etc/ar-data-retention/ar-data-retention.conf
+            owner=root group=root mode=0644
+
