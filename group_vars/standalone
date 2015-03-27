@@ -1,5 +1,7 @@
 ---
 
+mongo_bind_interface: 127.0.0.1
+
 cert_path: /etc/grid-security/hostcert.pem
 key_path: /etc/grid-security/hostkey.pem
 
