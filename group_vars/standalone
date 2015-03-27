@@ -8,3 +8,8 @@ mongo_retention_in_days: 900
 files_retention_in_days: 900
 
 
+hive_retention_in_days: 900
+mongo_retention_in_days: 900
+files_retention_in_days: 900
+
+
