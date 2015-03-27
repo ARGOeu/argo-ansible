@@ -3,6 +3,7 @@
 - hosts: webapi
   user: root
   roles:
+    - { role: firewall, tags: firewall }
     - { role: repos, tags: repos }
     - { role: has_certificate, tags: has_certificate }
     - { role: mongodb, tags: mongodb }
