@@ -2,3 +2,8 @@
 
 cert_path: /etc/grid-security/hostcert.pem
 key_path: /etc/grid-security/hostkey.pem
+
+iptables_rules:
+  input:
+    - { dport: "443",   proto: "tcp", policy: "accept"}
+
