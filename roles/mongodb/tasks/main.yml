@@ -11,7 +11,7 @@
   lineinfile: dest=/etc/mongod.conf
               regexp="^bind_ip="
               insertafter=EOF
-              line="bind_ip=0.0.0.0"
+              line="bind_ip={{ mongo_bind_interface }}"
               state=present
               backup=yes
   notify: restart mongo
