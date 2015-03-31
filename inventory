@@ -2,3 +2,5 @@
 [webapi]
 webapi.node
 
+[standalone]
+standalone.node

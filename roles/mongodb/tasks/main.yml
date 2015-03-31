@@ -11,10 +11,15 @@
   lineinfile: dest=/etc/mongod.conf
               regexp="^bind_ip="
               insertafter=EOF
-              line="bind_ip=0.0.0.0"
+              line="bind_ip={{ mongo_bind_interface }}"
               state=present
               backup=yes
   notify: restart mongo
+
+- name: Increase soft nproc limits
+  copy: src=etc/security/limits.d/99-mongodb-nproc.conf
+        dest=/etc/security/limits.d/99-mongodb-nproc.conf backup=no
+        owner=root group=root mode=0644
 
 - name: Enable and start mongoDB
   service: name=mongod enabled=yes state=started
