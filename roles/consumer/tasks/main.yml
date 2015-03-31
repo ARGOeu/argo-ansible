@@ -44,7 +44,7 @@
         state=present
         minute=0
         hour=0
-        job="/usr/libexec/ar-compute/standalone/job_cycle.py -d $(/bin/date --utc --date '-1 day' +\%Y-\%m-\%d)"
+        job="/usr/libexec/ar-compute/bin/job_cycle.py -d $(/bin/date --utc --date '-1 day' +\%Y-\%m-\%d)"
 
 - name: Configure ar-compute job cycle hourly cron 
   tags: compute_config
@@ -54,7 +54,7 @@
         state=present
         minute=55
         hour=*
-        job="/usr/libexec/ar-compute/standalone/job_cycle.py -d $(/bin/date --utc  +\%Y-\%m-\%d)"
+        job="/usr/libexec/ar-compute/bin/job_cycle.py -d $(/bin/date --utc  +\%Y-\%m-\%d)"
 
 - name: Create job directories
   tags: sync_config
