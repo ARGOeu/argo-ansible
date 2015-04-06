@@ -1,0 +1,41 @@
+- name: Configure pig related parameter
+  tags: pig_client_config
+  lineinfile: dest=/etc/pig/conf/pig.properties
+              regexp="^pig.logfile"
+              line="pig.logfile=/tmp/pig-err.log"
+              state=present
+              backup=yes
+
+- name: Insert comment for pig related parameter
+  tags: pig_client_config
+  lineinfile: dest=/etc/pig/conf/pig.properties
+              regexp="^# File Parameter"
+              insertbefore="^pig.logfile"
+              line="# File Parameter for pig exception dump."
+              state=present
+              backup=yes
+
+- name: Insert log4j pig config file
+  tags: pig_client_config
+  lineinfile: dest=/etc/pig/conf/pig.properties
+              regexp="^log4jconf="
+              insertbefore="# log4jconf=./conf/log4j.properties"
+              line="log4jconf=/etc/pig/conf/log4j.properties"
+              state=present
+              backup=yes
+
+- name: Copy pig log4j.properties file
+  tags: pig_client_config
+  copy: src=log4j.properties
+        dest=/etc/pig/conf/log4j.properties backup=yes
+        owner=root group=root mode=0644
+
+- name: Insert line in hadoop log4j.properties file
+  tags: hadoop_client_config
+  lineinfile: dest=/etc/hadoop/conf/log4j.properties
+              regexp="^hadoop.root.logger="
+              line="hadoop.root.logger=INFO,console,RFA"
+              state=present
+              backup=yes
+
+
