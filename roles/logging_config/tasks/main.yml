@@ -1,3 +1,25 @@
+---
+
+- name: Configure syslog to accept UDP reception 1
+  tags: syslog_config
+  lineinfile: dest=/etc/rsyslog.conf
+              regexp='^\$ModLoad imudp'
+              line='$ModLoad imudp'
+              insertafter='^#\$ModLoad imudp'
+              state=present
+              backup=yes
+  notify: restart syslog service
+
+- name: Configure syslog to accept UDP reception 2
+  tags: syslog_config
+  lineinfile: dest=/etc/rsyslog.conf
+              regexp='^\$UDPServerRun'
+              line='$UDPServerRun 514'
+              insertafter='^#\$UDPServerRun'
+              state=present
+              backup=yes
+#  notify: restart syslog service
+
 - name: Configure pig related parameter
   tags: pig_client_config
   lineinfile: dest=/etc/pig/conf/pig.properties
