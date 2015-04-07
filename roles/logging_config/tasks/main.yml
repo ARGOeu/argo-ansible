@@ -18,7 +18,17 @@
               insertafter='^#\$UDPServerRun'
               state=present
               backup=yes
-#  notify: restart syslog service
+  notify: restart syslog service
+
+- name: Bind syslog UDP service to localhost interface
+  tags: syslog_config
+  lineinfile: dest=/etc/rsyslog.conf
+              regexp='^\$UDPServerAddress'
+              line='$UDPServerAddress 127.0.0.1'
+              insertbefore='^#\$UDPServerRun'
+              state=present
+              backup=yes
+  notify: restart syslog service
 
 - name: Configure pig related parameter
   tags: pig_client_config
