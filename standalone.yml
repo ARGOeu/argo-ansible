@@ -8,6 +8,6 @@
     - { role: ca_bundle       , tags: ca_bundle       }
     - { role: has_certificate , tags: has_certificate }
     - { role: consumer        , tags: consumer        }
+    - { role: logging_config  , tags: logging_config  }
     - { role: mongodb         , tags: mongodb         }
-    - { role: pig_client      , tags: pig_client      }
     - { role: webapi          , tags: webapi          }
