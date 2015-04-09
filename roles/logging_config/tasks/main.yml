@@ -63,8 +63,17 @@
         owner=root group=root mode=0644
 
 - name: Copy hadoop log4j.properties file
-  tags: hadoop_client_config
+  tags: hadoop_client_logging_config
   copy: src=hadoop/log4j.properties
         dest=/etc/hadoop/conf/log4j.properties backup=yes
         owner=root group=root mode=0644
+
+- name: Add syslog appender to compute engine configuration
+  tags: hadoop_client_logging_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^hadoop_log_root="
+              line="hadoop_log_root=INFO,SYSLOG"
+              state=present
+              backup=yes
+
 
