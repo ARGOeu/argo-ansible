@@ -41,6 +41,22 @@
               state=present
               backup=yes
 
+- name: Configure ar-compute stuff 4
+  tags: consumer_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^sync_path="
+              line="sync_path=/var/lib/argo-connectors"
+              state=present
+              backup=yes
+
+- name: Configure ar-compute stuff 5
+  tags: consumer_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^sync_exec="
+              line="sync_exec=/usr/libexec/argo-egi-connectors"
+              state=present
+              backup=yes
+
 - name: Configure ar-compute job cycle daily cron 
   tags: compute_config
   cron: cron_file=ar_job_cycle_daily
