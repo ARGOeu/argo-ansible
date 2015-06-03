@@ -5,12 +5,17 @@
   yum: name=ar-consumer state=latest
   notify: restart consumer
 
-- name: Install packages from ar project
+- name: Install avro from ar project
   tags: ar-packages
-  yum: name={{ item }} state=latest
-  with_items:
-    - ar-sync
-    - ar-compute
+  yum: name=avro state=present
+
+- name: Install argo-egi-connectors from ar project
+  tags: ar-packages
+  yum: name=argo-egi-connectors state=latest
+
+- name: Install ar-compute from ar project
+  tags: ar-packages
+  yum: name=ar-compute state=latest
 
 - name: Configure ar-compute stuff 1
   tags: compute_config
@@ -33,6 +38,22 @@
   lineinfile: dest=/etc/ar-compute-engine.conf
               regexp="^prefilter_clean="
               line="prefilter_clean=false"
+              state=present
+              backup=yes
+
+- name: Configure ar-compute stuff 4
+  tags: consumer_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^sync_path="
+              line="sync_path=/var/lib/argo-connectors"
+              state=present
+              backup=yes
+
+- name: Configure ar-compute stuff 5
+  tags: consumer_config
+  lineinfile: dest=/etc/ar-compute-engine.conf
+              regexp="^sync_exec="
+              line="sync_exec=/usr/libexec/argo-egi-connectors"
               state=present
               backup=yes
 
@@ -60,14 +81,14 @@
   tags: sync_config
   file: path={{ item }} owner=root group=root mode=0755 state=directory
   with_items:
-    - /var/lib/ar-sync/EGI/Cloudmon
-    - /var/lib/ar-sync/EGI/Critical
+    - /var/lib/argo-connectors/EGI/Cloudmon
+    - /var/lib/argo-connectors/EGI/Critical
 
 - name: Make sure ownerships are OK
   tags: consumer_config
   file: path={{ item }} owner=root group=arstats mode=0775 state=directory
   with_items:
-    - /var/lib/ar-sync
+    - /var/lib/argo-connectors
     - /var/lib/ar-consumer
 
 - name: Enable and start consumer service
