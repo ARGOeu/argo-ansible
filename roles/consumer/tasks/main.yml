@@ -9,6 +9,10 @@
   tags: ar-packages
   yum: name=avro state=present
 
+- yum: name=python-pip state=present
+
+- pip: name=pymongo state=latest
+
 - name: Install argo-egi-connectors from ar project
   tags: ar-packages
   yum: name=argo-egi-connectors state=latest
