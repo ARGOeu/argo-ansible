@@ -7,11 +7,20 @@
     - mongodb-org
     - mongodb-org-server
 
-- name: Bind mongod processes to any interface
-  lineinfile: dest=/etc/mongod.conf
-              regexp="^bind_ip="
-              insertafter=EOF
-              line="bind_ip={{ mongo_bind_interface }}"
+- name: Bind mongod processes to an interface
+  lineinfile: >
+              dest=/etc/mongod.conf
+              regexp="\ \ bindIp"
+              line='  bindIp: {{ mongo_bind_interface }}'
+              state=present
+              backup=yes
+  notify: restart mongo
+
+- name: Fix issue with mongo init script
+  lineinfile: >
+              dest=/etc/mongod.conf
+              regexp="\ \ pidFilePath"
+              line='  pidFilePath: /var/run/mongodb/mongod.pid'
               state=present
               backup=yes
   notify: restart mongo

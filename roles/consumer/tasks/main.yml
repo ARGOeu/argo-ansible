@@ -1,10 +1,5 @@
 ---
 
-- name: Install consumer from ar project
-  tags: ar-packages
-  yum: name=ar-consumer state=latest
-  notify: restart consumer
-
 - name: Install avro from ar project
   tags: ar-packages
   yum: name=avro state=present
@@ -17,9 +12,31 @@
   tags: ar-packages
   pip: name=pymongo state=latest
 
+- name: Install consumer from ar project
+  tags: ar-packages
+  yum: name=argo-egi-consumer state=latest
+  notify: restart consumer
+
+- name: Consumer configuration
+  tags: consumer_config
+  template: src=consumer.conf.j2
+            dest=/etc/argo-egi-consumer/consumer.conf
+            owner=root group=root mode=0644
+
+- name: Enable and start consumer service
+  tags: consumer_config
+  service: name=argo-egi-consumer enabled=on state=started
+
 - name: Install argo-egi-connectors from ar project
   tags: ar-packages
   yum: name=argo-egi-connectors state=latest
+
+- name: Configure EGI connectors
+  tags: connectors_config
+  copy: src=customer.conf
+            dest=/etc/argo-egi-connectors/customer.conf
+            owner=root group=root mode=0644
+            backup=yes
 
 - name: Install ar-compute from ar project
   tags: ar-packages
@@ -85,6 +102,16 @@
         hour=*
         job="/usr/libexec/ar-compute/bin/job_cycle.py -d $(/bin/date --utc  +\%Y-\%m-\%d)"
 
+- name: Add ar-compute poller hourly cron for tenant EGI
+  tags: compute_crons
+  cron: cron_file=ar_poller_hourly_egi
+        name=ar_poller_hourly_egi
+        minute=25
+        hour=*
+        user=root
+        job="/usr/libexec/ar-compute/bin/poller_ar.py -t EGI"
+        state=present
+
 - name: Create job directories
   tags: sync_config
   file: path={{ item }} owner=root group=root mode=0755 state=directory
@@ -97,11 +124,7 @@
   file: path={{ item }} owner=root group=arstats mode=0775 state=directory
   with_items:
     - /var/lib/argo-connectors
-    - /var/lib/ar-consumer
-
-- name: Enable and start consumer service
-  tags: consumer_config
-  service: name=ar-consumer enabled=yes state=started
+    - /var/lib/argo-egi-consumer
 
 - name: Install ar-data-retention from ar project
   tags: ar-data-retention

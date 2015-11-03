@@ -1,0 +1,31 @@
+[General]
+LogFaultyTimestamps = True
+ReportWritMsgEveryHours = 24
+AvroSchema = /etc/argo-egi-consumer/metric_data.avsc
+
+
+[Subscription]
+Destinations = /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.ngi.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.roc.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.opsmonitor.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.project.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.vo.*
+IdleMsgTimeout = 0
+
+
+[Brokers]
+Server1 = mq.cro-ngi.hr:6163
+Server2 = mq.afroditi.hellasgrid.gr:6163
+
+[Authentication]
+HostKey = /etc/grid-security/hostkey.pem
+HostCert = /etc/grid-security/hostcert.pem
+
+[STOMP]
+TCPKeepAliveIdle = 20
+TCPKeepAliveInterval = 5
+TCPKeepAliveProbes = 10
+ReconnectAttempts = 10
+UseSSL = False
+
+[Output]
+WritePlaintext = False
+Directory = /var/lib/argo-egi-consumer
+Filename = argo-consumer_log_%s.avro
+ErrorFilename = argo-consumer_error_log_%s.avro
