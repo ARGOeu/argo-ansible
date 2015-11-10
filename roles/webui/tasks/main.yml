@@ -32,6 +32,7 @@
   command: mv argo-egi-web-master argo-egi-web-master.old
            chdir={{ lavoisier_home }}
   when: download_out is defined and download_out.changed
+  ignore_errors: True
 
 - name: Unzip zip file
   command: unzip master.zip

@@ -7,6 +7,9 @@ services:
 lavoisier_home: /var/www/lavoisier
 download_url: https://github.com/ARGOeu/argo-egi-web/archive/master.zip
 
+cert_path: /etc/grid-security/hostcert.pem
+key_path: /etc/grid-security/hostkey.pem
+
 certificate_password: change_me_or_overwrite_me_in_vars_file
 certificate_path: /etc/grid-security/server.p12
 cache_directory: /tmp
