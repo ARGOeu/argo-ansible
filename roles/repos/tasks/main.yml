@@ -3,12 +3,12 @@
 - name: Install epel repo files
   yum: name={{ epel_release_url }}{{ epel_release_name }}
        state=present
-  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webapi
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
 
 - name: Install arstats repo files
   yum: name={{ arstats_release_url }}{{ arstats_release_name }}
        state=present
-  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webapi
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
 
 - name: Install mongodb repo
   tags: mongodb_repo

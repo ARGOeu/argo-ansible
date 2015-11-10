@@ -1,9 +1,8 @@
 ---
 
-iptables_rules:
-  input:
-    - { dport: "80",  proto: "tcp", policy: "accept"}
-    - { dport: "443", proto: "tcp", policy: "accept"}
+services:
+  - http
+  - https
 
 lavoisier_home: /var/www/lavoisier
 download_url: https://github.com/ARGOeu/argo-egi-web/archive/master.zip
