@@ -1,0 +1,8 @@
+---
+
+- hosts: webui
+  user: root
+  roles:
+    - { role: firewall, tags: firewall }
+    - { role: repos,    tags: repos    }
+    - { role: webui,    tags: webui    }

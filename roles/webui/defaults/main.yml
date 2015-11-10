@@ -1,0 +1,18 @@
+---
+
+iptables_rules:
+  input:
+    - { dport: "80",  proto: "tcp", policy: "accept"}
+    - { dport: "443", proto: "tcp", policy: "accept"}
+
+lavoisier_home: /var/www/lavoisier
+download_url: https://github.com/ARGOeu/argo-egi-web/archive/master.zip
+
+certificate_password: change_me_or_overwrite_me_in_vars_file
+certificate_path: /etc/grid-security/server.p12
+cache_directory: /tmp
+truststore_path: /etc/grid-security
+keystore_path: /etc/grid-security/server.p12
+keystore_password: change_me_or_overwrite_me_in_vars_file
+
+admin_password_md5: b91cd1a54781790beaa2baf741fa6789
