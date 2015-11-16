@@ -43,14 +43,14 @@
 
 - name: Configure etc/lavoisier-hidden.properties step 1
   lineinfile: dest={{ lavoisier_home }}/argo-egi-web-master/etc/lavoisier-hidden.properties
-              line='certificate.password = {{ certificate_password }}'
+              line='certificate.password={{ certificate_password }}'
               regexp='^certificate.password'
               state=present
   notify: restart webui
 
 - name: Configure etc/lavoisier-hidden.properties step 2
   lineinfile: dest={{ lavoisier_home }}/argo-egi-web-master/etc/lavoisier-hidden.properties
-              line='certificate.path = {{ certificate_path }}'
+              line='certificate.path={{ certificate_path }}'
               regexp='^certificate.path'
               state=present
   notify: restart webui
@@ -65,7 +65,7 @@
 
 - name: Configure etc/lavoisier-hidden.properties step 4
   lineinfile: dest={{ lavoisier_home }}/argo-egi-web-master/etc/lavoisier-hidden.properties
-              line='server.baseUrl = https://{{ inventory_hostname }}'
+              line='server.baseUrl=http://{{ inventory_hostname }}'
               regexp='^server.baseUrl'
               state=present
   notify: restart webui

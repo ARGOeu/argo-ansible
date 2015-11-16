@@ -13,7 +13,7 @@ key_path: /etc/grid-security/hostkey.pem
 certificate_password: change_me_or_overwrite_me_in_vars_file
 certificate_path: /etc/grid-security/server.p12
 cache_directory: /tmp
-truststore_path: /etc/grid-security
+truststore_path: /etc/grid-security/certificates
 keystore_path: /etc/grid-security/server.p12
 keystore_password: change_me_or_overwrite_me_in_vars_file
 
