@@ -7,13 +7,13 @@
 
 - name: Copy host x509 certificate onto host
   tags: certificate
-  copy: src=hostcert.pem
+  copy: src={{ inventory_hostname }}.pem
         dest={{ cert_path }} backup=yes
         owner=root group=root mode=0644
 
 - name: Copy host x509 key onto host
   tags: certificate
-  copy: src=hostkey.pem
+  copy: src={{ inventory_hostname }}.key
         dest={{ key_path }} backup=yes
         owner=root group=root mode=0400
 
