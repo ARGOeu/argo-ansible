@@ -1,0 +1,4 @@
+---
+
+epel_release: http://ftp.ntua.gr/pub/linux/fedora-epel/6/i386/epel-release-6-8.noarch.rpm
+arstats_release: http://rpm.hellasgrid.gr/mash/centos6-arstats/i386/ar-release-1.0.0-3.el6.noarch.rpm
