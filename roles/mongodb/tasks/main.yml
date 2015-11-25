@@ -7,11 +7,11 @@
     - mongodb-org-3.0.7
     - mongodb-org-server-3.0.7
 
-- name: Bind mongod processes to an interface
+- name: Bind mongod processes to one or more interfaces
   lineinfile: >
               dest=/etc/mongod.conf
               regexp="\ \ bindIp"
-              line='  bindIp: {{ mongo_bind_interface }}'
+              line='  bindIp: {{ mongo_bind_interfaces }}'
               state=present
               backup=yes
   notify: restart mongo
