@@ -4,24 +4,10 @@
   tags: mongoDB-packages
   yum: name={{ item }} state=present
   with_items:
-    - mongodb-org
-    - mongodb-org-server
+    - mongodb-org-3.0.7
+    - mongodb-org-server-3.0.7
 
-- name: check mongo version
-  shell: rpm -q --queryformat '[%{RPMTAG_VERSION}]' mongodb-org
-  ignore_errors: True
-  register: mongo_version
-
-- name: Bind mongod for version 3.0.0
-  lineinfile: dest=/etc/mongod.conf
-              regexp="^bind_ip = "
-              line="bind_ip = 127.0.0.1,{{ ansible_eth0.ipv4.address }}"
-              state=present
-              backup=yes
-  notify: restart mongo
-  when: mongo_version is defined and mongo_version.stdout == "3.0.0"
-
-- name: Bind mongod for version 3.0.7
+- name: Bind mongod processes to an interface
   lineinfile: >
               dest=/etc/mongod.conf
               regexp="\ \ bindIp"
@@ -29,9 +15,8 @@
               state=present
               backup=yes
   notify: restart mongo
-  when: mongo_version is defined and mongo_version.stdout == "3.0.7"
 
-- name: Fix issue with mongo init script in version 3.0.7
+- name: Fix issue with mongo init script
   lineinfile: >
               dest=/etc/mongod.conf
               regexp="\ \ pidFilePath"
@@ -39,7 +24,6 @@
               state=present
               backup=yes
   notify: restart mongo
-  when: mongo_version is defined and mongo_version.stdout == "3.0.7"
 
 - name: Increase soft nproc limits
   copy: src=etc/security/limits.d/99-mongodb-nproc.conf
