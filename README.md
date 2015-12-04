@@ -25,6 +25,32 @@ Contains Ansible playbook for the deployment of the ARGO datastore and API servi
 $ ansible-playbook -v webapi.yml
 ```
 
+
+## Web UI deployment
+
+Contains Ansible playbook for the deployment of the ARGO Web UI service. The play is split into four (4) roles:
+- firewall (configures iptables firewall rules)
+- repos (includes tasks for the installation of the required repository definitions)
+- has_certificate (task for uploading the certificate file onto the host under the appropriate path)
+- webui (installation and bootstrap of ARGO Web UI service)
+
+### Things to do before deployment
+
+- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `hostkey.pem` and `hostcert.pem` respectively.
+- Edit inventory and replace `webui.node` with the hostname that you intend to deploy the API onto. 
+- Edit `roles/webui/vars/main.yml` file and change the values of the `certificate_password` and `keystore_password` variables to a stronger value.
+
+### Prerequisites
+
+- Deploy against CentOS 7.x node
+- Ansible version used is `1.9.2`
+
+### How to deploy
+
+```bash
+$ ansible-playbook -v webui.yml
+```
+
 ## Full standalone deployment
 
 Contains Ansible playbook for the deployment of all ARGO components. The play is split into six (6) roles:
