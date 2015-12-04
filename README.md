@@ -37,7 +37,7 @@ Contains Ansible playbook for the deployment of the ARGO Web UI service. The pla
 ### Things to do before deployment
 
 - Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `hostkey.pem` and `hostcert.pem` respectively.
-- Edit inventory and replace `webui.node` with the hostname that you intend to deploy the API onto. 
+- Edit inventory and replace `webui.node` with the hostname that you intend to deploy the Web UI onto. 
 - Edit `roles/webui/vars/main.yml` file and change the values of the `certificate_password` and `keystore_password` variables to a stronger value.
 
 ### Prerequisites
