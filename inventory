@@ -4,3 +4,6 @@ webapi.node
 
 [standalone]
 standalone.node
+
+[webui]
+webui.node

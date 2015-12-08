@@ -1,5 +1,10 @@
 ---
 
+- name: Create cert_dir if not exists
+  file: dest={{ cert_dir }} state=directory
+        owner=root group=root mode=0755
+  when: cert_dir is defined
+
 - name: Copy host x509 certificate onto host
   tags: certificate
   copy: src=hostcert.pem
@@ -24,3 +29,8 @@
         path=/etc/pki/tls/private/localhost.key
   when: inventory_hostname in groups.standalone
 
+- name: Create p12 key for web ui
+  command: openssl pkcs12 -export -in hostcert.pem -inkey hostkey.pem -password pass:{{ keystore_password }} -out server.p12
+           chdir=/etc/grid-security
+           creates=/etc/grid-security/server.p12
+  when: inventory_hostname in groups.webui
