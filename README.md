@@ -10,7 +10,7 @@ Contains Ansible playbook for the deployment of the ARGO datastore and API servi
 
 ### Things to do before deployment
 
-- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `hostkey.pem` and `hostcert.pem` respectively.
+- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `{{inventory_hostname}}.key` and `{{inventory_hostname}}.pem` respectively. As `{{inventory_hostname}}` use the exact name used within the `inventory` file. 
 - Edit inventory and replace `webapi.node` with the hostname that you intend to deploy the API onto. 
 
 ### Prerequisites
@@ -36,7 +36,7 @@ Contains Ansible playbook for the deployment of the ARGO Web UI service. The pla
 
 ### Things to do before deployment
 
-- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `hostkey.pem` and `hostcert.pem` respectively.
+- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `{{inventory_hostname}}.key` and `{{inventory_hostname}}.pem` respectively. As `{{inventory_hostname}}` use the exact name used within the `inventory` file. 
 - Edit inventory and replace `webui.node` with the hostname that you intend to deploy the Web UI onto. 
 - Edit `roles/webui/vars/main.yml` file and change the values of the `certificate_password` and `keystore_password` variables to a stronger value.
 
@@ -63,7 +63,7 @@ Contains Ansible playbook for the deployment of all ARGO components. The play is
 
 ### Things to do before deployment
 
-- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `hostkey.pem` and `hostcert.pem` respectively.
+- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `{{inventory_hostname}}.key` and `{{inventory_hostname}}.pem` respectively. As `{{inventory_hostname}}` use the exact name used within the `inventory` file. 
 - Edit inventory and replace `standalone.node` with the hostname that you intend to deploy the complete ARGO stack onto. 
 
 ### Prerequisites
