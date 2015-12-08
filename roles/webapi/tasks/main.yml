@@ -1,10 +1,10 @@
 ---
 
-- name: Install ar-web-api package
-  yum: name=ar-web-api state=latest
-  notify: updated ar-web-api package
+- name: Install argo-web-api package
+  yum: name=argo-web-api state=latest
+  notify: updated argo-web-api package
   tags: api
 
 - name: Start web api service
-  service: name=ar-web-api state=started
+  service: name=argo-web-api state=started
   tags: api
