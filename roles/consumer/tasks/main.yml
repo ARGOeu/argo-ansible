@@ -15,7 +15,7 @@
 - name: Install consumer from ar project
   tags: ar-packages
   yum: name=argo-egi-consumer state=latest enablerepo={{ enabled_argo_repo }}
-  notify: restart consumer
+  notify: restart egi consumer
 
 - name: Consumer configuration
   tags: consumer_config
