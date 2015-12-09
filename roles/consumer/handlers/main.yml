@@ -1,5 +1,5 @@
 ---
 
 - name: restart consumer
-  service: name=ar-consumer state=restarted
+  service: name=argo-egi-consumer state=restarted
 
