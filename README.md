@@ -77,3 +77,8 @@ Contains Ansible playbook for the deployment of all ARGO components. The play is
 ```bash
 $ ansible-playbook -v standalone.yml
 ```
+
+
+## Monitoring your services
+
+In case you are using Nagios or Icinga for health monitoring purposes a minimal `is_monitored` role is included in the repo. The puspose of this role is to install and configure the nrpe service on your target machines. Modify the remote host variable within the `roles/is_monitored/defaults/main.yml` file and include it in your playbooks. 
