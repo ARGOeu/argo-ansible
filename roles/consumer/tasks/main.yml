@@ -2,7 +2,7 @@
 
 - name: Install avro from ar project
   tags: ar-packages
-  yum: name=avro state=present
+  yum: name=avro state=present enablerepo={{ enabled_argo_repo }}
 
 - name: Install python-pip
   tags: ar-packages
@@ -14,7 +14,7 @@
 
 - name: Install consumer from ar project
   tags: ar-packages
-  yum: name=argo-egi-consumer state=latest
+  yum: name=argo-egi-consumer state=latest enablerepo={{ enabled_argo_repo }}
   notify: restart consumer
 
 - name: Consumer configuration
@@ -29,7 +29,7 @@
 
 - name: Install argo-egi-connectors from ar project
   tags: ar-packages
-  yum: name=argo-egi-connectors state=latest
+  yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }}
 
 - name: Configure EGI connectors
   tags: connectors_config
@@ -40,7 +40,7 @@
 
 - name: Install ar-compute from ar project
   tags: ar-packages
-  yum: name=ar-compute state=latest
+  yum: name=ar-compute state=latest enablerepo={{ enabled_argo_repo }}
 
 - name: Configure ar-compute stuff 1
   tags: compute_config
@@ -128,7 +128,7 @@
 
 - name: Install ar-data-retention from ar project
   tags: ar-data-retention
-  yum: name=ar-data-retention state=latest
+  yum: name=ar-data-retention state=latest enablerepo={{ enabled_argo_repo }}
 
 - name: Parametrize data retention policies
   tags: data_retention
