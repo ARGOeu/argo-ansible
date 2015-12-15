@@ -91,6 +91,20 @@
               state=present
   notify: restart webui
 
+- name: Configure etc/lavoisier-hidden.properties step 8
+  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
+              line='argo.api.key={{ argo_api_key }}'
+              regexp='^argo.api.key='
+              state=present
+  notify: restart webui
+
+- name: Configure etc/lavoisier-hidden.properties step 9
+  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
+              line='contact.email={{ contact_email }}'
+              regexp='^contact.email='
+              state=present
+  notify: restart webui
+
 - name: Configure etc/security/passwords.properties
   lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/security/passwords.properties
               line='admin={{ admin_password_md5 }}'
