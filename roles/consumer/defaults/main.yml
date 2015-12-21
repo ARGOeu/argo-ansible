@@ -1,0 +1,16 @@
+---
+
+tenants:
+  - name: "TenantA"
+    outputdir: "/var/lib/argo-connectors/tenant_a/"
+    jobs_all: "JOB_TenantA_ALL, JOB_EGI-ROC-Critical, JOB_EGI-ROC-Operators, JOB_EGI-OPS-MONITOR, JOB_EGI-OPS-MONITOR-Critical, JOB_EGI-CLOUDMON, JOB_EGI-CLOUDMON-Critical, JOB_EGI-GLEXEC, JOB_GridPPTest"
+    jobs_details:
+      - name: "ALL"
+        Directory: "TenantA_ALL"
+        Profiles: "ALL_SERVICES"
+        TopoType: "GOCDB"
+        TopoFeed: "https://goc.example.com/gocdbpi/"
+        TopoFetchType: "Sites"
+        TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
+        TopoSelectGroupOfGroups: "Certification:Certified, Infrastructure:Production, Scope:TenantA"
+        DowntimesFeed: "https://goc.example.com/gocdbpi/"

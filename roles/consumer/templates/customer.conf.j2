@@ -1,0 +1,25 @@
+{% if tenants is defined %}
+{% for tenant in tenants %}
+[CUSTOMER_{{tenant.name|upper}}]
+Name = {{tenant.name|upper}}
+OutputDir = {{tenant.outputdir}}
+{% if tenant.jobs_all is defined %}
+Jobs = {{ tenant.jobs_all }}
+{% endif %}
+
+{% if tenant.jobs_details is defined %}
+{% for job in tenant.jobs_details %}
+[{{job.name}}]
+Dirname = {{job.Directory}}
+Profiles = {{job.Profiles}}
+TopoType = {{job.TopoType}}
+TopoFeed = {{job.TopoFeed}}
+TopoFetchType = {{job.TopoFetchType}}
+TopoSelectGroupofEndpoints = {{job.TopoSelectGroupofEndpoints}}
+TopoSelectGroupOfGroups = {{job.TopoSelectGroupOfGroups}}
+DowntimesFeed = {{job.DowntimesFeed}}
+
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}

@@ -31,9 +31,9 @@
   tags: ar-packages
   yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }}
 
-- name: Configure EGI connectors
+- name: Configure connectors
   tags: connectors_config
-  copy: src=customer.conf
+  template: src=customer.conf.j2
             dest=/etc/argo-egi-connectors/customer.conf
             owner=root group=root mode=0644
             backup=yes
