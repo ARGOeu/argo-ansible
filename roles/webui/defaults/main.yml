@@ -8,7 +8,7 @@ lavoisier_home: /var/www/lavoisier
 branch_name: master
 argo_web: argo-egi-web
 argo_api_key: some_api_key
-contact_mail: foo@example.com
+contact_email: foo@example.com
 
 cert_dir: /etc/grid-security
 cert_path: /etc/grid-security/hostcert.pem
