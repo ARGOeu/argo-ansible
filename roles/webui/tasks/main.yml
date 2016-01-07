@@ -23,6 +23,9 @@
 - name: Create download directory
   file: path={{ lavoisier_home }} state=directory
 
+- name: Create cache directory
+  file: path={{ cache_directory }} state=directory
+
 - name: Download lavoisier zip file
   get_url: url=https://github.com/ARGOeu/{{ argo_web }}/archive/{{ branch_name }}.zip
            dest={{ lavoisier_home }}/{{ branch_name }}.zip
