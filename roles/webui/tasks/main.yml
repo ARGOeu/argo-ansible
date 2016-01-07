@@ -14,8 +14,8 @@
   notify: restart webui
 
 - name: Copy files to setup HOME_LAVOISIER
-  copy: src={{ item }} dest=/etc/profile.d/{{ item }}
-        owner=root group=root mode=0644
+  template: src={{ item }}.j2 dest=/etc/profile.d/{{ item }}
+            owner=root group=root mode=0644
   with_items:
     - lavoisier.sh
     - lavoisier.csh
