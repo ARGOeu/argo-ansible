@@ -40,6 +40,8 @@ Contains Ansible playbook for the deployment of the ARGO Web UI service. The pla
 - Edit inventory and replace `webui.node` with the hostname that you intend to deploy the Web UI onto. 
 - Edit `roles/webui/vars/main.yml` file and change the values of the `certificate_password` and `keystore_password` variables to a stronger value.
 
+- Note that by default the EGI based web UI will be deployed on your target node. To change this behaviour use the `argo_web` and `branch_name` variables within the `roles/webui/vars/main.yml` file to point to another upstream lavoisier repository. 
+
 ### Prerequisites
 
 - Deploy against CentOS 7.x node
