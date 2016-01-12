@@ -44,68 +44,16 @@
            chdir={{ lavoisier_home }}
   when: download_out is defined and download_out.changed
 
-- name: Configure etc/lavoisier-hidden.properties step 1
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='certificate.password={{ certificate_password }}'
-              regexp='^certificate.password'
-              state=present
+- name: Copy etc/lavoisier-hidden.properties file
+  template: src=lavoisier-hidden.properties.j2
+            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
+            owner=root group=root mode=0644
   notify: restart webui
 
-- name: Configure etc/lavoisier-hidden.properties step 2
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='certificate.path={{ certificate_path }}'
-              regexp='^certificate.path'
-              state=present
-  notify: restart webui
-
-- name: Configure etc/lavoisier-hidden.properties step 3
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='cache.baseDirectory={{ cache_directory }}'
-              regexp='^cache.baseDirectory='
-              state=present
-              insertafter='^#cache.baseDirectory'
-  notify: restart webui
-
-- name: Configure etc/lavoisier-hidden.properties step 4
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='server.baseUrl=http://{{ inventory_hostname }}'
-              regexp='^server.baseUrl'
-              state=present
-  notify: restart webui
-
-- name: Configure etc/lavoisier-hidden.properties step 5
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='lavoisier.ssl.trustStore={{ truststore_path }}'
-              regexp='^lavoisier.ssl.trustStore='
-              state=present
-  notify: restart webui
-
-- name: Configure etc/lavoisier-hidden.properties step 6
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='lavoisier.ssl.keyStore={{ keystore_path }}'
-              regexp='^lavoisier.ssl.keyStore='
-              state=present
-  notify: restart webui
-
-- name: Configure etc/lavoisier-hidden.properties step 7
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='lavoisier.ssl.keyStorePassword={{ keystore_password }}'
-              regexp='^lavoisier.ssl.keyStorePassword='
-              state=present
-  notify: restart webui
-
-- name: Configure etc/lavoisier-hidden.properties step 8
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='argo.api.key={{ argo_api_key }}'
-              regexp='^argo.api.key='
-              state=present
-  notify: restart webui
-
-- name: Configure etc/lavoisier-hidden.properties step 9
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
-              line='contact.email={{ contact_email }}'
-              regexp='^contact.email='
-              state=present
+- name: Copy etc/argo-config.properties file
+  template: src=argo-config.properties.j2
+            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/argo-config.properties
+            owner=root group=root mode=0644
   notify: restart webui
 
 - name: Configure etc/security/passwords.properties
