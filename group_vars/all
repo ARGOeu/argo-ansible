@@ -4,3 +4,5 @@
 # To use the development repository set its value to argo-devel
 
 enabled_argo_repo: argo-prod
+
+cert_dir: /etc/grid-security
