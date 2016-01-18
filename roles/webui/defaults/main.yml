@@ -7,8 +7,13 @@ services:
 lavoisier_home: /var/www/lavoisier
 branch_name: master
 argo_web: argo-egi-web
+argo_api_host: example.com
 argo_api_key: some_api_key
 contact_email: foo@example.com
+
+gocdb_endpoint: goc.egi.eu
+gocdb_production: Production
+gocdb_certification: Certified
 
 cert_dir: /etc/grid-security
 cert_path: /etc/grid-security/hostcert.pem
