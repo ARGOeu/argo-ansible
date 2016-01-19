@@ -5,5 +5,8 @@ webapi.node
 [standalone]
 standalone.node
 
+[poem]
+poem.node
+
 [webui]
 webui.node
