@@ -1,9 +1,9 @@
 ---
 
 tenants:
-  - name: "TenantA"
+  TenantA:
     outputdir: "/var/lib/argo-connectors/tenant_a/"
-    jobs_all: "JOB_TenantA_ALL, JOB_EGI-ROC-Critical, JOB_EGI-ROC-Operators, JOB_EGI-OPS-MONITOR, JOB_EGI-OPS-MONITOR-Critical, JOB_EGI-CLOUDMON, JOB_EGI-CLOUDMON-Critical, JOB_EGI-GLEXEC, JOB_GridPPTest"
+    jobs_all: "JOB_TenantA_ALL, JOB_TenantA_PART"
     jobs_details:
       - name: "ALL"
         Directory: "TenantA_ALL"
@@ -13,4 +13,26 @@ tenants:
         TopoFetchType: "Sites"
         TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
         TopoSelectGroupOfGroups: "Certification:Certified, Infrastructure:Production, Scope:TenantA"
+        DowntimesFeed: "https://goc.example.com/gocdbpi/"
+      - name: "PART"
+        Directory: "TenantA_PART"
+        Profiles: "PART_SERVICES"
+        TopoType: "GOCDB"
+        TopoFeed: "https://goc.example.com/gocdbpi/"
+        TopoFetchType: "Sites"
+        TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
+        TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantA"
+        DowntimesFeed: "https://goc.example.com/gocdbpi/"
+  TenantB:
+    outputdir: "/var/lib/argo-connectors/tenant_b/"
+    jobs_all: "JOB_TenantB_SERVICES"
+    jobs_details:
+      - name: "SERVICES"
+        Directory: "SERVICES"
+        Profiles: "My_Critical_Services"
+        TopoType: "GOCDB"
+        TopoFeed: "https://goc.example.com/gocdbpi/"
+        TopoFetchType: "ServiceGroups"
+        TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantB"
+        TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantB"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"

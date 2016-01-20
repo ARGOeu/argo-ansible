@@ -34,9 +34,10 @@
 - name: Configure connectors
   tags: connectors_config
   template: src=customer.conf.j2
-            dest=/etc/argo-egi-connectors/customer.conf
+            dest=/etc/argo-egi-connectors/{{ item.key }}-customer.conf
             owner=root group=root mode=0644
             backup=yes
+  with_dict: tenants
 
 - name: Install ar-compute from ar project
   tags: ar-packages
