@@ -2,10 +2,19 @@
 
 tenants:
   TenantA:
-    outputdir: "/var/lib/argo-connectors/tenant_a/"
+    topics:
+      - "probe.metricOutput.tenantA.ngi.*"
+      - "probe.metricOutput.tenantA.roc.*"
+      - "probe.metricOutput.tenantA.opsmonitor.*"
+      - "probe.metricOutput.tenantA.project.*"
+      - "probe.metricOutput.tenantA.vo.*"
+    brokers:
+      - "broker1.example.com"
+      - "broker2.example.com"
+    outputdir: "/var/lib/argo-connectors/TenantA/"
     jobs_all: "JOB_TenantA_ALL, JOB_TenantA_PART"
     jobs_details:
-      - name: "ALL"
+      - name: "JOB_TenantA_ALL"
         Directory: "TenantA_ALL"
         Profiles: "ALL_SERVICES"
         TopoType: "GOCDB"
@@ -14,7 +23,7 @@ tenants:
         TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
         TopoSelectGroupOfGroups: "Certification:Certified, Infrastructure:Production, Scope:TenantA"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
-      - name: "PART"
+      - name: "JOB_TenantA_PART"
         Directory: "TenantA_PART"
         Profiles: "PART_SERVICES"
         TopoType: "GOCDB"
@@ -24,10 +33,14 @@ tenants:
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantA"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
   TenantB:
-    outputdir: "/var/lib/argo-connectors/tenant_b/"
+    topics:
+      - "probe.*"
+    brokers:
+      - "broker3.example.com"
+    outputdir: "/var/lib/argo-connectors/TenantB/"
     jobs_all: "JOB_TenantB_SERVICES"
     jobs_details:
-      - name: "SERVICES"
+      - name: "JOB_TenantB_SERVICES"
         Directory: "SERVICES"
         Profiles: "My_Critical_Services"
         TopoType: "GOCDB"
@@ -36,3 +49,17 @@ tenants:
         TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantB"
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantB"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
+
+poem_servers:
+  - host: "poemA.example.com"
+    vos:
+      - ops
+      - gridpp
+  - host: "poemB.example.com"
+    vos:
+      - ops
+
+poem_fetch_profiles:
+  - profile_1
+  - profile_2
+

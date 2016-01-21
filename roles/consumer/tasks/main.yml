@@ -12,31 +12,118 @@
   tags: ar-packages
   pip: name=pymongo state=latest
 
-- name: Install consumer from ar project
-  tags: ar-packages
+- name: Install egi consumer package from ar project
+  tags: 
+    - ar-packages
+    - consumer_config
   yum: name=argo-egi-consumer state=latest enablerepo={{ enabled_argo_repo }}
-  notify: restart egi consumer
+  notify: restart all consumers
+
+- name: Create consumer configuration directories
+  file: path=/etc/argo-{{ item.key | lower }}-consumer
+        state=directory
+        owner=root group=root mode=0755
+  with_dict: tenants
+  notify: restart all consumers
+
+- name: Copy metric avro specification for each tenant
+  tags: 
+    - consumer_config
+  template: src=metric_data.avsc.j2
+            dest=/etc/argo-{{ item.key | lower }}-consumer/metric_data.avsc
+            owner=root group=root mode=0644
+  with_dict: tenants
+  notify: restart all consumers
+
+- name: Create consumer output directories per tenant
+  tags: consumer_config
+  file: path=/var/lib/argo-{{ item.key | lower }}-consumer
+        state=directory
+        owner=arstats group=arstats mode=0755
+  with_dict: tenants
 
 - name: Consumer configuration
-  tags: consumer_config
+  tags: 
+    - consumer_config
   template: src=consumer.conf.j2
-            dest=/etc/argo-egi-consumer/consumer.conf
+            dest=/etc/argo-{{ item.key | lower }}-consumer/consumer.conf
             owner=root group=root mode=0644
+  with_dict: tenants
+  notify: restart all consumers
 
-- name: Enable and start consumer service
-  tags: consumer_config
-  service: name=argo-egi-consumer enabled=on state=started
+- name: Copy out init scripts for consumers
+  tags: 
+    - consumer_config
+  template: src=consumer.init.j2
+            dest=/etc/init.d/argo-{{ item.key | lower }}-consumer
+            owner=root group=root mode=0755
+  with_dict: tenants
+  notify: restart all consumers
+
+- name: Create copies of python wrappers for non egi consumers
+  tags: 
+    - consumer_config
+  file: path=/usr/bin/argo-{{ item.key | lower }}-wrapper-consumer.py
+        state=link src=/usr/bin/argo-egi-consumer.py
+  with_dict: tenants
+
+- name: Enable and start consumer services
+  tags: 
+    - consumer_config
+  service: name=argo-{{ item.key | lower }}-consumer enabled=on state=started
+  with_dict: tenants
 
 - name: Install argo-egi-connectors from ar project
-  tags: ar-packages
+  tags: 
+    - ar-packages
+    - connectors
   yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }}
 
 - name: Configure connectors
-  tags: connectors_config
+  tags: 
+    - connectors_config
+    - connectors
   template: src=customer.conf.j2
-            dest=/etc/argo-egi-connectors/{{ item.key }}-customer.conf
+            dest=/etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf
             owner=root group=root mode=0644
             backup=yes
+  with_dict: tenants
+
+- name: POEM configuration
+  tags:
+    - connectors_config
+    - poem_config
+  template: src=poem-connector.conf.j2
+            dest=/etc/argo-egi-connectors/poem-connector.conf
+            owner=root group=root mode=0644
+            backup=yes
+
+- name: Configure poem connector per tenant cron job
+  tags: 
+    - connectors_config
+    - connectors
+    - poem_cron
+  cron: cron_file=poem_{{ item.key | lower }}
+        name=poem_{{ item.key | lower }}
+        minute=2
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/poem-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present
+  with_dict: tenants
+
+- name: Configure poem connector per tenant cron job
+  tags: 
+    - connectors_config
+    - connectors
+    - topology_cron
+  cron: cron_file=topology_{{ item.key | lower }}
+        name=topology_{{ item.key | lower }}
+        minute=7
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/topology-gocdb-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present
   with_dict: tenants
 
 - name: Install ar-compute from ar project
@@ -68,7 +155,7 @@
               backup=yes
 
 - name: Configure ar-compute stuff 4
-  tags: consumer_config
+  tags: compute_config
   lineinfile: dest=/etc/ar-compute-engine.conf
               regexp="^sync_path="
               line="sync_path=/var/lib/argo-connectors"
@@ -76,7 +163,7 @@
               backup=yes
 
 - name: Configure ar-compute stuff 5
-  tags: consumer_config
+  tags: compute_config
   lineinfile: dest=/etc/ar-compute-engine.conf
               regexp="^sync_exec="
               line="sync_exec=/usr/libexec/argo-egi-connectors"
@@ -112,20 +199,6 @@
         user=root
         job="/usr/libexec/ar-compute/bin/poller_ar.py -t EGI"
         state=present
-
-- name: Create job directories
-  tags: sync_config
-  file: path={{ item }} owner=root group=root mode=0755 state=directory
-  with_items:
-    - /var/lib/argo-connectors/EGI/Cloudmon
-    - /var/lib/argo-connectors/EGI/Critical
-
-- name: Make sure ownerships are OK
-  tags: consumer_config
-  file: path={{ item }} owner=root group=arstats mode=0775 state=directory
-  with_items:
-    - /var/lib/argo-connectors
-    - /var/lib/argo-egi-consumer
 
 - name: Install ar-data-retention from ar project
   tags: ar-data-retention

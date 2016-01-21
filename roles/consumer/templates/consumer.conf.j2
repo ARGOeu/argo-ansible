@@ -1,17 +1,21 @@
 [General]
 LogFaultyTimestamps = True
 ReportWritMsgEveryHours = 24
-AvroSchema = /etc/argo-egi-consumer/metric_data.avsc
+AvroSchema = /etc/argo-{{ item.key | lower }}-consumer/metric_data.avsc
 
 
 [Subscription]
-Destinations = /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.ngi.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.roc.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.opsmonitor.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.project.*, /queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.grid.probe.metricOutput.EGEE.vo.*
+Destinations = {% if item.value.topics is defined %}{% for topic in item.value.topics %}{% if loop.last %}/queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.{{ topic }}{% else %}/queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.{{ topic }}, {% endif %}{% endfor %}{% endif %}
+
 IdleMsgTimeout = 0
 
 
 [Brokers]
-Server1 = mq.cro-ngi.hr:6163
-Server2 = mq.afroditi.hellasgrid.gr:6163
+{% if item.value.brokers is defined %}
+{% for broker in item.value.brokers %}
+Server{{ loop.index }} = {{ broker }}:6163
+{% endfor %}
+{% endif %}
 
 [Authentication]
 HostKey = /etc/grid-security/hostkey.pem
@@ -26,6 +30,6 @@ UseSSL = False
 
 [Output]
 WritePlaintext = False
-Directory = /var/lib/argo-egi-consumer
+Directory = /var/lib/argo-{{ item.key | lower }}-consumer
 Filename = argo-consumer_log_%s.avro
 ErrorFilename = argo-consumer_error_log_%s.avro
