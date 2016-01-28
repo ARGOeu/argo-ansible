@@ -130,45 +130,12 @@
   tags: ar-packages
   yum: name=ar-compute state=latest enablerepo={{ enabled_argo_repo }}
 
-- name: Configure ar-compute stuff 1
-  tags: compute_config
-  lineinfile: dest=/etc/ar-compute-engine.conf
-              regexp="^mongo_host="
-              line="mongo_host=127.0.0.1"
-              state=present
-              backup=yes
-
-- name: Configure ar-compute stuff 2
-  tags: compute_config
-  lineinfile: dest=/etc/ar-compute-engine.conf
-              regexp="^mode="
-              line="mode=local"
-              state=present
-              backup=yes
-
-- name: Configure ar-compute stuff 3
-  tags: compute_config
-  lineinfile: dest=/etc/ar-compute-engine.conf
-              regexp="^prefilter_clean="
-              line="prefilter_clean=false"
-              state=present
-              backup=yes
-
-- name: Configure ar-compute stuff 4
-  tags: compute_config
-  lineinfile: dest=/etc/ar-compute-engine.conf
-              regexp="^sync_path="
-              line="sync_path=/var/lib/argo-connectors"
-              state=present
-              backup=yes
-
-- name: Configure ar-compute stuff 5
-  tags: compute_config
-  lineinfile: dest=/etc/ar-compute-engine.conf
-              regexp="^sync_exec="
-              line="sync_exec=/usr/libexec/argo-egi-connectors"
-              state=present
-              backup=yes
+- name: Copy out compute engine configuration file
+  tags: ce_config
+  template: src=ar-compute-engine.conf.j2
+            dest=/etc/ar-compute-engine.conf
+            owner=root group=root mode=0644
+            backup=yes
 
 - name: Configure ar-compute job cycle daily cron 
   tags: compute_config
@@ -187,7 +154,7 @@
         name=ar_job_cycle_hourly
         state=present
         minute=55
-        hour=*
+        hour=*/2
         job="/usr/libexec/ar-compute/bin/job_cycle.py -d $(/bin/date --utc  +\%Y-\%m-\%d)"
 
 - name: Add ar-compute poller hourly cron for tenant EGI

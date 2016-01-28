@@ -1,4 +1,5 @@
 [General]
+LogName = argo-{{ item.key | lower }}-consumer
 LogFaultyTimestamps = True
 ReportWritMsgEveryHours = 24
 AvroSchema = /etc/argo-{{ item.key | lower }}-consumer/metric_data.avsc
