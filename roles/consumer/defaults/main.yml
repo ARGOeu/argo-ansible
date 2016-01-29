@@ -13,6 +13,7 @@ tenants:
       - "broker2.example.com"
     outputdir: "/var/lib/argo-connectors/TenantA/"
     jobs_all: "JOB_TenantA_ALL, JOB_TenantA_PART"
+    prefilter: "prefilter-tenantA.py"
     jobs_details:
       - name: "JOB_TenantA_ALL"
         Directory: "TenantA_ALL"
@@ -63,3 +64,9 @@ poem_fetch_profiles:
   - profile_1
   - profile_2
 
+mongo_host_or_ip: "127.0.0.1"
+mongo_port_number: "27017"
+argo_compute_mode: "local"
+prefilter_clean_bool: "false"
+argo_sync_path: "/var/lib/argo-connectors"
+argo_exec_path: "/usr/libexec/argo-egi-connectors"
