@@ -108,7 +108,7 @@
         minute=2
         hour=0
         user=root
-        job="/usr/libexec/argo-egi-connectors/poem-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        job="/usr/libexec/argo-egi-connectors/poem-connector.py {% if item.value.prefilter is not defined %} -np {% endif %} -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
         state=present
   with_dict: tenants
 
