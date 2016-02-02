@@ -112,7 +112,7 @@
         state=present
   with_dict: tenants
 
-- name: Configure poem connector per tenant cron job
+- name: Configure topology connector per tenant cron job
   tags: 
     - connectors_config
     - connectors
