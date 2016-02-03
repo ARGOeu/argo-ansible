@@ -1,0 +1,24 @@
+{
+  "name": "{{ item.1.name }}",
+  "namespace": "",
+  "metric_profile": "{{ item.1.Profiles }}",
+  "metric_ops":"{{ item.1.MetricOps }}",
+  "group_type": "{{ item.1.TopoFetchType }}",
+  "operation":"{{ item.1.Operations }}",
+  "groups": {
+{% for capability in item.1.Capabilities %}
+    "{{ capability.name }}": {
+      "services":{
+{% for flavor in capability.flavors %}
+        "{{ flavor.name }}":"{{ flavor.ops }}"{% if loop.index != loop.length %},
+{% endif %}
+{% endfor %}
+
+      },
+      "operation":"{{ capability.default_ops }}"
+    }{% if loop.index != loop.length %},
+{% endif %}
+{% endfor %}
+
+  } 
+}
