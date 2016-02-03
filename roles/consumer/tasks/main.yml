@@ -137,6 +137,16 @@
             owner=root group=root mode=0644
             backup=yes
 
+- name: Configure compute engine job files
+  tags: jobs_configs
+  template: src=tenant_ap.cfg.j2
+        dest=/tmp/{{ item.1.name }}_ap.cfg
+        owner=root group=root mode=0644
+        backup=yes
+  with_subelements:
+    - tenants
+    - jobs_details
+
 - name: Configure ar-compute job cycle daily cron 
   tags: compute_config
   cron: cron_file=ar_job_cycle_daily

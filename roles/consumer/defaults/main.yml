@@ -24,6 +24,37 @@ tenants:
         TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
         TopoSelectGroupOfGroups: "Certification:Certified, Infrastructure:Production, Scope:TenantA"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
+        MetricOps: "AND"
+        Operations: "AND"
+        Capabilities:
+          - name: compute
+            default_ops: "OR"
+            flavors: 
+              - name: CREAM
+                ops: "OR"
+              - name: CRUM
+                ops: "OR"
+              - name: SCRUM
+                ops: "AND"
+          - name: storage
+            default_ops: "OR"
+            flavors:
+              - name: srmv2.2
+                ops: "OR"
+          - name: databases
+            default_ops: "OR"
+            flavors:
+              - name: maria_db
+                ops: "AND"
+          - name: virtualization
+            default_ops: "OR"
+            flavors:
+              - name: XEN
+                ops: "OR"
+              - name: KVM
+                ops: "OR"
+              - name: VSphere
+                ops: "OR"
       - name: "JOB_TenantA_PART"
         Directory: "TenantA_PART"
         Profiles: "PART_SERVICES"
@@ -33,6 +64,18 @@ tenants:
         TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantA"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
+        MetricOps: "AND"
+        Operations: "AND"
+        Capabilities:
+          - name: virtualization
+            default_ops: "OR"
+            flavors:
+              - name: XEN
+                ops: "OR"
+              - name: KVM
+                ops: "OR"
+              - name: VSphere
+                ops: "OR"
   TenantB:
     topics:
       - "probe.*"
@@ -50,6 +93,23 @@ tenants:
         TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantB"
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantB"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
+        MetricOps: "AND"
+        Operations: "AND"
+        Capabilities:
+          - name: compute
+            default_ops: "OR"
+            flavors: 
+              - name: CREAM
+                ops: "OR"
+              - name: CRUM
+                ops: "OR"
+              - name: SCRUM
+                ops: "AND"
+          - name: storage
+            default_ops: "OR"
+            flavors:
+              - name: srmv2.2
+                ops: "OR"
 
 poem_servers:
   - host: "poemA.example.com"
