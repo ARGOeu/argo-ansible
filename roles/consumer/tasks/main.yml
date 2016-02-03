@@ -8,9 +8,9 @@
   tags: ar-packages
   yum: name=python-pip state=present
 
-- name: Upgrade pymongo to latest available version
+- name: Install pymongo fixed version
   tags: ar-packages
-  pip: name=pymongo state=latest
+  pip: name=pymongo state=present version=3.2.1
 
 - name: Install egi consumer package from ar project
   tags: 
