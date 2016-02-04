@@ -21,7 +21,7 @@ tenants:
         TopoType: "GOCDB"
         TopoFeed: "https://goc.example.com/gocdbpi/"
         TopoFetchType: "Sites"
-        TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
+        TopoSelectGroupOfEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
         TopoSelectGroupOfGroups: "Certification:Certified, Infrastructure:Production, Scope:TenantA"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
       - name: "JOB_TenantA_PART"
@@ -30,7 +30,7 @@ tenants:
         TopoType: "GOCDB"
         TopoFeed: "https://goc.example.com/gocdbpi/"
         TopoFetchType: "Sites"
-        TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
+        TopoSelectGroupOfEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantA"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
   TenantB:
@@ -47,7 +47,7 @@ tenants:
         TopoType: "GOCDB"
         TopoFeed: "https://goc.example.com/gocdbpi/"
         TopoFetchType: "ServiceGroups"
-        TopoSelectGroupofEndpoints: "Production:Y, Monitored:Y, Scope:TenantB"
+        TopoSelectGroupOfEndpoints: "Production:Y, Monitored:Y, Scope:TenantB"
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantB"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
 
