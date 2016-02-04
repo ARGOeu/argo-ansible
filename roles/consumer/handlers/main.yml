@@ -7,3 +7,8 @@
   service: name=argo-{{ item.key | lower }}-consumer state=restarted
   with_dict: tenants
 
+# TODO: Make following handler task tenant unaware
+- name: restart all non egi consumers
+  service: name=argo-{{ item.key | lower }}-consumer state=restarted
+  with_dict: tenants
+  when: item.key|lower != "egi"

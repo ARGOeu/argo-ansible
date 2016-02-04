@@ -51,21 +51,25 @@
   with_dict: tenants
   notify: restart all consumers
 
-- name: Copy out init scripts for consumers
+# TODO: Make following task tenant unaware
+- name: Copy out init scripts for non egi consumers
   tags: 
     - consumer_config
   template: src=consumer.init.j2
             dest=/etc/init.d/argo-{{ item.key | lower }}-consumer
             owner=root group=root mode=0755
   with_dict: tenants
-  notify: restart all consumers
+  when: item.key|lower != "egi"
+  notify: restart all non egi consumers
 
+# TODO: Make following task tenant unaware
 - name: Create copies of python wrappers for non egi consumers
   tags: 
     - consumer_config
   file: path=/usr/bin/argo-{{ item.key | lower }}-wrapper-consumer.py
         state=link src=/usr/bin/argo-egi-consumer.py
   with_dict: tenants
+  when: item.key|lower != "egi"
 
 - name: Enable and start consumer services
   tags: 

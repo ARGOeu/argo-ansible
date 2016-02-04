@@ -7,7 +7,7 @@
 . /etc/rc.d/init.d/functions
 PROG_NAME="argo-{{ item.key | lower }}-consumer"
 CONFIG="/etc/argo-{{ item.key | lower }}-consumer/consumer.conf"
-DAEMON_PATH="/usr/bin/argo-{{ item.key | lower }}-wrapper-consumer.py"
+DAEMON_PATH="/usr/bin/argo-{{ item.key | lower }}{% if item.key|lower != "egi" %}-wrapper{% endif %}-consumer.py"
 
 case "$1" in
 start)
