@@ -130,6 +130,20 @@
         state=present
   with_dict: tenants
 
+- name: Configure weights connector per tenant cron job
+  tags: 
+    - connectors_config
+    - connectors
+    - weights_cron
+  cron: cron_file=weights_{{ item.key | lower }}
+        name=weights_{{ item.key | lower }}
+        minute=5
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/weights-gstat-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present
+  with_dict: tenants
+
 - name: Install ar-compute from ar project
   tags: ar-packages
   yum: name=ar-compute state=latest enablerepo={{ enabled_argo_repo }}
