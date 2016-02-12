@@ -9,14 +9,18 @@
     - nagios-plugins-disk
 
 - name: Copy nrpe configuration file on host
-  tags: monitoring
-  copy: src=ar-dev-api.cfg
-        dest={{ nrpe_conf_path }}/ar-dev-api.cfg backup=yes
-        owner=root group=root mode=0644
+  tags: 
+    - monitoring
+    - nrpe_checks
+  template: src=nrpe.cfg.j2
+            dest={{ nrpe_conf_path }}/nrpe.cfg backup=yes
+            owner=root group=root mode=0644
   notify: restart nrpe
 
 - name: Modify nrpe configuration itself
-  tags: monitoring
+  tags: 
+    - monitoring
+    - nrpe_hosts
   lineinfile: dest=/etc/nagios/nrpe.cfg
               regexp="^allowed_hosts="
               line="allowed_hosts={{ nrpe_allowed_hosts }}"
