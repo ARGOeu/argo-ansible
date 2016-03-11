@@ -1,6 +1,8 @@
 [General]
 LogName = argo-{{ item.key | lower }}-consumer
-LogFaultyTimestamps = True
+WritePlaintext = False
+LogMsgOutAllowedTime = True
+LogWrongFormat = True
 ReportWritMsgEveryHours = 24
 AvroSchema = /etc/argo-{{ item.key | lower }}-consumer/metric_data.avsc
 
@@ -18,6 +20,10 @@ Server{{ loop.index }} = {{ broker }}:6163
 {% endfor %}
 {% endif %}
 
+[MsgRetention]
+PastDaysOk = 1
+FutureDaysOk = 1
+
 [Authentication]
 HostKey = /etc/grid-security/hostkey.pem
 HostCert = /etc/grid-security/hostcert.pem
@@ -30,7 +36,6 @@ ReconnectAttempts = 10
 UseSSL = False
 
 [Output]
-WritePlaintext = False
 Directory = /var/lib/argo-{{ item.key | lower }}-consumer
 Filename = argo-consumer_log_%s.avro
 ErrorFilename = argo-consumer_error_log_%s.avro
