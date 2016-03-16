@@ -1,0 +1,8 @@
+---
+cert_path: /etc/pki/tls/certs/localhost.crt
+key_path: /etc/pki/tls/private/localhost.key
+
+iptables_rules:
+  input:
+    - { dport: "80",   proto: "tcp", policy: "accept"}
+    - { dport: "443",  proto: "tcp", policy: "accept"}

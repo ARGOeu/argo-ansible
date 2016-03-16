@@ -32,3 +32,10 @@
         dest=/etc/yum.repos.d/cloudera-cdh5.repo backup=no
         owner=root group=root mode=0644
   when: inventory_hostname in groups.standalone
+
+- name: Install Nagios repo
+  tags: monitoring_engine_repo
+  copy: src=etc/yum.repos.d/nagios.repo
+        dest=/etc/yum.repos.d/nagios.repo backup=no
+        owner=root group=root mode=0644
+  when: inventory_hostname in groups.monitoring_engine

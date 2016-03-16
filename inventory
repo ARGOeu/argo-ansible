@@ -10,3 +10,6 @@ poem.node
 
 [webui]
 webui.node
+
+[monitoring_engine]
+monitoring_engine.node
