@@ -1,0 +1,21 @@
+
+nagios_components:
+  - { name: argo-ncg                , repo: argo-prod }
+  - { name: argo-msg-nagios         , repo: argo-prod }
+  
+nagios_server: localhost
+probes_type: local
+nagios_admin_email: contact@nagiosadmin.localhost
+vo: ops
+enable_unicore_probes: "0"
+metric_config_file: /etc/ncg-metric-config.d/local.conf
+gocdb_root_url: https://goc.egi.eu/gocdbpi
+cert_status: Production
+nagios_role: PROJECT
+include_empty_hosts: "0"
+enable_notifications: "0"
+check_hosts: "0"
+tenant: TENANT_A
+poem_root_url: http://localhost/poem
+include_proxy_checks: "0"
+include_msg_checks_recv: "0"

@@ -1,0 +1,8 @@
+---
+
+- name: Install Nagios
+  yum: name=nagios-4.0.8-1.el6.srce.x86_64.rpm state=present enablerepo=nagios
+  
+- name: Install NCG and MSG conponents
+  yum: name={{ item.name }} state=latest enablerepo={{ item.repo }}
+  with_items: nagios_components
