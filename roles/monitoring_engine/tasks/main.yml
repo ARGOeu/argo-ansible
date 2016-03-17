@@ -1,8 +1,27 @@
 ---
 
 - name: Install Nagios
-  yum: name=nagios-4.0.8-1.el6.srce.x86_64.rpm state=present enablerepo=nagios
+  yum: name=nagios state=latest enablerepo=nagios
   
 - name: Install NCG and MSG conponents
   yum: name={{ item.name }} state=latest enablerepo={{ item.repo }}
   with_items: nagios_components
+
+- name: Copy nagios.cfg file
+  template: src=nagios.cfg.j2
+            dest=/etc/nagios/nagios.cfg
+            owner=nagios group=nagios mode=0644
+
+- name: Copy ncg.conf file
+  template: src=ncg.conf.j2
+            dest=/etc/ncg/ncg.conf
+            owner=root group=root
+
+- name: Copy broker-list file
+  template: src=broker-list.j2
+            dest=/var/cache/msg/broker-cache-file/broker-list
+            owner=root group=root mode=0644
+
+- name: Enable nagios on boot and start service
+  service: name=nagios state=started enabled=yes
+

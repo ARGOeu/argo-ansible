@@ -19,3 +19,7 @@ tenant: TENANT_A
 poem_root_url: http://localhost/poem
 include_proxy_checks: "0"
 include_msg_checks_recv: "0"
+ocsp_command: handle_service_check
+obsess_over_services: "1"
+enable_environment_macros: "1"
+backup_instance: "false"
