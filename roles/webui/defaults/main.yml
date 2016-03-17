@@ -4,6 +4,7 @@ services:
   - http
   - https
 
+tenant_name: einfraname
 lavoisier_home: /var/www/lavoisier
 branch_name: master
 argo_web: argo-egi-web

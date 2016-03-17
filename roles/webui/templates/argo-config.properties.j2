@@ -1,10 +1,6 @@
 ############################################
-# Okeanos API methods
+# ARGO API methods
 ###########################################
-
-
-# Base.Prod.Api=https://{{ argo_api_host }}/api/v1/
-# Base.Test.Api=https://{{ argo_api_host }}/api/v2/
 
 ### Generic Url Availability
 
@@ -25,6 +21,9 @@ api.custom.factors=https://{{ argo_api_host }}/api/v2/factors
 
 api.recomputation.url=https://{{ argo_api_host }}/api/v2/recalculate
 api.recomputation.history.url=https://{{ argo_api_host }}/api/v2/get_recalculation_requests
+
+### METRICS PROFILE
+api.metrics.profile=https://{{ argo_api_host }}/api/v2/metric_profiles
 
 ### PROFILES
 
@@ -48,6 +47,9 @@ api.monthly.sites.argo.cloud=https://{{ argo_api_host }}/api/v2/group_availabili
 # GOC DB
 ######################
 
+{% if tenant_name is defined and tenant_name|lower == "eudat" %}
+goc.siteProjects=https://{{ gocdb_endpoint }}/gocdbpi/private/?method=get_service_group
+{% endif %}
 goc.siteList=https://{{ gocdb_endpoint }}/gocdbpi/private/?method=get_site&certification_status={{ gocdb_certification }}&production_status={{ gocdb_production }}
 goc.ngiContactsList=https://{{ gocdb_endpoint }}/gocdbpi/private/?method=get_roc_contacts
 goc.serviceFlavours=https://{{ gocdb_endpoint }}/gocdbpi/public/?method=get_service_types
