@@ -1,4 +1,4 @@
 ---
 
-- name: updated argo-web-api package
+- name: restart argo-web-api service
   service: name=argo-web-api state=restarted
