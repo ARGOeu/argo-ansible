@@ -2,11 +2,18 @@
 
 - name: Install Nagios
   yum: name=nagios state=latest enablerepo=nagios
+
+- name: Install Apache
+  yum: name=httpd state=latest
   
 - name: Install NCG and MSG conponents
   yum: name={{ item.name }} state=latest enablerepo={{ item.repo }}
   with_items: nagios_components
 
+- name: Install Nagios plugins
+  yum: name={{ item.name }} state=latest enablerepo={{ item.repo }}
+  with_items: nagios_plugins
+  
 - name: Copy nagios.cfg file
   template: src=nagios.cfg.j2
             dest=/etc/nagios/nagios.cfg
@@ -22,6 +29,9 @@
             dest=/var/cache/msg/broker-cache-file/broker-list
             owner=root group=root mode=0644
 
-- name: Enable nagios on boot and start service
-  service: name=nagios state=started enabled=yes
+- name: Enable nagios and httpd on boot and start service
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - nagios
+    - httpd
 
