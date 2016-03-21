@@ -7,7 +7,7 @@
 
 - name: Configure argo-web-api
   template: src=argo-web-api.conf.j2
-            dest=argo-web-api.conf backup-yes
+            dest=/etc/argo-web-api.conf backup=yes
             owner=root group=root mode=0644
   notify: restart argo-web-api service
 
