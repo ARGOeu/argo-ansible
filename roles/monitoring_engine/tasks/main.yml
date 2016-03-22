@@ -14,6 +14,11 @@
   yum: name={{ item.name }} state=latest enablerepo={{ item.repo }}
   with_items: nagios_plugins
   
+- name: Install Nagios UMD plugins
+  yum: name={{ item.name }} state=latest
+  with_items: nagios_plugins_umd
+  when: nagios_plugins_umd is defined
+
 - name: Copy nagios.cfg file
   template: src=nagios.cfg.j2
             dest=/etc/nagios/nagios.cfg
