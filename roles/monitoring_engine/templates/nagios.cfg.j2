@@ -49,11 +49,11 @@ log_file=/var/log/nagios/nagios.log
 # directive as shown below:
 
 #cfg_dir=/etc/nagios/conf.d
-cfg_dir=/etc/nagios/wlcg.d
 #cfg_dir=/etc/nagios/printers
 #cfg_dir=/etc/nagios/switches
 #cfg_dir=/etc/nagios/routers
 
+cfg_dir={{ cfg_dir }}
 
 
 
@@ -251,7 +251,7 @@ log_archive_path=/var/log/nagios/archives
 # If you want messages logged to the syslog facility, as well as the
 # Nagios log file set this option to 1.  If not, set it to 0.
 
-use_syslog=1
+use_syslog={{ use_syslog }}
 
 
 
@@ -296,7 +296,7 @@ log_event_handlers=1
 # statistics reporting, you do not need to enable this option.  In
 # this case, set the value to 0.
 
-log_initial_states=0
+log_initial_states={{ log_initial_states }}
 
 
 
@@ -316,7 +316,7 @@ log_current_states=1
 # checks - see the option below for controlling whether or not
 # passive checks are logged.
 
-log_external_commands=1
+log_external_commands={{ log_external_commands }}
 
 
 
@@ -325,7 +325,7 @@ log_external_commands=1
 # this value to 0.  If passive checks should be logged, set
 # this value to 1.
 
-log_passive_checks=1
+log_passive_checks={{ log_passive_checks }}
 
 
 
@@ -586,7 +586,7 @@ auto_rescheduling_window=180
 # ocsp command, and performance data commands.  All values are in
 # seconds.
 
-service_check_timeout=60
+service_check_timeout={{ service_check_timeout }}
 host_check_timeout=30
 event_handler_timeout=30
 notification_timeout=30
@@ -808,7 +808,7 @@ enable_event_handlers=1
 # performance data.
 # Values: 1 = process performance data, 0 = do not process performance data
 
-process_performance_data=0
+process_performance_data={{ process_performance_data }}
 
 
 
@@ -846,6 +846,8 @@ process_performance_data=0
 #host_perfdata_file_template=[HOSTPERFDATA]\t$TIMET$\t$HOSTNAME$\t$HOSTEXECUTIONTIME$\t$HOSTOUTPUT$\t$HOSTPERFDATA$
 #service_perfdata_file_template=[SERVICEPERFDATA]\t$TIMET$\t$HOSTNAME$\t$SERVICEDESC$\t$SERVICEEXECUTIONTIME$\t$SERVICELATENCY$\t$SERVICEOUTPUT$\t$SERVICEPERFDATA$
 
+host_perfdata_file_template={{ host_perfdata_file_template }}
+service_perfdata_file_template={{ service_perfdata_file_template }}
 
 
 # HOST AND SERVICE PERFORMANCE DATA FILE MODES
@@ -879,6 +881,8 @@ process_performance_data=0
 #host_perfdata_file_processing_command=process-host-perfdata-file
 #service_perfdata_file_processing_command=process-service-perfdata-file
 
+host_perfdata_file_processing_command={{ host_perfdata_file_processing_command }}
+service_perfdata_file_processing_command={{ service_perfdata_file_processing_command }}
 
 
 # HOST AND SERVICE PERFORMANCE DATA PROCESS EMPTY RESULTS
@@ -901,7 +905,7 @@ process_performance_data=0
 # implementing distributed monitoring.
 # Values: 1 = obsess over services, 0 = do not obsess (default)
 
-obsess_over_services= {{ obsess_over_services }}
+obsess_over_services={{ obsess_over_services }}
 
 
 
@@ -1121,7 +1125,7 @@ date_format=us
 # be used in host names, service descriptions, or names of other
 # object types.
 
-illegal_object_name_chars=`~!$%^&*|'"<>?,()=
+illegal_object_name_chars=`~!$%^*|"<>?,
 
 
 
@@ -1140,7 +1144,7 @@ illegal_object_name_chars=`~!$%^&*|'"<>?,()=
 #	$SERVICEACKAUTHOR$
 #	$SERVICEACKCOMMENT$
 
-illegal_macro_output_chars=`~$&|'"<>
+illegal_macro_output_chars=`~$|'"<>
 
 
 
@@ -1201,7 +1205,7 @@ daemon_dumps_core=0
 # Values: 1 - Enabled tweaks
 #         0 - Disable tweaks (default)
 
-use_large_installation_tweaks=0
+use_large_installation_tweaks={{ use_large_installation_tweaks }}
 
 
 
@@ -1304,7 +1308,7 @@ max_debug_file_size=1000000
 # Should we allow hostgroups to have no hosts, we default this to off since
 # that was the old behavior
 
-allow_empty_hostgroup_assignment=0
+allow_empty_hostgroup_assignment={{ allow_empty_hostgroup_assignment }}
 
 
 
