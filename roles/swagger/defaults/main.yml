@@ -1,6 +1,4 @@
 ---
 
-swagger_ui_host: example.com
-swagger_ui_port: 8080
-swagger_web_api_branch: devel
-swagger_messaging_branch: devel
+swagger_docs:
+  - { github_org: swagger-api, name: swagger-spec , branch: master, path_to_yaml: "examples/v2.0/yaml/petstore.yaml" , api_host: "petstore.swagger.io"}
