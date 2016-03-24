@@ -1,0 +1,7 @@
+---
+
+- name: reload nagios
+  service: name=nagios state=reloaded
+
+- name: reload httpd
+  service: name=httpd state=reloaded

@@ -9,58 +9,90 @@
 # variables.
 
 NAGIOS_SERVER = {{ nagios_server }}
-PROBES_TYPE= {{ probes_type }}
 NAGIOS_ADMIN = {{ nagios_admin_email }}
 VO = {{ vo }}
 ENABLE_UNICORE_PROBES= {{ enable_unicore_probes }}
-METRIC_CONFIG_FILE = {{ metric_config_file }}
+MYPROXY_SERVER = {{ myproxy_server }}
+
 BACKUP_INSTANCE = {{ backup_instance }}
 
 <NCG::SiteSet>
   <GOCDB>
     GOCDB_ROOT_URL={{ gocdb_root_url }}
     CERT_STATUS={{ cert_status }}
+    ENABLE_UNICORE_PROBES=$ENABLE_UNICORE_PROBES
   </GOCDB>
+  <File>
+    DB_FILE=/etc/argo-ncg/ncg.localdb
+    DB_DIRECTORY=/etc/argo-ncg/ncg-localdb.d
+  </File>
 </NCG::SiteSet>
+<NCG::SiteContacts>
+  <GOCDB>
+    GOCDB_ROOT_URL={{ gocdb_root_url }}
+  </GOCDB>
+  <GOCDB>
+    CONTACT_TYPE=alarm
+    GOCDB_ROOT_URL={{ gocdb_root_url }}
+  </GOCDB>
+  <GOCDB>
+    CONTACT_TYPE={{ contact_type }}
+    GOCDB_ROOT_URL={{ gocdb_root_url }}
+  </GOCDB>
+  <File>
+    DB_FILE=/etc/argo-ncg/ncg.localdb
+    DB_DIRECTORY=/etc/argo-ncg/ncg-localdb.d
+  </File>
+</NCG::SiteContacts>
+
 <NCG::SiteInfo>
   <GOCDB>
     GOCDB_ROOT_URL={{ gocdb_root_url }}
   </GOCDB>
+  <File>
+    DB_FILE=/etc/argo-ncg/ncg.localdb
+    DB_DIRECTORY=/etc/argo-ncg/ncg-localdb.d
+  </File>
 </NCG::SiteInfo>
+
+<NCG::LocalMetricsAttrs>
+  <Active>
+    GOCDB_ROOT_URL={{ gocdb_root_url }}
+    ENABLE_UNICORE_PROBES=$ENABLE_UNICORE_PROBES
+    BDII_HOST={{ bdii_host }}
+    INCLUDE_PROXY_CHECKS = {{ include_proxy_checks }}
+    LOCAL_METRIC_STORE = {{ local_metric_store }}
+  </Active>
+  <LDAP>
+    LDAP_ADDRESS={{ bdii_host }}
+  </LDAP>
+  <File>
+    DB_FILE=/etc/argo-ncg/ncg.localdb
+    DB_DIRECTORY=/etc/argo-ncg/ncg-localdb.d
+  </File>
+</NCG::LocalMetricsAttrs>
 
 <NCG::ConfigGen>
   <Nagios>
-    TEMPLATES_DIR = /usr/share/grid-monitoring/config-gen/nagios
-    OUTPUT_DIR = /etc/nagios/wlcg.d
-    NRPE_OUTPUT_DIR = /etc/nagios/nrpe/
     NAGIOS_ROLE = {{ nagios_role }}
     INCLUDE_EMPTY_HOSTS = {{ include_empty_hosts }}
     ENABLE_NOTIFICATIONS = {{ enable_notifications }}
+    SEND_TO_DASHBOARD = {{ send_to_dashboard }}
     CHECK_HOSTS = {{ check_hosts }}
     TENANT = {{ tenant_name }}
   </Nagios>
 </NCG::ConfigGen>
 
 <NCG::LocalMetrics>
+  <File>
+    DB_FILE=/etc/argo-ncg/ncg.localdb
+    DB_DIRECTORY=/etc/argo-ncg/ncg-localdb.d
+  </File>
   <POEM>
     POEM_ROOT_URL = {{ poem_root_url }}
+    POEM_PROFILES = {% for poem in poem_profiles %}{{ poem }}{% if not loop.last %},{% endif %}{% endfor %}
+
   </POEM>
-  <File>
-    DB_FILE=/etc/ncg/ncg.localdb
-  </File>
 </NCG::LocalMetrics>
 
-<NCG::LocalMetricsAttrs>
-  <Active>
-    GOCDB_ROOT_URL={{ gocdb_root_url }}
-    ENABLE_UNICORE_PROBES=$ENABLE_UNICORE_PROBES
-    INCLUDE_PROXY_CHECKS = {{ include_proxy_checks }}
-    INCLUDE_MSG_CHECKS_RECV = {{ include_msg_checks_recv }}
-  </Active>
-  <File>
-    DB_FILE=/etc/ncg/ncg.localdb
-  </File>
-</NCG::LocalMetricsAttrs>
-
 include ncg.conf.d/*.conf
-

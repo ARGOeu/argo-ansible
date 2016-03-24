@@ -2,27 +2,43 @@
 nagios_components:
   - { name: argo-ncg                , repo: argo-prod }
   - { name: argo-msg-nagios         , repo: argo-prod }
-  
+
+## NCG vars ##
 nagios_server: localhost
-probes_type: local
 nagios_admin_email: contact@nagiosadmin.localhost
 vo: ops
 enable_unicore_probes: "0"
-metric_config_file: /etc/ncg-metric-config.d/local.conf
-gocdb_root_url: https://goc.egi.eu/gocdbpi
-cert_status: Production
-nagios_role: PROJECT
+probes_type: local
+gocdb_root_url: https://localhost/gocdbpi
+cert_status: Certified
+contact_type: roc
+nagios_role: project
 include_empty_hosts: "0"
 enable_notifications: "0"
+local_metric_store: "0"
 check_hosts: "0"
 tenant_name: TENANT_A
 poem_root_url: http://localhost/poem
 include_proxy_checks: "0"
 include_msg_checks_recv: "0"
-ocsp_command: handle_service_check
-obsess_over_services: "1"
-enable_environment_macros: "1"
 backup_instance: "false"
+
+## CGI vars ##
+authorized_for_all_service_commands:
+  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1
+  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2
+authorized_for_all_host_commands:
+  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1
+  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2
+
+## Nagios.cfg vars ##
+host_perfdata_file_processing_command: ncg-process-host-perfdata-file
+service_perfdata_file_processing_command: ncg-process-service-perfdata-file
+obsess_over_services: "1"
+ocsp_command: handle_service_check
+use_large_installation_tweaks: "1"
+enable_environment_macros: "1"
+allow_empty_hostgroup_assignment: "1"
 cfg_dir: /etc/nagios/argo-ncg.d
 use_syslog: "0"
 log_initial_states: "1"
@@ -30,9 +46,8 @@ log_external_commands: "0"
 log_passive_checks: "0"
 service_check_timeout: 910
 process_performance_data: "1"
-host_perfdata_file_template: "DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$"
-service_perfdata_file_template: "DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$"
-host_perfdata_file_processing_command: ncg-process-host-perfdata-file
-service_perfdata_file_processing_command: ncg-process-service-perfdata-file
-use_large_installation_tweaks: "1"
-allow_empty_hostgroup_assignment: "1"
+
+## Other vars
+ca_bundle_install: false
+
+

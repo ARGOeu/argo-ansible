@@ -3,9 +3,19 @@
 - name: Install Nagios
   yum: name=nagios state=latest enablerepo=nagios
 
-- name: Install Apache
-  yum: name=httpd state=latest
-  
+- name: Install pnp4nagios
+  yum: name=pnp4nagios state=latest
+
+- name: Install Apache and mod_ssl
+  yum: name={{ item }} state=latest
+  with_items:
+    - httpd
+    - mod_ssl
+
+- name: Install fetch-crl
+  yum: name=fetch-crl state=latest
+  when: ca_bundle_install
+
 - name: Install NCG and MSG conponents
   yum: name={{ item.name }} state=latest enablerepo={{ item.repo }}
   with_items: nagios_components
@@ -15,7 +25,7 @@
   with_items: nagios_plugins
   
 - name: Install Nagios UMD plugins
-  yum: name={{ item.name }} state=latest
+  yum: name={{ item }} state=latest
   with_items: nagios_plugins_umd
   when: nagios_plugins_umd is defined
 
@@ -23,16 +33,91 @@
   template: src=nagios.cfg.j2
             dest=/etc/nagios/nagios.cfg
             owner=nagios group=nagios mode=0644
+  notify: reload nagios
 
-- name: Copy ncg.conf file
+- name: Copy cgi.cfg file
+  template: src=cgi.cfg.j2
+            dest=/etc/nagios/cgi.cfg
+            owner=nagios group=nagios mode=0644
+  notify: reload nagios
+
+#FIXME: Make this tenant unaware
+- name: Copy ncg.conf file for EGI
   template: src=ncg.conf.j2
+            dest=/etc/argo-ncg/ncg.conf
+            owner=root group=root
+  when: tenant_name == "EGI"
+  notify: reload nagios
+
+- name: Copy ncg.conf file for EUDAT
+  template: src=ncg.conf.eudat.j2
             dest=/etc/ncg/ncg.conf
             owner=root group=root
+  when: tenant_name == "EUDAT"
+  notify: reload nagios
 
+- name: Copy argo-voms-htpasswd.conf file
+  template: src=argo-voms-htpasswd.conf.j2
+            dest=/etc/argo-voms-htpasswd/argo-voms-htpasswd.conf
+            owner=root group=root
+  when: voms_htpasswd is defined
+
+#FIXME: Temp workaround for tenants without BDII infrastructure.
 - name: Copy broker-list file
   template: src=broker-list.j2
             dest=/var/cache/msg/broker-cache-file/broker-list
             owner=root group=root mode=0644
+  when: broker_host is defined
+##
+
+- name: Copy argo-msg-cache file
+  template: src=argo-msg-cache.conf.j2
+            dest=/etc/argo-msg-cache.conf
+            owner=root group=root
+  when: lcg_gfal_infosys is defined and broker_network is defined
+
+- name: Create vomses dir
+- file: path=/etc/vomses 
+        state=directory 
+        owner=root group=root mode=0755
+  when: vomses is defined
+
+- name: Copy vomses files
+  template: src=vomses.j2
+            dest=/etc/vomses/{{ item.name }}
+            owner=root group=root mode=0644
+  when: vomses is defined
+  with_items: vomses
+
+- name: Create voms lsc dir
+- file: path=/etc/grid-security/vomsdir/{{ item.vo }}
+        state=directory 
+        owner=root group=root mode=0755
+  when: vomses is defined
+  with_items: vomses
+
+- name: Create voms lsc files
+- template: src=voms_lsc.j2
+            dest=/etc/grid-security/vomsdir/{{ item.vo }}/{{ item.server }}.lsc
+            owner=root group=root mode=0644
+  when: vomses is defined
+  with_items: vomses
+
+- name: Create sha checksum for dashboard config
+  shell: echo -n {{ nagios_server }} | sha1sum | cut -f1 -d' '
+  register: sha
+  
+- name: Create dashboard config for msg-to-handler
+  template: src=dashboard.conf.j2
+            dest=/etc/msg-to-handler.d/DASHBOARD.conf
+            owner=root group=root mode=0644
+  when: send_to_dashboard is defined and send_to_dashboard == "1"
+
+- name: Create apel config for msg-to-handler
+  template: src=apel.conf.j2
+            dest=/etc/msg-to-handler.d/APEL.conf
+            owner=root group=root mode=0644
+  when: send_to_apel is defined and send_to_apel == "1"
 
 - name: Enable nagios and httpd on boot and start service
   service: name={{ item }} state=started enabled=yes
@@ -40,3 +125,19 @@
     - nagios
     - httpd
 
+- name: Start fetch-crl cron
+  service: name=fetch-crl-cron state=started enabled=yes
+  when: ca_bundle_install
+
+- name: Start fetch-crl boot
+  service: name=fetch-crl-boot state=started enabled=no
+  when: ca_bundle_install
+  ignore_errors: yes
+
+- name: Enable argo-voms-htpasswd on boot and start service
+  service: name=argo-voms-htpasswd state=started enabled=yes
+  when: voms_htpasswd is defined
+
+- name: Enable argo-msg-cache on boot and start service
+  service: name=argo-msg-cache state=started enabled=yes
+  when: lcg_gfal_infosys is defined
