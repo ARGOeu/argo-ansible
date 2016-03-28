@@ -10,13 +10,10 @@
 
 - name: Install Apache
   tags: swagger
-  yum: name=httpd state=present
-
-- name: Config Apache to run on specified port
-  tags: swagger
-  lineinfile: dest=/etc/httpd/conf/httpd.conf regexp="^Listen "
-              insertafter="^#Listen " line="Listen {{ swagger_ui_port }}"
-  notify: restart apache
+  yum: name={{ item }} state=present
+  with_items:
+    - httpd
+    - mod_ssl
 
 - name: Config Apache Up and Running
   tags: swagger
@@ -32,53 +29,48 @@
     curl -L https://api.github.com/repos/swagger-api/swagger-ui/tarball
     | tar xz -C /tmp/swagger --strip-components 1
 
-- name: Create argo-web-api swagger dir
+- name: Create swagger directories
   tags: swagger
-  file: path={{item}} state=directory
-  with_items:
-    - /var/www/html/argo-web-api
-    - /var/www/html/argo-messaging
+  file: path=/var/www/html/{{ item.name }} state=directory owner=root group=root mode=0755
+  with_items: swagger_docs
 
 - name: Transfer dist files to each dedicated dir at /var/www/html/
   tags: swagger
-  shell: cp -R /tmp/swagger/dist/* {item}
-  with_items:
-      - /var/www/html/argo-web-api
-      - /var/www/html/argo-messaging
+  shell: cp -R /tmp/swagger/dist/* /var/www/html/{{ item.name }}
+  with_items: swagger_docs
 
-- name: Get latest argo-web-api swagger.yaml from our devel repo
+- name: Get latest swagger.yaml definition files
   tags: swagger
-  command: >
-    curl -L -H "Accept: application/vnd.github.raw"
-    https://api.github.com/repositories/17568185/contents/doc/swagger/swagger.yaml?ref={{swagger_web_api_branch}}
-    -o /tmp/swagger/argo-web-api_swagger.yaml
+  get_url: url=https://raw.githubusercontent.com/{{ item.github_org }}/{{ item.name }}/{{ item.branch }}/{{ item.path_to_yaml }}
+           dest=/tmp/swagger/{{ item.name }}_swagger.yaml force=yes
+           owner=root group=root mode=0644
+  with_items: swagger_docs
+  notify: restart apache
 
-- name: Convert argo-web-api swagger.yaml to swagger.json
-  tags: swagger
-  shell: >
-    python -c 'import sys, yaml, json;
-    json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'
-    < /tmp/swagger/argo-web-api_swagger.yaml > /var/www/html/argo-web-api/swagger.json
-
-- name: Point argo-web-api swagger-ui to our own swagger.yaml definition
-  tags: swagger
-  replace: dest=/var/www/html/argo-web-api/index.html regexp='url = "http:\/\/petstore\.swagger\.io\/v2\/swagger\.json";' replace='url = "http://{{ swagger_ui_host }}:{{ swagger_ui_port }}/argo-web-api/swagger.json";' backup=yes
-
-
-- name: Get latest argo-messaging swagger.yaml from our devel repo
-  tags: swagger
-  command: >
-    curl -L -H "Accept: application/vnd.github.raw"
-    https://api.github.com/repositories/17568185/contents/doc/swagger/swagger.yaml?ref={{swagger_messaging_branch}}
-    -o /tmp/swagger/argo-messaging_swagger.yaml
-
-- name: Convert argo-messaging swagger.yaml to swagger.json
+- name: Convert swagger.yaml to swagger.json
   tags: swagger
   shell: >
     python -c 'import sys, yaml, json;
     json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'
-    < /tmp/swagger/argo-messaging_swagger.yaml > /var/www/html/argo-web-api/swagger.json
+    < /tmp/swagger/{{ item.name }}_swagger.yaml > /var/www/html/{{ item.name }}/swagger.json
+  with_items: swagger_docs
 
-- name: Point argo-messaging swagger-ui to our own swagger.yaml definition
+- name: Make swagger.json point to corresponding api endpoint
   tags: swagger
-  replace: dest=/var/www/html/argo-messaging/index.html regexp='url = "http:\/\/petstore\.swagger\.io\/v2\/swagger\.json";' replace='url = "http://{{ swagger_ui_host }}:{{ swagger_ui_port }}/argo-messaging/swagger.json";' backup=yes
+  lineinfile: >
+              dest=/var/www/html/{{ item.name }}/swagger.json
+              regexp='( +)\"host\":\ \"(.+)\"\,'
+              line='    \"host\": \"{{ item.api_host }}\",'
+              state=present backup=yes
+  with_items: swagger_docs
+  notify: restart apache
+
+- name: Point swagger-ui to corresponding swagger definitions on host
+  tags: swagger
+  replace: dest=/var/www/html/{{ item.name }}/index.html
+           regexp='url = "http:\/\/petstore\.swagger\.io\/v2\/swagger\.json";'
+           replace='url = "https://{{ inventory_hostname }}/{{ item.name }}/swagger.json";'
+           backup=yes
+  with_items: swagger_docs
+
+
