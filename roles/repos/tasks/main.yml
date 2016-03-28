@@ -24,7 +24,7 @@
   copy: src=etc/yum.repos.d/EGI-trustanchors.repo
         dest=/etc/yum.repos.d/EGI-trustanchors.repo backup=no
         owner=root group=root mode=0644
-  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webui
+  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webui or ca_bundle_install==true
 
 - name: Install cloudera-cdh5 repo
   tags: cloudera-cdh5_repo

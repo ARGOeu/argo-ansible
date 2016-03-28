@@ -35,7 +35,7 @@ BACKUP_INSTANCE = {{ backup_instance }}
     INCLUDE_EMPTY_HOSTS = {{ include_empty_hosts }}
     ENABLE_NOTIFICATIONS = {{ enable_notifications }}
     CHECK_HOSTS = {{ check_hosts }}
-    TENANT = {{ tenant_name }}
+    TENANT = {{ tenant_name|lower }}
   </Nagios>
 </NCG::ConfigGen>
 

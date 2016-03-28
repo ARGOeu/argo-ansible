@@ -168,6 +168,7 @@ authorized_for_all_hosts=*
 # user who has authenticated to the web server.
 
 authorized_for_all_service_commands={% for dn in authorized_for_all_service_commands %}{{ dn }}{% if not loop.last %},{% endif %}{% endfor %}
+
 authorized_for_all_host_commands={% for dn in authorized_for_all_host_commands %}{{ dn }}{% if not loop.last %},{% endif %}{% endfor %}
 
 

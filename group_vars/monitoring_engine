@@ -1,6 +1,7 @@
 ---
 cert_path: /etc/pki/tls/certs/localhost.crt
 key_path: /etc/pki/tls/private/localhost.key
+ca_path: /etc/pki/tls/certs/ca-bundle.crt
 
 iptables_rules:
   input:

@@ -14,12 +14,9 @@ VO = {{ vo }}
 ENABLE_UNICORE_PROBES= {{ enable_unicore_probes }}
 MYPROXY_SERVER = {{ myproxy_server }}
 
-BACKUP_INSTANCE = {{ backup_instance }}
-
 <NCG::SiteSet>
   <GOCDB>
     GOCDB_ROOT_URL={{ gocdb_root_url }}
-    CERT_STATUS={{ cert_status }}
     ENABLE_UNICORE_PROBES=$ENABLE_UNICORE_PROBES
   </GOCDB>
   <File>
@@ -61,10 +58,10 @@ BACKUP_INSTANCE = {{ backup_instance }}
     ENABLE_UNICORE_PROBES=$ENABLE_UNICORE_PROBES
     BDII_HOST={{ bdii_host }}
     INCLUDE_PROXY_CHECKS = {{ include_proxy_checks }}
-    LOCAL_METRIC_STORE = {{ local_metric_store }}
   </Active>
   <LDAP>
     LDAP_ADDRESS={{ bdii_host }}
+    BDII_LEVEL={{ bdii_level }}
   </LDAP>
   <File>
     DB_FILE=/etc/argo-ncg/ncg.localdb
@@ -74,12 +71,12 @@ BACKUP_INSTANCE = {{ backup_instance }}
 
 <NCG::ConfigGen>
   <Nagios>
-    NAGIOS_ROLE = {{ nagios_role }}
+    NAGIOS_ROLE = {{ nagios_role|lower }}
     INCLUDE_EMPTY_HOSTS = {{ include_empty_hosts }}
     ENABLE_NOTIFICATIONS = {{ enable_notifications }}
     SEND_TO_DASHBOARD = {{ send_to_dashboard }}
     CHECK_HOSTS = {{ check_hosts }}
-    TENANT = {{ tenant_name }}
+    TENANT = {{ tenant_name|lower }}
   </Nagios>
 </NCG::ConfigGen>
 
@@ -90,7 +87,7 @@ BACKUP_INSTANCE = {{ backup_instance }}
   </File>
   <POEM>
     POEM_ROOT_URL = {{ poem_root_url }}
-    POEM_PROFILES = {% for poem in poem_profiles %}{{ poem }}{% if not loop.last %},{% endif %}{% endfor %}
+    POEM_PROFILES = {% for poem in poem_profiles %}{{ poem|upper }}{% if not loop.last %},{% endif %}{% endfor %}
 
   </POEM>
 </NCG::LocalMetrics>
