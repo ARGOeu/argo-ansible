@@ -2,6 +2,7 @@
 nagios_components:
   - { name: argo-ncg                , repo: argo-prod }
   - { name: argo-msg-nagios         , repo: argo-prod }
+  - { name: perl-Crypt-SSLeay       , repo: ""        }
 
 ## NCG vars ##
 nagios_server: localhost
@@ -17,7 +18,7 @@ include_empty_hosts: "0"
 enable_notifications: "0"
 local_metric_store: "0"
 check_hosts: "0"
-tenant_name: TENANT_A
+tenant_name: tenant_a
 poem_root_url: http://localhost/poem
 include_proxy_checks: "0"
 include_msg_checks_recv: "0"
@@ -25,11 +26,11 @@ backup_instance: "false"
 
 ## CGI vars ##
 authorized_for_all_service_commands:
-  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1
-  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1"
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2"
 authorized_for_all_host_commands:
-  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1
-  - /C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1"
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2"
 
 ## Nagios.cfg vars ##
 host_perfdata_file_processing_command: ncg-process-host-perfdata-file
@@ -49,5 +50,6 @@ process_performance_data: "1"
 
 ## Other vars
 ca_bundle_install: false
-
+configure_apache_ssl: false
+configure_nagios_apache: false
 
