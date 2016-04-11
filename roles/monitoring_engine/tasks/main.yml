@@ -91,6 +91,33 @@
   when: enable_unicore_probes is defined and enable_unicore_probes == "1"
   tags: config
 
+- name: Copy ucc.config file for unicore
+  template: src=ucc.config.j2
+            dest=/etc/nagios/unicore/ucc.config
+            owner=nagios group=nagios mode=0400
+  when: enable_unicore_probes is defined and enable_unicore_probes == "1"
+  tags: config
+
+- name: Copy scripts for unicore credentials
+  template: src={{ item }}.j2
+            dest=/usr/local/bin/{{ item }} 
+            owner=root group=root mode=0744
+  with_items:
+    - unicore_jks.sh
+    - unicore_ks.sh
+    - unicore_ts.sh
+  when: enable_unicore_probes is defined and enable_unicore_probes == "1"
+  tags: config
+
+- name: Execute scripts for unicore credentials
+  command: /usr/local/bin/{{ item }}
+  with_items:
+    - unicore_jks.sh
+    - unicore_ks.sh
+    - unicore_ts.sh
+  when: enable_unicore_probes is defined and enable_unicore_probes == "1"
+  tags: config
+
 - name: Create vomses dir
   file: path=/etc/vomses 
         state=directory 
