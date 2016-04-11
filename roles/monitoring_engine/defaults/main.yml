@@ -6,7 +6,7 @@ nagios_components:
 
 ## NCG vars ##
 nagios_server: localhost
-nagios_admin_email: contact@nagiosadmin.localhost
+nagios_admin_email: "contact@nagiosadmin.localhost"
 vo: ops
 enable_unicore_probes: "0"
 probes_type: local
