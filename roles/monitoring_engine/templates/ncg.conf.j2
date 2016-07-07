@@ -77,6 +77,9 @@ MYPROXY_SERVER = {{ myproxy_server }}
     SEND_TO_DASHBOARD = {{ send_to_dashboard }}
     CHECK_HOSTS = {{ check_hosts }}
     TENANT = {{ tenant_name|lower }}
+    ROBOT_CERT=/etc/nagios/globus/robocert.pem
+    ROBOT_KEY=/etc/nagios/globus/robokey.pem
+    USE_ROBOT_CERT=1
   </Nagios>
 </NCG::ConfigGen>
 

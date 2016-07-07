@@ -219,4 +219,9 @@
   service: name=argo-msg-cache state=started enabled=yes
   when: lcg_gfal_infosys is defined
   tags: config
+
+- name: Enable msg-to-handler on boot and start service
+  service: name=msg-to-handler state=started enabled=yes
+  when: lcg_gfal_infosys is defined
+  tags: config
   
