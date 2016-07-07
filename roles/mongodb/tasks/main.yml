@@ -4,14 +4,23 @@
   tags: mongoDB-packages
   yum: name={{ item }} state=present
   with_items:
-    - mongodb-org
-    - mongodb-org-server
+    - mongodb-org-3.0.7
+    - mongodb-org-server-3.0.7
 
-- name: Bind mongod processes to any interface
-  lineinfile: dest=/etc/mongod.conf
-              regexp="^bind_ip="
-              insertafter=EOF
-              line="bind_ip={{ mongo_bind_interface }}"
+- name: Bind mongod processes to one or more interfaces
+  lineinfile: >
+              dest=/etc/mongod.conf
+              regexp="\ \ bindIp"
+              line='  bindIp: {{ mongo_bind_interfaces }}'
+              state=present
+              backup=yes
+  notify: restart mongo
+
+- name: Fix issue with mongo init script
+  lineinfile: >
+              dest=/etc/mongod.conf
+              regexp="\ \ pidFilePath"
+              line='  pidFilePath: /var/run/mongodb/mongod.pid'
               state=present
               backup=yes
   notify: restart mongo

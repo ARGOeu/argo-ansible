@@ -1,6 +1,6 @@
 ---
 
-mongo_bind_interface: 0.0.0.0
+mongo_bind_interfaces: 0.0.0.0
 
 cert_path: /etc/pki/tls/certs/localhost.crt
 key_path: /etc/pki/tls/private/localhost.key

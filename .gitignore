@@ -2,5 +2,4 @@
 .DS_Store
 setup.sh
 .*.sw?
-hostcert.pem
-hostkey.pem
+roles/has_certificate/files/*.key
