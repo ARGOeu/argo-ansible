@@ -26,6 +26,10 @@
 - name: Create cache directory
   file: path={{ cache_directory }} state=directory
 
+- name: Remove older downloaded lavoisier zip file
+  command: rm -f {{ lavoisier_home }}/{{ branch_name }}.zip
+  ignore_errors: True
+  
 - name: Download lavoisier zip file
   get_url: url=https://github.com/ARGOeu/{{ argo_web }}/archive/{{ branch_name }}.zip
            dest={{ lavoisier_home }}/{{ branch_name }}.zip

@@ -1,11 +1,11 @@
 [argo-prod]
 name=ARGO Product Repository
-baseurl=http://rpm.hellasgrid.gr/mash/centos6-arstats/$basearch
+baseurl=http://snf-711530.vm.okeanos.grnet.gr/ARGO/prod/centos6/
 enabled=0
 gpgcheck=0
 
 [argo-devel]
-name=ARstats Development Repository
-baseurl=http://rpm.hellasgrid.gr/mash/centos6-arstats-devel/$basearch
-enabled=0
+name=ARGO Development Repository
+baseurl=http://snf-711530.vm.okeanos.grnet.gr/ARGO/devel/centos6/
 gpgcheck=0
+enabled=1
