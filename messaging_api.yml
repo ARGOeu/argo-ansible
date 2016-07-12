@@ -1,10 +1,10 @@
 ---
 
-- hosts: webapi
+- hosts: messaging
   sudo: true
   roles:
     - { role: firewall, tags: firewall }
     - { role: repos, tags: repos }
     - { role: has_certificate, tags: has_certificate }
     - { role: mongodb, tags: mongodb }
-    - { role: webapi, tags: webapi }
+    - { role: messaging_api, tags: messaging_api }
