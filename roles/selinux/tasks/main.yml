@@ -1,0 +1,5 @@
+---
+
+- name: Disable selinux
+  selinux: state=disabled
+  tags: selinux_disable
