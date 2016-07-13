@@ -1,0 +1,69 @@
+---
+
+- name: Install argo-egi-connectors from ar project
+  tags: 
+    - ar-packages
+    - connectors
+  yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }}
+
+- name: Configure connectors
+  tags: 
+    - connectors_config
+    - connectors
+  template: src=customer.conf.j2
+            dest=/etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf
+            owner=root group=root mode=0644
+            backup=yes
+  with_dict: tenants
+
+- name: POEM configuration
+  tags:
+    - connectors_config
+    - poem_config
+  template: src=poem-connector.conf.j2
+            dest=/etc/argo-egi-connectors/poem-connector.conf
+            owner=root group=root mode=0644
+            backup=yes
+
+- name: Configure poem connector per tenant cron job
+  tags: 
+    - connectors_config
+    - connectors
+    - poem_cron
+  cron: cron_file=poem_{{ item.key | lower }}
+        name=poem_{{ item.key | lower }}
+        minute=2
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/poem-connector.py {% if item.value.prefilter is not defined %} -np {% endif %} -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present
+  with_dict: tenants
+
+- name: Configure topology connector per tenant cron job
+  tags: 
+    - connectors_config
+    - connectors
+    - topology_cron
+  cron: cron_file=topology_{{ item.key | lower }}
+        name=topology_{{ item.key | lower }}
+        minute=7
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/topology-gocdb-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present
+  with_dict: tenants
+
+- name: Configure weights connector per tenant cron job
+  tags: 
+    - connectors_config
+    - connectors
+    - weights_cron
+  cron: cron_file=weights_{{ item.key | lower }}
+        name=weights_{{ item.key | lower }}
+        minute=5
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/weights-gstat-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present
+  with_dict: tenants
+
