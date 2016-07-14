@@ -5,6 +5,6 @@
   roles:
     - { role: firewall, tags: firewall }
     - { role: repos, tags: repos }
-    - { role: has_certificate, tags: has_certificate }
+#    - { role: has_certificate, tags: has_certificate }
     - { role: mongodb, tags: mongodb }
     - { role: messaging_api, tags: messaging_api }
