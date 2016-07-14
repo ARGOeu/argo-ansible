@@ -3,8 +3,10 @@
 - hosts: messaging
   sudo: true
   roles:
+    - { role: selinux, tags: selinux_disable}
+    - { role: timezone, tags: timezone}
     - { role: firewall, tags: firewall }
     - { role: repos, tags: repos }
-#    - { role: has_certificate, tags: has_certificate }
+    # - { role: has_certificate, tags: has_certificate } Needs discussion
     - { role: mongodb, tags: mongodb }
     - { role: messaging_api, tags: messaging_api }
