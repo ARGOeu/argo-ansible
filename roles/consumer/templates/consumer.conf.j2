@@ -36,6 +36,6 @@ ReconnectAttempts = 10
 UseSSL = False
 
 [Output]
-Directory = /var/lib/argo-{{ item.key | lower }}-consumer
+Directory = {{}}argo-{{ item.key | lower }}-consumer
 Filename = argo-consumer_log_DATE.avro
 ErrorFilename = argo-consumer_error_log_DATE.avro

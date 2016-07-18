@@ -1,5 +1,6 @@
 ---
 
+data_path: "/var/lib/"
 tenants:
   TenantA:
     topics:
