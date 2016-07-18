@@ -102,6 +102,15 @@
             owner=root group=root mode=0644
             backup=yes
 
+- name: connectors Global configuration
+  tags:
+    - connectors_config
+    - connectors
+  template: src=global.conf.j2
+            dest=/etc/argo-egi-connectors/global.conf
+            owner=root group=root mode=0644
+            backup=yes
+
 - name: Configure poem connector per tenant cron job
   tags: 
     - connectors_config

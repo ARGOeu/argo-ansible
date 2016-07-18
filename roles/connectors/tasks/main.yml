@@ -16,6 +16,15 @@
             backup=yes
   with_dict: tenants
 
+- name: connectors Global configuration
+  tags:
+    - connectors_config
+    - connectors
+  template: src=global.conf.j2
+            dest=/etc/argo-egi-connectors/global.conf
+            owner=root group=root mode=0644
+            backup=yes
+
 - name: POEM configuration
   tags:
     - connectors_config
