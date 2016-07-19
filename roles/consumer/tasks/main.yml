@@ -226,7 +226,7 @@
         owner=root group=root mode=0644
         backup=yes
   with_fileglob:
-    - ../templates/ar-compute/*.j2
+    - /../templates/ar-compute/*.j2
         
 - name: Configure hadoop (mr) related parameter files
   tags: hadoop_client_config
