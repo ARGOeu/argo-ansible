@@ -10,7 +10,7 @@
 
 - name: Install pymongo fixed version
   tags: ar-packages
-  pip: name=pymongo state=present version=3.2.1
+  pip: name=pymongo state=present version=3.2.2
 
 - name: Install egi consumer package from ar project
   tags: 
@@ -92,6 +92,16 @@
             owner=root group=root mode=0644
             backup=yes
   with_dict: tenants
+  
+- name: Configure global connectors
+  tags: 
+    - connectors_config
+    - connectors
+  template: src=global.conf.j2
+            dest=/etc/argo-egi-connectors/global.conf
+            owner=root group=root mode=0644
+            backup=yes
+  with_dict: tenants
 
 - name: POEM configuration
   tags:
@@ -99,15 +109,6 @@
     - poem_config
   template: src=poem-connector.conf.j2
             dest=/etc/argo-egi-connectors/poem-connector.conf
-            owner=root group=root mode=0644
-            backup=yes
-
-- name: connectors Global configuration
-  tags:
-    - connectors_config
-    - connectors
-  template: src=global.conf.j2
-            dest=/etc/argo-egi-connectors/global.conf
             owner=root group=root mode=0644
             backup=yes
 
@@ -204,3 +205,34 @@
             dest=/etc/ar-data-retention/ar-data-retention.conf
             owner=root group=root mode=0644
 
+- name: Configure hadoop (mr) related parameter files
+  tags: hadoop_client_config
+  copy: src={{ item }}
+        dest=/etc/hadoop/conf/{{ item }} backup=yes
+        owner=root group=root mode=0644
+  with_items:
+    - core-site.xml
+    - hadoop-env.sh
+    - hdfs-site.xml
+    - log4j.properties
+    - mapred-site.xml
+    - ssl-client.xml
+    - topology.map
+    - topology.py
+
+- name: Configure pig related parameter
+  tags: pig_client_config
+  lineinfile: dest=/etc/pig/conf/pig.properties
+              regexp="^pig.logfile"
+              line="pig.logfile=/tmp/pig-err.log"
+              state=present
+              backup=yes
+
+- name: Insert comment for pig related parameter
+  tags: pig_client_config
+  lineinfile: dest=/etc/pig/conf/pig.properties
+              regexp="^# File Parameter"
+              insertbefore="^pig.logfile"
+              line="# File Parameter for pig exception dump."
+              state=present
+              backup=yes

@@ -1,0 +1,1 @@
+{% include "private_files/" + ansible_fqdn + "/files/ar-compute/EGI_JOB_EGI-OPS-MONITOR-Critical_cfg.json" %}
