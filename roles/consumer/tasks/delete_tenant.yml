@@ -1,0 +1,62 @@
+---
+#delete all relative configuration files of a tenant.
+# Step 1: check if exists
+# Step 2: delete it
+# /etc/argo-egi-connectors/egicentral-customer.conf
+# /etc/init.d/argo-egicentral-consumer
+# /etc/argo-egicentral-consumer/
+# cronjobs in /etc/cron.d/*_egicentral (poem_egicentral, topology_egicentral, weights_egicentral)
+
+- name: Stat tenant-customer.conf 
+  tags: delete_tenant
+  stat: path=/etc/argo-egi-connectors/{{delete_tenant_name}}-customer.conf
+  register: tenant_customer
+
+- name: Delete tenant-customer.conf
+  file: path=/etc/argo-egi-connectors/{{delete_tenant_name}}-customer.conf  state=absent
+  when: tenant_customer.stat.exists
+  
+- name: Stat /etc/init.d/argo-tenant-consumer
+  tags: delete_tenant
+  stat: path=/etc/init.d/argo-{{delete_tenant_name}}-consumer
+  register: tenant_consumer
+
+- name: Delete argo-tenant-consumer
+  file: path=/etc/init.d/argo-{{delete_tenant_name}}-consumer  state=absent
+  when: tenant_consumer.stat.exists
+  
+- name: Stat /etc/argo-tenant-consumer/
+  tags: delete_tenant
+  stat: path=/etc/argo-{{delete_tenant_name}}-consumer/ 
+  register: tenant_consumer_folder
+  
+- name: Delete argo-tenant-consumer folder
+  file: path=/etc/argo-{{delete_tenant_name}}-consumer/ state=absent
+  when: tenant_consumer_folder.stat.exists
+
+- name: Stat cronjob /etc/cron.d/poem_tenant
+  tags: delete_tenant
+  stat: path=/etc/cron.d/poem_{{delete_tenant_name}} 
+  register: poem_tenant
+  
+- name: Delete cronjob /etc/cron.d/poem_tenant
+  file: path=/etc/cron.d/poem_{{delete_tenant_name}}  state=absent
+  when: poem_tenant.stat.exists
+
+- name: Stat cronjob /etc/cron.d/topology_tenant
+  tags: delete_tenant
+  stat: path=/etc/cron.d/topology_{{delete_tenant_name}} 
+  register: topology_tenant
+  
+- name: Delete cronjob /etc/cron.d/topology_tenant
+  file: path=/etc/cron.d/topology_{{delete_tenant_name}}  state=absent
+  when: topology_tenant.stat.exists
+
+- name: Stat cronjob /etc/cron.d/weights_tenant
+  tags: delete_tenant
+  stat: path=/etc/cron.d/weights_{{delete_tenant_name}} 
+  register: weights_tenant
+  
+- name: Delete cronjob /etc/cron.d/weights_tenant
+  file: path=/etc/cron.d/weights_{{delete_tenant_name}}  state=absent
+  when: weights_tenant.stat.exists

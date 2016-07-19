@@ -207,18 +207,18 @@
 
 - name: Configure hadoop (mr) related parameter files
   tags: hadoop_client_config
-  copy: src={{ item }}
+  template: src={{ item }}
         dest=/etc/hadoop/conf/{{ item }} backup=yes
         owner=root group=root mode=0644
   with_items:
-    - core-site.xml
-    - hadoop-env.sh
-    - hdfs-site.xml
-    - log4j.properties
-    - mapred-site.xml
-    - ssl-client.xml
-    - topology.map
-    - topology.py
+    - core-site.xml.j2
+    - hadoop-env.sh.j2
+    - hdfs-site.xml.j2
+    - log4j.properties.j2
+    - mapred-site.xml.j2
+    - ssl-client.xml.j2
+    - topology.map.j2
+    - topology.py.j2
 
 - name: Configure pig related parameter
   tags: pig_client_config
