@@ -1,0 +1,73 @@
+---
+
+# Based on
+# https://github.com/hpcloud-mon/ansible-zookeeper
+
+- name: Install OpenJDK
+  yum: name=java-1.7.0-openjdk state=present
+  tags: zookeeper_install
+
+- name: setup group
+  group: name=zookeeper system=yes
+  tags: zookeeper_install
+
+- name: Setup user
+  user: name=zookeeper system=yes group=zookeeper
+  tags: zookeeper_install
+
+- name: Change ownership on zokeeper directory.
+  file: path="{{zookeeper_dir}}" state=directory owner=zookeeper group=zookeeper recurse=yes
+  tags: zookeeper_install
+
+
+- name: Download Zookeeper version
+  get_url: url={{zookeeper_url}} dest=/tmp/argo/zookeeper-{{zookeeper_version}}.tar.gz timeout=100
+  tags: zookeeper_install
+
+- name: Unpack tarball
+  command: tar xzf /tmp/argo/zookeeper-{{zookeeper_version}}.tar.gz --strip-components=1 chdir={{zookeeper_dir}} creates={{zookeeper_dir}}/bin
+  tags: zookeeper_install
+
+- name: Setup Apache ZooKeeper service
+  template: dest="/etc/systemd/system/zookeeper.service" src=zookeeper.service.j2
+  register: zookeeper_service
+  tags: zookeeper_install
+
+- name: reload systemd
+  command: /usr/bin/systemctl --system daemon-reload
+  when: zookeeper_service | changed
+  tags: zookeeper_install
+
+- name: Setup zoo.cfg
+  template: dest="{{zookeeper_conf_dir}}/zoo.cfg" src=zoo.cfg.j2
+  notify:
+    - restart zookeeper
+  tags: zookeeper_config
+
+- name: Setup myid
+  template: dest="{{zookeeper_conf_dir}}/myid" src=myid.j2
+  notify:
+    - restart zookeeper
+  tags: zookeeper_config
+
+
+- name: Setup environment
+  template: dest="{{zookeeper_conf_dir}}/environment" src=environment.j2
+  notify:
+    - restart zookeeper
+  tags: zookeeper_config
+
+
+- name: Create log_dir
+  file: path={{zookeeper_log_dir}} state=directory owner=zookeeper group=zookeeper mode=755
+  tags: zookeeper_config
+
+
+- name: Setup log4j
+  template: dest="{{zookeeper_conf_dir}}/log4j.properties" owner=root group=root mode=644 src=log4j.properties.j2
+  notify:
+    - restart zookeeper
+  tags: zookeeper_config
+
+
+- meta: flush_handlers

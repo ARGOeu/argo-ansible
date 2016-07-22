@@ -1,0 +1,9 @@
+---
+
+
+# Based on
+# https://github.com/hpcloud-mon/ansible-zookeeper
+  
+
+- name: restart zookeeper
+  service: name=zookeeper state=restarted
