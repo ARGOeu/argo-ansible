@@ -17,7 +17,15 @@
   copy: src=etc/yum.repos.d/mongodb_3.repo
         dest=/etc/yum.repos.d/mongodb_3.repo backup=no
         owner=root group=root mode=0644
-  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webapi
+  when: ( inventory_hostname in groups.standalone or inventory_hostname in groups.webapi ) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+
+- name: Install mongodb 3.2 repo
+  tags: mongodb_repo
+  copy: src=etc/yum.repos.d/mongodb-org-3.2.repo
+        dest=/etc/yum.repos.d/mongodb_3.repo backup=no
+        owner=root group=root mode=0644
+  when: inventory_hostname in groups.messaging and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
 
 - name: Install EGI-trustanchors repository definitions
   tags: ca_bundle_repo
@@ -42,6 +50,6 @@
 
 - name: Install UMD repo
   tags: umd_repo
-  yum: name=http://repository.egi.eu/sw/production/umd/3/sl6/x86_64/updates/umd-release-3.0.1-1.el6.noarch.rpm 
+  yum: name=http://repository.egi.eu/sw/production/umd/3/sl6/x86_64/updates/umd-release-3.0.1-1.el6.noarch.rpm
        state=present
   when: inventory_hostname in groups.monitoring_engine and nagios_plugins_umd is defined
