@@ -9,6 +9,50 @@ The administrator of the ARGO product being deployed via these Ansible playbooks
 
 Per ARGO product more details on prerequisites and variables are given in the following subsections.
 
+## Messaging API
+
+Contains Ansible playbook for the deployment of the ARGO Messaging API. The play is split into the following roles:
+- selinux (disables selinux)
+- firewall (configures iptables firewall rules)
+- repos (includes tasks for the installation of the required repository definitions)
+- has_certificate (task for uploading the certificate file onto the host under the appropriate path)
+- zookeeper (installs and bootstraps zookeeper)
+- kafka (installs and bootstraps kafka)
+- mongodb (installs and bootstraps mongodb)
+- messaging_api (installs and bootstraps messaging_api)
+
+### Things to do before deployment
+
+- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `{{inventory_hostname}}.key` and `{{inventory_hostname}}.pem` respectively. As `{{inventory_hostname}}` use the exact name used within the `inventory` file. 
+- Edit inventory and replace `messaging.node` with the hostname that you intend to deploy the Messaging service onto. 
+- Create a `host_vars/{{inventory_hostname}}` file and place therein the variables found within the 
+	- `roles/messaging_api/defaults/main.yml` file in order to overwrite them. 
+ 	- `roles/zookeeper/defaults/main.yml` file in order to overwrite them.
+ 	- `roles/mongodb/defaults/main.yml` file in order to overwrite them.
+ 	- `roles/kafka/defaults/main.yml` file in order to overwrite them.
+ 	
+### Prerequisites
+
+- Deploy against CentOS 7.x node
+- Ansible version used is `1.9.2`
+
+### How to deploy
+
+```bash
+$ ansible-playbook -v messaging_api.yml
+```
+
+### Default Values
+The script creates some defaults:
+ 
+ - Project: ARGO
+ - Users:
+   - admin:ADMINTOKEN
+   - viewer:VIEWERTOKEN 
+ - BASIC URL: [MESSAGING_DOMAIN]/v1/
+ 
+ for more information about the messaging API please visit the [SWAGGER API Description](https://api-doc.argo.grnet.gr/argo-messaging/)
+
 ## WebAPI deployment
 
 Contains Ansible playbook for the deployment of the ARGO datastore and API service. The play is split into four (4) roles:

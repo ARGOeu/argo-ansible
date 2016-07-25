@@ -13,3 +13,6 @@ webui.node
 
 [monitoring_engine]
 monitoring_engine.node
+
+[messaging]
+messaging_api.node
