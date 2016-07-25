@@ -42,6 +42,16 @@ Contains Ansible playbook for the deployment of the ARGO Messaging API. The play
 $ ansible-playbook -v messaging_api.yml
 ```
 
+### Default Values
+The script creates some defaults:
+ 
+ - Project: ARGO
+ - Users:
+   - admin:ADMINTOKEN
+   - viewer:VIEWERTOKEN 
+ - BASIC URL: [MESSAGING_DOMAIN]/v1/
+ 
+ for more information about the messaging API please visit the [SWAGGER API Description](https://api-doc.argo.grnet.gr/argo-messaging/)
 
 ## WebAPI deployment
 
