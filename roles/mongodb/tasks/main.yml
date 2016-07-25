@@ -24,6 +24,7 @@
               state=present
               backup=yes
   notify: restart mongo
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
 
 - name: Fix issue with mongo init script
   lineinfile: >
@@ -33,6 +34,7 @@
               state=present
               backup=yes
   notify: restart mongo
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
 
 - name: Increase soft nproc limits
   copy: src=etc/security/limits.d/99-mongodb-nproc.conf

@@ -1,0 +1,12 @@
+---
+ingestion_users:
+  -  username: FOO_user
+     tenant: FOO
+     key: FOOKEY
+     role: admin
+     email: foo@example.com
+  -  username: BAR_user
+     tenant: BAR
+     key: BARKEY
+     role: admin
+     email: foo@example.com
