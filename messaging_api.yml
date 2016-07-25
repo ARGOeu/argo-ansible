@@ -8,5 +8,7 @@
     - { role: firewall, tags: firewall }
     - { role: repos, tags: repos }
     # - { role: has_certificate, tags: has_certificate } Needs discussion
+    - { role: zookeeper, tags: zookeeper_install,zookeeper_config }
+    - { role: kafka, tags: kafka_install,kafka_config }
     - { role: mongodb, tags: mongodb }
     - { role: messaging_api, tags: messaging_api }

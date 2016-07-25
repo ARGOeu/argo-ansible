@@ -5,6 +5,18 @@
   notify: restart argo-messaging service
   tags: messaging_api
 
+- name: allow bind port 443
+  shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-messaging/argo-messaging
+  tags: messaging_api
+
+- name: Move init_defaults.js script
+  template: dest="/tmp/argo-messaging/init_defaults.js" owner=root group=root mode=640 src=init_defaults.js.j2
+  tags: messaging_api
+
+- name: Run init_defaults.js script
+  shell: mongo < /tmp/argo-messaging/init_defaults.js
+  tags: messaging_api
+
 - name: Configure argo-messaging api
   template: src=config.json.j2
             dest=/etc/argo-messaging/config.json backup=yes
