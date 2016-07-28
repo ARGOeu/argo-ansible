@@ -1,7 +1,7 @@
 ---
 
 - name: Install argo-messaging package
-  yum: name=argo-messaging state=latest enablerepo={{ enabled_argo_repo }}
+  yum: name=argo-messaging state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
   notify: restart argo-messaging service
   tags: messaging_api
 

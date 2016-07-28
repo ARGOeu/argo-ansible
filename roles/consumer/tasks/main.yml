@@ -16,7 +16,7 @@
   tags: 
     - ar-packages
     - consumer_config
-  yum: name=argo-egi-consumer state=latest enablerepo={{ enabled_argo_repo }}
+  yum: name=argo-egi-consumer state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
   notify: restart all consumers
 
 - name: Create consumer configuration directories
@@ -81,7 +81,7 @@
   tags: 
     - ar-packages
     - connectors
-  yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }}
+  yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
 
 - name: Configure connectors
   tags: 
@@ -156,7 +156,7 @@
 
 - name: Install ar-compute from ar project
   tags: ar-packages
-  yum: name=ar-compute state=latest enablerepo={{ enabled_argo_repo }}
+  yum: name=ar-compute state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
 
 - name: Copy out compute engine configuration file
   tags: ce_config
@@ -197,7 +197,7 @@
 
 - name: Install ar-data-retention from ar project
   tags: ar-data-retention
-  yum: name=ar-data-retention state=latest enablerepo={{ enabled_argo_repo }}
+  yum: name=ar-data-retention state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
 
 - name: Parametrize data retention policies
   tags: data_retention
