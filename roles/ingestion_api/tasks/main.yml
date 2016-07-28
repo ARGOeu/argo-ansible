@@ -1,0 +1,7 @@
+- name: Move init_ingestion.js script
+  template: dest="/tmp/init_ingestion.js" owner=root group=root mode=640 src=init_ingestion.js.j2
+  tags: ingestion_api
+
+- name: Run init_defaults.js script
+  shell: mongo < /tmp/init_ingestion.js
+  tags: messaging_api

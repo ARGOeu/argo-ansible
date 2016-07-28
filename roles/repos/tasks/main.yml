@@ -5,12 +5,29 @@
        state=present
   when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
 
+- name: Install EPEL repo.
+  yum:
+    name: "{{ epel_repo_url }}"
+    state: present
+  register: result
+  until: '"failed" not in result'
+  retries: 5
+  delay: 10
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+
+- name: Import EPEL GPG key.
+  rpm_key:
+    key: "{{ epel_repo_gpg_key_url }}"
+    state: present
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
 - name: Install argo repository definitions
   tags: argo_repo
   copy: src=etc/yum.repos.d/argo.repo
         dest=/etc/yum.repos.d/argo.repo backup=no
         owner=root group=root mode=0644
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+
 
 - name: Install mongodb repo
   tags: mongodb_repo
@@ -22,9 +39,9 @@
 - name: Install mongodb 3.2 repo
   tags: mongodb_repo
   copy: src=etc/yum.repos.d/mongodb-org-3.2.repo
-        dest=/etc/yum.repos.d/mongodb_3.repo backup=no
+        dest=/etc/yum.repos.d/mongodb-org-3.2.repo backup=no
         owner=root group=root mode=0644
-  when: inventory_hostname in groups.messaging and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+  when: (inventory_hostname in groups.messaging or inventory_hostname in groups.ingestion) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
 
 
 - name: Install EGI-trustanchors repository definitions
