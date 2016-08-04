@@ -19,15 +19,20 @@
   file: path="{{zookeeper_dir}}" state=directory owner=zookeeper group=zookeeper recurse=yes
   tags: zookeeper_install
 
+- name: Remove older downloaded Zookeeper tgz file
+  command: rm -f {{zookeeper_dir}}/zookeeper-{{zookeeper_version}}.tar.gz
+  tags: zookeeper_install
+  ignore_errors: True
 
 - name: Download Zookeeper version
-  get_url: url={{zookeeper_url}} dest=/tmp/argo/zookeeper-{{zookeeper_version}}.tar.gz timeout=100
+  get_url: url={{zookeeper_url}} dest={{zookeeper_dir}}/zookeeper-{{zookeeper_version}}.tar.gz timeout=100
+  remote_user: root
   tags: zookeeper_install
 
 - name: Unpack tarball
-  command: tar xzf /tmp/argo/zookeeper-{{zookeeper_version}}.tar.gz --strip-components=1 chdir={{zookeeper_dir}} creates={{zookeeper_dir}}/bin
+  command: tar xzf {{zookeeper_dir}}/zookeeper-{{zookeeper_version}}.tar.gz --strip-components=1 chdir={{zookeeper_dir}} creates={{zookeeper_dir}}/bin
   tags: zookeeper_install
-
+  
 - name: Setup Apache ZooKeeper service
   template: dest="/etc/systemd/system/zookeeper.service" src=zookeeper.service.j2
   register: zookeeper_service
