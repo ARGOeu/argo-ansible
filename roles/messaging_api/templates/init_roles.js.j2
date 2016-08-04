@@ -12,9 +12,5 @@ db.roles.insert([{"resource" : "topics:list", "roles" : [ "admin", "viewer" ] },
 {"resource" : "subscriptions:show", "roles" : [ "admin","viwer" ] },
 {"resource" : "subscriptions:acknowledge", "roles" : [ "admin" ] },
 {"resource" : "subscriptions:show", "roles" : [ "admin" ] },
+{"resource" : "subscriptions:pull", "roles" : [ "admin" ] },
 {"resource" : "subscriptions:modifyPushConfig", "roles" : [ "admin" ] }])
-db.users.remove({"name":"default_admin"})
-db.users.remove({"name":"default_viewer"})
-db.users.insert([{"name" : "default_admin", "email" : "admin@localhost", "project" : "ARGO", "token" : "ADMINTOKEN", "roles" : [ "admin", "viewer" ] },
-{"name" : "default_viewer", "email" : "viewer@localhost", "project" : "ARGO", "token" : "VIEWERTOKEN", "roles" : [ "viewer" ] }
-])
