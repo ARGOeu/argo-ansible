@@ -69,6 +69,12 @@
             dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/argo-config.properties
             owner=root group=root mode=0644
   notify: restart webui
+  
+- name: Copy etc/lavoisier-service.properties file
+  template: src=lavoisier-service.properties.j2
+            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-service.properties
+            owner=root group=root mode=0644
+  notify: restart webui
 
 - name: Configure etc/security/passwords.properties
   lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/security/passwords.properties
