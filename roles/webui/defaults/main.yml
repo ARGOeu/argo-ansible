@@ -3,6 +3,10 @@
 services:
   - http
   - https
+  
+lavoisier_http_port: 80
+lavoisier_https_port: 443
+
 
 tenant_name: einfraname
 lavoisier_home: /var/www/lavoisier
