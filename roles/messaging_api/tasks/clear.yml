@@ -20,7 +20,6 @@
   command: rm -rf /var/lib/zookeeper/*
   tags: clear_messaging_api
 
-
 - name: Clear MongoDB topics
   command: mongo argo_msg --eval "db.topics.drop()"
   tags: clear_messaging_api
@@ -37,6 +36,9 @@
   service: name=kafka state=started
   tags: clear_messaging_api
 
+- name: Sleep
+  command: /bin/sleep 15
+  
 - name: Start Argo-messaging
   service: name=argo-messaging state=started
   tags: clear_messaging_api
