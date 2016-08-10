@@ -9,13 +9,31 @@
   shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-messaging/argo-messaging
   tags: messaging_api
 
-- name: Move init_defaults.js script
-  template: dest="/tmp/init_defaults.js" owner=root group=root mode=640 src=init_defaults.js.j2
-  tags: messaging_api
 
-- name: Run init_defaults.js script
-  shell: mongo < /tmp/init_defaults.js
-  tags: messaging_api
+- name: Move init_roles.js script
+  template: dest="/tmp/init_roles.js" owner=root group=root mode=640 src=init_roles.js.j2
+  tags:
+    - messaging_api
+    - init_roles
+
+- name: Run init_roles.js script
+  shell: mongo < /tmp/init_roles.js
+  tags:
+    - messaging_api
+    - init_roles
+
+- name: Move init_users.js script
+  template: dest="/tmp/init_users.js" owner=root group=root mode=640 src=init_users.js.j2
+  tags:
+    - messaging_api
+    - init_users
+
+- name: Run init_users.js script
+  shell: mongo < /tmp/init_users.js
+  tags:
+    - messaging_api
+    - init_users
+
 
 - name: Configure argo-messaging api
   template: src=config.json.j2

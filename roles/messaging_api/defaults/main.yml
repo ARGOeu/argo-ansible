@@ -4,3 +4,15 @@ argo_msg_port: 443
 argo_msg_store_host: 'localhost'
 argo_msg_store_db: 'argo_msg'
 argo_msg_zookeeper_hosts: '["localhost:2181"]'
+
+messaging_api_users:
+  -  username: default_admin
+     project: ARGO
+     key: ADMINTOKEN
+     role: admin
+     email: admin@argo.example.foo
+  -  username: default_viewer
+     project: ARGO
+     key: VIEWERTOKEN
+     role: viewer
+     email: viewer@argo.example.foo
