@@ -31,6 +31,14 @@
 
 - name: Create p12 key for web ui
   command: openssl pkcs12 -export -in hostcert.pem -inkey hostkey.pem -password pass:{{ keystore_password }} -out server.p12
+
+- name: Remove old p12 key for web ui
+  shell: rm /etc/grid-security/server.p12
+  ignore_errors: True
+  when: inventory_hostname in groups.webui
+  
+- name: Create p12 key for web ui
+  command: openssl pkcs12 -export -in hostcert.pem -inkey hostkey.pem -password pass:{{ keystore_password }} -out server.p12
            chdir=/etc/grid-security
            creates=/etc/grid-security/server.p12
   when: inventory_hostname in groups.webui

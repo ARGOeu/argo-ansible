@@ -1,0 +1,11 @@
+[argo-prod]
+name=ARGO Product Repository - Centos7
+baseurl=http://rpm-repo.argo.grnet.gr/ARGO/prod/centos7/
+enabled=0
+gpgcheck=0
+
+[argo-devel]
+name=ARGO Development Repository - Centos7
+baseurl=http://rpm-repo.argo.grnet.gr/ARGO/devel/centos7/
+gpgcheck=0
+enabled=1

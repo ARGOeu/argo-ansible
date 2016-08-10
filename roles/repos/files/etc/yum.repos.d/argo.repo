@@ -1,11 +1,11 @@
 [argo-prod]
-name=ARGO Product Repository
-baseurl=http://snf-711530.vm.okeanos.grnet.gr/ARGO/prod/centos6/
+name=ARGO Product Repository - Centos6
+baseurl=http://rpm-repo.argo.grnet.gr/ARGO/prod/centos6/
 enabled=0
 gpgcheck=0
 
 [argo-devel]
-name=ARGO Development Repository
-baseurl=http://snf-711530.vm.okeanos.grnet.gr/ARGO/devel/centos6/
+name=ARGO Development Repository - Centos6
+baseurl=http://rpm-repo.argo.grnet.gr/ARGO/devel/centos6/
 gpgcheck=0
 enabled=1
