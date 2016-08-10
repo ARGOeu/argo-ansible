@@ -1,0 +1,42 @@
+---
+
+- name: Stop Argo-Messaging
+  service: name=argo-messaging state=stopped
+  tags: clear_messaging_api
+
+- name: Stop Kafka
+  service: name=kafka state=stopped
+  tags: clear_messaging_api
+
+- name: Stop Zookeeper
+  service: name=zookeeper state=stopped
+  tags: clear_messaging_api
+
+- name: Clear Kafka Dir
+  command: rm -rf /var/lib/kafka/*
+  tags: clear_messaging_api
+
+- name: Clear Zookeeper Dir
+  command: rm -rf /var/lib/zookeeper/*
+  tags: clear_messaging_api
+
+
+- name: Clear MongoDB topics
+  command: mongo argo_msg --eval "db.topics.drop()"
+  tags: clear_messaging_api
+
+- name: Clear MongoDB Subscriptions
+  command: mongo argo_msg --eval "db.subscriptions.drop()"
+  tags: clear_messaging_api
+
+- name: Start Zookeeper
+  service: name=zookeeper state=started
+  tags: clear_messaging_api
+
+- name: Start Kafka
+  service: name=kafka state=started
+  tags: clear_messaging_api
+
+- name: Start Argo-messaging
+  service: name=argo-messaging state=started
+  tags: clear_messaging_api
