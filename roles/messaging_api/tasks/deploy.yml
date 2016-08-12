@@ -5,6 +5,10 @@
   notify: restart argo-messaging service
   tags: messaging_api
 
+- name: systemctl daemon-reload to avoid message for disk rellocation 
+  command: systemctl daemon-reload
+  ignore_errors: yes
+    
 - name: allow bind port 443
   shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-messaging/argo-messaging
   tags: messaging_api
