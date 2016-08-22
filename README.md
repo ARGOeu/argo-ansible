@@ -160,7 +160,31 @@ Contains Ansible playbook for the deployment of all ARGO components. The play is
 $ ansible-playbook -v standalone.yml
 ```
 
+### Run extra tasks
 
+Apart from deploying the standalone component there is also a list of task one may use to manage the component. 
+
+#### Pause cron jobs
+
+An example for poem_cron jobs pause
+
+```bash
+$ ansible-playbook -vvv standalone-pause.yml --extra-vars "cron_status=true" --tags poem_cron
+``` 
+
+where: 
+
+ - **cron_status** : is the status of the cron job. It actually uses the disabled ansible paremeter. If true then cron job is disabled, if false the job is running
+ - **tags** : The main tags are:
+	 - poem_cron: Configure  poem connector per tenant cron job
+	 - topology_cron: Configure topology connector per tenant cron job
+	 - weights_cron: Configure weights connector per tenant cron job
+	 - compute_job_hourly: Configure ar-compute job cycle hourly cron
+	 - compute_job_daily: Configure ar-compute job cycle daily cron
+	 - compute_poller_hourly: ar-compute poller hourly cron for tenant EGI
+	 - cron_jobs: all jobs
+
+ 
 ## Monitoring your services
 
 In case you are using Nagios or Icinga for health monitoring purposes a minimal `is_monitored` role is included in the repo. The puspose of this role is to install and configure the nrpe service on your target machines. Modify the remote host variable within the `roles/is_monitored/defaults/main.yml` file and include it in your playbooks. 
