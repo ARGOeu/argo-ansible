@@ -184,6 +184,36 @@ where:
 	 - compute_poller_hourly: ar-compute poller hourly cron for tenant EGI
 	 - cron_jobs: all jobs
 
+
+#### Start stop services
+
+Τhere are two main types of services. The egi specific services and the non-egi services which are based on the tenants name ( ex egicentral)
+
+if you want to stop egi service you should run 
+
+```bash
+$ ansible-playbook standalone-start-stop.yml -vvv  --tags stop_egi_consumer'
+``` 
+
+If you want to start egicentral consumer
+
+```bash
+$ ansible-playbook standalone-start-stop.yml -vvv --extra-vars "consumer_name=egicentral" --tags start_consumer
+``` 
+
+where: 
+
+ - **consumer_name** : is the the name of a tenant.
+ - **tags** : The main tags are:
+	 - stop_egi_consumer: stops egi consumer
+	 - stop_all_consumer: stop all consumers
+	 - stop_non_egi_consumer:  stop all non-egi consumers
+	 - stop a consumer: stops a selected consumer_name consumer. When used you should provide a **consumer_name**.
+	 - start_egi_consumer: start egi consumer
+	 - start_all_consumer: start all consumers
+	 - start_non_egi_consumer:  start all non-egi consumers
+	 - start a consumer: start a selected consumer_name consumer. When used you should provide a **consumer_name**.
+
  
 ## Monitoring your services
 
