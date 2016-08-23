@@ -23,7 +23,7 @@
 - name: upload certificate 
   tags: poem_certificate
   copy: src=DigiCertCA.crt
-        dest=/etc/pki/tls/certs/ca-bundle-onlyterena.crt backup=yes
+        dest=/etc/pki/tls/certs/DigiCertCA.crt backup=yes
         owner=root group=root mode=0400
         
 - name: Create ssl.conf file
