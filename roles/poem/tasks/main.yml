@@ -22,8 +22,8 @@
             
 - name: upload certificate 
   tags: poem_certificate
-  copy: src=chain_TERENA_SSL_CA_3.pem
-        dest={{ key_path }} backup=yes
+  copy: src=DigiCertCA.crt
+        dest=/etc/pki/tls/certs/ca-bundle-onlyterena.crt backup=yes
         owner=root group=root mode=0400
         
 - name: Create ssl.conf file
