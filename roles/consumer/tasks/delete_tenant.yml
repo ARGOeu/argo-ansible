@@ -6,57 +6,145 @@
 # /etc/init.d/argo-egicentral-consumer
 # /etc/argo-egicentral-consumer/
 # cronjobs in /etc/cron.d/*_egicentral (poem_egicentral, topology_egicentral, weights_egicentral)
+# 1) Delete connectors configuration file /etc/argo-egi-connectors/{{ TENANT }}-customer.conf
+# 2) delete init scripts for non egi consumers /etc/init.d/argo-{{ TENANT }}-consumer
+# 3) /etc/cron.d a) poem_TENANT, b)topology_TENANT, c) weights_TENANT
+# 4) Delete directory with  metric avro specification for each tenant /etc/argo-{{ TENANT }}-consumer/metric_data.avsc and Consumer configuration /etc/argo-{{ TENANT }}-consumer/consumer.conf
+# 5) copies of python wrappers for non egi consumers /usr/bin/argo-{{ TENANT}}-wrapper-consumer.py
+# 6) Configure connectors /etc/argo-egi-connectors/{{ TENANT }}-customer.conf
+# 7) remove symlink for non-egi /usr/bin/argo-{{item.item.name}}-wrapper-consumer.py
+# 8) stop consumer services: argo-{{ TENANT}}-consumer
+# TODO) consumer output directories per tenant /var/lib/argo-{{TENANT }}-consumer #NOT NOW 
 
 - name: Stat tenant-customer.conf 
   tags: delete_tenant
-  stat: path=/etc/argo-egi-connectors/{{delete_tenant_name}}-customer.conf
+  stat: path="/etc/argo-egi-connectors/'{{item.name}}'-customer.conf"   
+  with_items: "{{tenants_delete}}"
   register: tenant_customer
 
+
 - name: Delete tenant-customer.conf
-  file: path=/etc/argo-egi-connectors/{{delete_tenant_name}}-customer.conf  state=absent
-  when: tenant_customer.stat.exists
-  
+  tags: delete_tenant
+  file: path=/etc/argo-egi-connectors/{{item.item.name}}-customer.conf  state=absent
+  with_items: "{{tenant_customer.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
+   
 - name: Stat /etc/init.d/argo-tenant-consumer
   tags: delete_tenant
-  stat: path=/etc/init.d/argo-{{delete_tenant_name}}-consumer
+  stat: path=/etc/init.d/argo-{{item.name}}-consumer
+  with_items: "{{tenants_delete}}"
   register: tenant_consumer
 
 - name: Delete argo-tenant-consumer
-  file: path=/etc/init.d/argo-{{delete_tenant_name}}-consumer  state=absent
-  when: tenant_consumer.stat.exists
-  
-- name: Stat /etc/argo-tenant-consumer/
   tags: delete_tenant
-  stat: path=/etc/argo-{{delete_tenant_name}}-consumer/ 
-  register: tenant_consumer_folder
-  
-- name: Delete argo-tenant-consumer folder
-  file: path=/etc/argo-{{delete_tenant_name}}-consumer/ state=absent
-  when: tenant_consumer_folder.stat.exists
+  file: path=/etc/init.d/argo-{{item.item.name}}-consumer  state=absent
+  with_items: "{{tenant_consumer.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
 
 - name: Stat cronjob /etc/cron.d/poem_tenant
   tags: delete_tenant
-  stat: path=/etc/cron.d/poem_{{delete_tenant_name}} 
+  stat: path=/etc/cron.d/poem_{{item.name}} 
+  with_items: "{{tenants_delete}}"
   register: poem_tenant
   
 - name: Delete cronjob /etc/cron.d/poem_tenant
-  file: path=/etc/cron.d/poem_{{delete_tenant_name}}  state=absent
-  when: poem_tenant.stat.exists
+  file: path=/etc/cron.d/poem_{{item.item.name}}  state=absent
+  with_items: "{{poem_tenant.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
 
 - name: Stat cronjob /etc/cron.d/topology_tenant
-  tags: delete_tenant
-  stat: path=/etc/cron.d/topology_{{delete_tenant_name}} 
+  tags: [delete_tenant, delete_tenant_top]
+  stat: path=/etc/cron.d/topology_{{item.name}} 
+  with_items: "{{tenants_delete}}"
   register: topology_tenant
   
 - name: Delete cronjob /etc/cron.d/topology_tenant
-  file: path=/etc/cron.d/topology_{{delete_tenant_name}}  state=absent
-  when: topology_tenant.stat.exists
+  tags: [delete_tenant, delete_tenant_top]
+  file: path=/etc/cron.d/topology_{{item.item.name}}  state=absent
+  with_items: "{{topology_tenant.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
 
 - name: Stat cronjob /etc/cron.d/weights_tenant
   tags: delete_tenant
-  stat: path=/etc/cron.d/weights_{{delete_tenant_name}} 
+  stat: path=/etc/cron.d/weights_{{item.name}} 
+  with_items: "{{tenants_delete}}"
   register: weights_tenant
   
 - name: Delete cronjob /etc/cron.d/weights_tenant
-  file: path=/etc/cron.d/weights_{{delete_tenant_name}}  state=absent
-  when: weights_tenant.stat.exists
+  tags: delete_tenant
+  file: path=/etc/cron.d/weights_{{item.item.name}}  state=absent
+  with_items: "{{weights_tenant.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
+
+- name: folder with metric avro specification for each tenant
+  tags: [delete_tenant, delete_tenant_avro]
+  stat: path=/etc/argo-{{item.name}}-consumer/metric_data.avsc 
+  with_items: "{{tenants_delete}}"
+  register: metric_tenant
+  
+- name: Delete folder with metric avro specification for each tenant
+  tags: [delete_tenant, delete_tenant_avro]
+  command: rm -rf /etc/argo-{{item.item.name}}-consumer/ 
+  with_items: "{{metric_tenant.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
+
+- name: copies of python wrappers for non egi consumers /usr/bin/argo-TENANT-wrapper-consumer.py
+  tags: delete_tenant
+  stat: path=/usr/bin/argo-{{item.name}}-wrapper-consumer.py
+  with_items: "{{tenants_delete}}"
+  register: wrappers_tenant
+  
+- name: Delete copies of python wrappers for non egi consumers
+  tags: delete_tenant
+  file: path=/usr/bin/argo-{{item.item.name}}-wrapper-consumer.py}  state=absent
+  with_items: "{{wrappers_tenant.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
+   
+- name: Configure connectors /etc/argo-egi-connectors/TENANT-customer.conf
+  tags: delete_tenant
+  stat: path=/etc/argo-egi-connectors/{{item.name}}-customer.conf
+  with_items: "{{tenants_delete}}"
+  register: connectors_tenant
+  
+- name: Delete  Configure connectors /etc/argo-egi-connectors/TENANT-customer.conf
+  tags: delete_tenant
+  file: path=/etc/argo-egi-connectors/{{item.item.name}}-customer.conf state=absent
+  with_items: "{{connectors_tenant.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
+
+- name: symlink for /usr/bin/argo-TENANT-wrapper-consumer.py to argo-egi-consumer.py
+  tags: [delete_tenant, delete_symlink_tenant]
+  stat: path=/usr/bin/argo-{{item.name}}-wrapper-consumer.py
+  with_items: "{{tenants_delete}}"
+  register: symlink_tenant
+  
+- name: Delete  symlink for /usr/bin/argo-TENANT-wrapper-consumer.py
+  tags: [delete_tenant, delete_symlink_tenant]
+  file: path=/usr/bin/argo-{{item.item.name}}-wrapper-consumer.py state=absent
+  with_items: "{{symlink_tenant.results}}"
+  when: 
+   - not item | skipped
+   - item.stat.exists
+
+- name: Stop consumer services
+  tags: [delete_tenant,stop_consumer_service]
+  service: name=argo-{{item.name}}-consumer enabled=on state=started
+  with_items: "{{tenants_delete}}"
+  ignore_errors: yes
+

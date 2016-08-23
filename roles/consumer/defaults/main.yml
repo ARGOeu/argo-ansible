@@ -54,6 +54,8 @@ tenants:
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantB"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
 
+tenants_delete: []
+
 poem_servers:
   - host: "poemA.example.com"
     vos:
