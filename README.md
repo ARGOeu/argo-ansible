@@ -214,7 +214,23 @@ where:
 	 - start_non_egi_consumer:  start all non-egi consumers
 	 - start a consumer: start a selected consumer_name consumer. When used you should provide a **consumer_name**.
 
- 
+#### Delete a tenant
+
+The `tenants_delete` variable contains a list of tenants who should no longer be
+in the system, and these will be removed on the next ansible run. The format
+is the following:
+
+tenants_delete:
+	- name: TEST
+	- name: FOO
+	
+If you want to run this ansible script
+
+```bash
+$ ansible-playbook standalone-deletetenant.yml -vvv 
+``` 
+
+
 ## Monitoring your services
 
 In case you are using Nagios or Icinga for health monitoring purposes a minimal `is_monitored` role is included in the repo. The puspose of this role is to install and configure the nrpe service on your target machines. Modify the remote host variable within the `roles/is_monitored/defaults/main.yml` file and include it in your playbooks. 
