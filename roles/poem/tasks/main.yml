@@ -19,7 +19,13 @@
   template: src=poem.ini.j2
             dest=/etc/poem/poem.ini backup=yes
             owner=root group=root mode=0644
-
+            
+- name: upload certificate 
+  tags: poem_certificate
+  copy: src=chain_TERENA_SSL_CA_3.pem
+        dest={{ key_path }} backup=yes
+        owner=root group=root mode=0400
+        
 - name: Create ssl.conf file
   template: src=ssl.conf.j2
             dest=/etc/httpd/conf.d/ssl.conf backup=yes
