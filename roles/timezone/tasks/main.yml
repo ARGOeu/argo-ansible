@@ -1,5 +1,4 @@
 ---
-
-- name: Set timezone
-  timezone: name=Europe/Athens
-  tags: timezone
+- name: Change timezone to Europe/Athens
+  command: timedatectl set-timezone Europe/Athens
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
