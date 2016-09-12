@@ -4,3 +4,7 @@
   command: firewall-cmd --zone=public --add-service={{item}} --permanent
   with_items: services
   when: services is defined
+
+- name: Restart firewalld
+  command: systemctl restart firewalld
+  
