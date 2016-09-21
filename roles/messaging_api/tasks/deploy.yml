@@ -5,10 +5,10 @@
   notify: restart argo-messaging service
   tags: messaging_api
 
-- name: systemctl daemon-reload to avoid message for disk rellocation 
+- name: systemctl daemon-reload to avoid message for disk rellocation
   command: systemctl daemon-reload
   ignore_errors: yes
-    
+
 - name: allow bind port 443
   shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-messaging/argo-messaging
   tags: messaging_api
@@ -25,6 +25,18 @@
   tags:
     - messaging_api
     - init_roles
+
+- name: Move init_projects.js script
+  template: dest="/tmp/init_projects.js" owner=root group=root mode=640 src=init_projects.js.j2
+  tags:
+    - messaging_api
+    - init_projects
+
+- name: Run init_projects.js script
+  shell: mongo < /tmp/init_projects.js
+  tags:
+    - messaging_api
+    - init_projects
 
 - name: Move init_users.js script
   template: dest="/tmp/init_users.js" owner=root group=root mode=640 src=init_users.js.j2
