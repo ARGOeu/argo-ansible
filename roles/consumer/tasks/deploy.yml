@@ -77,41 +77,6 @@
   service: name=argo-{{ item.key | lower }}-consumer enabled=on state=started
   with_dict: tenants
 
-- name: Install argo-egi-connectors from ar project
-  tags: 
-    - ar-packages
-    - connectors
-  yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
-
-- name: Configure connectors
-  tags: 
-    - connectors_config
-    - connectors
-  template: src=customer.conf.j2
-            dest=/etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf
-            owner=root group=root mode=0644
-            backup=yes
-  with_dict: tenants
-  
-- name: Configure global connectors
-  tags: 
-    - connectors_config
-    - connectors
-  template: src=global.conf.j2
-            dest=/etc/argo-egi-connectors/global.conf
-            owner=root group=root mode=0644
-            backup=yes
-  with_dict: tenants
-
-- name: POEM configuration
-  tags:
-    - connectors_config
-    - poem_config
-  template: src=poem-connector.conf.j2
-            dest=/etc/argo-egi-connectors/poem-connector.conf
-            owner=root group=root mode=0644
-            backup=yes
-
 
 - name: Install ar-compute from ar project
   tags: ar-packages
@@ -182,5 +147,3 @@
               line="# File Parameter for pig exception dump."
               state=present
               backup=yes
-
-- include: 'cron_jobs.yml'
