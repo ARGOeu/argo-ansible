@@ -35,5 +35,3 @@
             dest=/etc/argo-egi-connectors/poem-connector.conf
             owner=root group=root mode=0644
             backup=yes
-            
-- include: 'cron_jobs.yml'
