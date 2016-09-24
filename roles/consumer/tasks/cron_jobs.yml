@@ -47,7 +47,7 @@
         minute=5
         hour=0
         user=root
-        job="/usr/libexec/argo-egi-connectors/weights-gstat-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        job="/usr/libexec/argo-egi-connectors/weights-vapor-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
         state=present disabled={{cron_status}}
   with_dict: tenants
   
