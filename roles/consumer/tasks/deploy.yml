@@ -109,8 +109,8 @@
     - hdfs-site.xml
     - log4j.properties
     - mapred-site.xml
-    - ssl-client.xml
-    - topology.map
+    #- ssl-client.xml
+    #- topology.map
 
     
 - name: Copy out compute engine jobs configuration files
@@ -129,7 +129,7 @@
         owner=root group=root mode=0644
   with_items:
     - hadoop-env.sh
-    - topology.py
+    #- topology.py
 
 - name: Configure pig related parameter
   tags: pig_client_config
