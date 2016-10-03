@@ -1,0 +1,24 @@
+// Open Database
+use argo_msg
+
+
+
+
+// Create projects
+
+
+
+{%- if messaging_api_projects is defined -%}
+
+{%- for project in messaging_api_projects -%}
+
+
+// Create projects
+db.projects.update({"name" : "{{project.name}}"},{ "name":"{{project.name}}","uuid" : "{{project.uuid}}"},{"upsert":"true"})
+
+
+
+{%- endfor -%}
+
+
+{%- endif -%}

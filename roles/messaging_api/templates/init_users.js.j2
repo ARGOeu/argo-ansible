@@ -2,6 +2,8 @@
 use argo_msg
 
 
+
+
 // Create tenants
 
 
@@ -12,7 +14,7 @@ use argo_msg
 
 
 // Create tenant admin user
-db.users.update({"name" : "{{user.username}}"},{ "name":"{{user.username}}","email" : "{{user.email}}", "project" : "{{user.project}}", "token" : "{{user.key}}", "roles" : ["{{user.role}}"]},{"upsert":"true"})
+db.users.update({"name" : "{{user.username}}"},{ "name":"{{user.username}}","email" : "{{user.email}}", "project_uuid" : "{{user.project_uuid}}", "token" : "{{user.key}}", "roles" : ["{{user.role}}"]},{"upsert":"true"})
 
 
 

@@ -5,14 +5,31 @@ argo_msg_store_host: 'localhost'
 argo_msg_store_db: 'argo_msg'
 argo_msg_zookeeper_hosts: '["localhost:2181"]'
 
+messaging_api_projects:
+  -  name: SERVICE
+     uuid: 53056373-ad88-4dbf-9981-6596a0a633de
+  -  name: ARGO
+     uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
+
+
 messaging_api_users:
-  -  username: default_admin
-     project: ARGO
-     key: ADMINTOKEN
-     role: admin
-     email: admin@argo.example.foo
+  -  username: default_service_admin
+     project_uuid: 53056373-ad88-4dbf-9981-6596a0a633de
+     key: ffdb37e45fe8994dd6b0262464968093f2857a0b
+     role: service_admin
+     email: service_admin@argo.example.foo
+  -  username: default_project_admin
+     project_uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
+     key: 4d5c37781694ae20298554be8ba1e1d0a25a8c43
+     role: project_admin
+     email: project_admin@argo.example.foo
   -  username: default_viewer
-     project: ARGO
-     key: VIEWERTOKEN
+     project_uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
+     key: b285b02d3500eab3e4884984dd84e93b5ca4f00e
      role: viewer
      email: viewer@argo.example.foo
+  -  username: default_admin
+     project_uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9 
+     key: 694905bd8184544cd68c46cd5d8e678c73b984a3
+     role: admin
+     email: admin@argo.example.foo
