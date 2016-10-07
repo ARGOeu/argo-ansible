@@ -18,7 +18,7 @@ use argo_msg
 
 
 
-db.users.update({"name" : "{{user.username}}"},{ "name":"{{user.username}}","email" : "{{user.email}}", {%- if user.projects is defined -%} "projects" : [ {%- for prole in user.projects -%} { "project":"{{prole.project}}" {%- if prole.roles is defined -%}, "roles": [ {%- for role in prole.roles -%} "{{role}}" {%- endfor -%} ] {%- endif -%}} {%- endfor -%}],{%- endif -%} {%- if user.service_roles is defined -%} "service_roles": [ {%- for role in user.service_roles -%} "{{role}}" {%- endfor -%}], {%- endif -%} "token" : "{{user.key}}"  },{"upsert":"true"})
+db.users.update({"name" : "{{user.username}}"},{ "name":"{{user.username}}","email" : "{{user.email}}", {%- if user.projects is defined -%} "projects" : [ {%- for prole in user.projects -%} { "project_uuid":"{{prole.project_uuid}}" {%- if prole.roles is defined -%}, "roles": [ {%- for role in prole.roles -%} "{{role}}" {%- endfor -%} ] {%- endif -%}} {%- endfor -%}],{%- endif -%} {%- if user.service_roles is defined -%} "service_roles": [ {%- for role in user.service_roles -%} "{{role}}" {%- endfor -%}], {%- endif -%} "token" : "{{user.key}}"  },{"upsert":"true"})
 
 
 

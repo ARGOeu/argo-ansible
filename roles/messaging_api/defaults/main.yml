@@ -18,21 +18,21 @@ messaging_api_users:
      email: service_admin@argo.example.foo
   -  username: default_project_admin
      projects:
-       - project: ARGO
+       - project_uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
          roles:
           - project_admin
      key: 4d5c37781694ae20298554be8ba1e1d0a25a8c43
      email: project_admin@argo.example.foo
   -  username: default_viewer
      projects:
-       - project: ARGO
+       - project_uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
          roles:
           - viewer
      key: b285b02d3500eab3e4884984dd84e93b5ca4f00e
      email: viewer@argo.example.foo
   -  username: default_admin
      projects:
-       - project: ARGO
+       - project_uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
          roles:
           - admin
      key: 694905bd8184544cd68c46cd5d8e678c73b984a3
