@@ -1,10 +1,10 @@
 // Open Database
+
+
 use argo_msg
 
+// Begin inserting new users
 
-
-
-// Create tenants
 
 
 
@@ -13,8 +13,12 @@ use argo_msg
 {%- for user in messaging_api_users -%}
 
 
-// Create tenant admin user
-db.users.update({"name" : "{{user.username}}"},{ "name":"{{user.username}}","email" : "{{user.email}}", "project_uuid" : "{{user.project_uuid}}", "token" : "{{user.key}}", "roles" : ["{{user.role}}"]},{"upsert":"true"})
+;
+
+
+
+
+db.users.update({"name" : "{{user.username}}"},{ "name":"{{user.username}}","email" : "{{user.email}}", {%- if user.projects is defined -%} "projects" : [ {%- for prole in user.projects -%} { "project":"{{prole.project}}" {%- if prole.roles is defined -%}, "roles": [ {%- for role in prole.roles -%} "{{role}}" {%- endfor -%} ] {%- endif -%}} {%- endfor -%}],{%- endif -%} {%- if user.service_roles is defined -%} "service_roles": [ {%- for role in user.service_roles -%} "{{role}}" {%- endfor -%}], {%- endif -%} "token" : "{{user.key}}"  },{"upsert":"true"})
 
 
 
