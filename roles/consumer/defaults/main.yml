@@ -17,6 +17,7 @@ tenants:
     outputdir: "/var/lib/argo-connectors/TenantA/"
     jobs_all: "JOB_TenantA_ALL, JOB_TenantA_PART"
     prefilter: "prefilter-tenantA.py"
+    cron_weight_minute: 30
     jobs_details:
       - name: "JOB_TenantA_ALL"
         Directory: "TenantA_ALL"
@@ -43,6 +44,7 @@ tenants:
       - "broker3.example.com"
     outputdir: "/var/lib/argo-connectors/TenantB/"
     jobs_all: "JOB_TenantB_SERVICES"
+    cron_weight_minute: 35
     jobs_details:
       - name: "JOB_TenantB_SERVICES"
         Directory: "SERVICES"

@@ -44,13 +44,13 @@
     - cron_jobs
   cron: cron_file=weights_{{ item.key | lower }}
         name=weights_{{ item.key | lower }}
-        minute=5
+        minute={{item.value.cron_weight_minute}}
         hour=0
         user=root
         job="/usr/libexec/argo-egi-connectors/weights-vapor-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
         state=present disabled={{cron_status}}
   with_dict: tenants
-  
+
 - name: Configure ar-compute job cycle hourly cron 
   tags: 
     - compute_config
