@@ -3,7 +3,7 @@
 - name: Install epel repo files
   yum: name={{ epel_release }}
        state=present
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  when: (ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6') 
 
 - name: Install EPEL repo.
   yum:
@@ -34,7 +34,7 @@
   copy: src=etc/yum.repos.d/argo.repo
         dest=/etc/yum.repos.d/argo.repo backup=no
         owner=root group=root mode=0644
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  when: ( ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6' ) 
 
 - name: Install mongodb repo
   tags: mongodb_repo
@@ -56,7 +56,9 @@
   copy: src=etc/yum.repos.d/EGI-trustanchors.repo
         dest=/etc/yum.repos.d/EGI-trustanchors.repo backup=no
         owner=root group=root mode=0644
-  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webui or (ca_bundle_install is defined and ca_bundle_install)
+  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webui or 
+        (ca_bundle_install is defined and ca_bundle_install) or 
+        inventory_hostname in groups.poem
 
 - name: Install cloudera-cdh5 repo
   tags: cloudera-cdh5_repo
