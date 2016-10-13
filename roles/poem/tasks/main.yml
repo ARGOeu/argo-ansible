@@ -11,6 +11,10 @@
     - zsh
   tags: install_requirements
 
+- name: Install EGI-trustanchors packages
+  tags: trustanchors-packages
+  yum: name=ca-policy-egi-core state=present
+  
 - name: Install poem package from argo repository
   yum: name=poem state=latest enablerepo={{ enabled_argo_repo }}  update_cache=yes
   tags: install_poem
