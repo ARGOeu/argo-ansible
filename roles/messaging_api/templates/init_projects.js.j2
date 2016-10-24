@@ -14,7 +14,7 @@ use argo_msg
 
 
 // Create projects
-db.projects.update({"name" : "{{project.name}}"},{ "name":"{{project.name}}","uuid" : "{{project.uuid}}"},{"upsert":"true"})
+db.projects.update({"name" : "{{project.name}}"},{ "name":"{{project.name}}","uuid" : "{{project.uuid}}", "created_on":new ISODate(), "modified_on": new ISODate()},{"upsert":"true"})
 
 
 
