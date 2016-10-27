@@ -8,6 +8,15 @@
     - nagios-plugins
     - nagios-plugins-disk
 
+- name: 5666 port is open to monitor(s)
+  command: firewall-cmd --permanent --zone=public --add-rich-rule="rule family='ipv4' source address='{{ item }}/32' port port=5666 protocol='tcp' accept"
+  with_items: monitoring_hosts
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+- name: Bounce firewalld
+  service: name=firewalld state=reloaded
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
 - name: Copy nrpe configuration file on host
   tags: 
     - monitoring
