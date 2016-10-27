@@ -233,7 +233,14 @@ $ ansible-playbook standalone-deletetenant.yml -vvv
 
 ## Monitoring your services
 
-In case you are using Nagios or Icinga for health monitoring purposes a minimal `is_monitored` role is included in the repo. The puspose of this role is to install and configure the nrpe service on your target machines. Modify the remote host variable within the `roles/is_monitored/defaults/main.yml` file and include it in your playbooks. 
+In case you are using Nagios or Icinga for health monitoring purposes a minimal `is_monitored` role 
+is included in the repo. The purpose of this role is to install and configure the nrpe service 
+on your target machines. Modify the remote host variable within the `roles/is_monitored/defaults/main.yml` 
+file and include it in your playbooks. 
+
+These variables are:
+ - monitoring_hosts: list of monitoring hosts
+ - nrpe_allowed_hosts: a comma separated list of monitoring hosts (IPs).
 
 ## Users role
 
