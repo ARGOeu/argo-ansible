@@ -5,9 +5,10 @@
   roles:
     - { role: selinux, tags: selinux_disable}
     - { role: timezone, tags: timezone}
+    - { role: has_certificate, tags: has_certificate}
     - { role: firewall, tags: firewall }
     - { role: repos, tags: repos }
-    - { role: zookeeper, tags: zookeeper_install,zookeeper_config }
+    - { role: zookeeper, tags: zookeeper }
     - { role: kafka, tags: kafka_install,kafka_config }
     - { role: mongodb, tags: mongodb }
-    - { role: messaging_api, task: deploy }
+    - { role: messaging_api, task: deploy ,tags: messaging}

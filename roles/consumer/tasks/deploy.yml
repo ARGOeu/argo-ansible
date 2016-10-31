@@ -79,25 +79,17 @@
 
 
 - name: Install ar-compute from ar project
-  tags: ar-packages
+  tags: ce-packages
   yum: name=ar-compute state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
 
 - name: Copy out compute engine configuration file
-  tags: ce_config
+  tags: 
+    - ce-packages
+    - ce_config
   template: src=ar-compute-engine.conf.j2
             dest=/etc/ar-compute-engine.conf
             owner=root group=root mode=0644
             backup=yes
-
-- name: Install ar-data-retention from ar project
-  tags: ar-data-retention
-  yum: name=ar-data-retention state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
-
-- name: Parametrize data retention policies
-  tags: data_retention
-  template: src=ar-data-retention.conf.j2
-            dest=/etc/ar-data-retention/ar-data-retention.conf
-            owner=root group=root mode=0644
 
 - name: Configure hadoop (mr) related parameter files
   tags: hadoop_client_config
@@ -109,8 +101,8 @@
     - hdfs-site.xml
     - log4j.properties
     - mapred-site.xml
-    #- ssl-client.xml
-    #- topology.map
+    - ssl-client.xml
+    - topology.map
 
     
 - name: Copy out compute engine jobs configuration files
@@ -129,7 +121,7 @@
         owner=root group=root mode=0644
   with_items:
     - hadoop-env.sh
-    #- topology.py
+    - topology.py
 
 - name: Configure pig related parameter
   tags: pig_client_config
