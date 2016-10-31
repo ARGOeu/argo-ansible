@@ -12,7 +12,9 @@
 - name: allow bind port 443
   shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-messaging/argo-messaging
   tags: messaging_api
-
+  
+- name: Create directory 
+  file: path={{ argo_msg_path }}certs state=directory mode=0755
 
 - name: Move init_roles.js script
   template: dest="/tmp/init_roles.js" owner=root group=root mode=640 src=init_roles.js.j2

@@ -4,6 +4,6 @@
   "zookeeper_hosts":{{argo_msg_zookeeper_hosts}},
   "store_host":"{{argo_msg_store_host}}",
   "store_db":"{{argo_msg_store_db}}",
-  "certificate":"/etc/pki/tls/certs/localhost.crt",
-  "certificate_key":"/etc/pki/tls/private/localhost.key"
+  "certificate":"{{argo_msg_path}}/certs/localhost.crt",
+  "certificate_key":"{{argo_msg_path}}/certs/localhost.key"
 }

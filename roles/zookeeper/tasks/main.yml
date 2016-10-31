@@ -4,7 +4,7 @@
 # https://github.com/hpcloud-mon/ansible-zookeeper
 
 - name: Install OpenJDK
-  yum: name=java-1.7.0-openjdk state=present
+  yum: name=java-1.7.0-openjdk state=latest
   tags: zookeeper_install
 
 - name: setup group
@@ -19,6 +19,9 @@
   file: path="{{zookeeper_dir}}" state=directory owner=zookeeper group=zookeeper recurse=yes
   tags: zookeeper_install
 
+- name: Create directory 
+  file: path=/var/lib/zookeeper state=directory mode=0755
+    
 - name: Remove older downloaded Zookeeper tgz file
   command: rm -f {{zookeeper_dir}}/zookeeper-{{zookeeper_version}}.tar.gz
   tags: zookeeper_install
@@ -43,6 +46,9 @@
   when: zookeeper_service | changed
   tags: zookeeper_install
 
+- name: Enable and start zookeeper
+  command: /opt/zookeeper-3.4.6/bin/zkServer.sh start
+  
 - name: Setup zoo.cfg
   template: dest="{{zookeeper_conf_dir}}/zoo.cfg" src=zoo.cfg.j2
   notify:
