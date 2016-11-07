@@ -1,4 +1,6 @@
 [General]
+WriteMsgFile = {{WriteMsgFile}} 
+WriteMsgIngestion = {{WriteMsgIngestion}} 
 LogName = argo-{{ item.key | lower }}-consumer
 WritePlaintext = False
 LogMsgOutAllowedTime = True
@@ -39,3 +41,16 @@ UseSSL = False
 Directory = {{data_path}}argo-{{ item.key | lower }}-consumer
 Filename = argo-consumer_log_DATE.avro
 ErrorFilename = argo-consumer_error_log_DATE.avro
+
+[MsgIngestion]
+Host = {{MsgIngestion_Host}}
+Token = {{MsgIngestion_Token}}_{{ item.key | upper }}
+Tenant = {{ item.key | upper }}
+BulkSize = 100
+
+[MsgFile]
+Directory = {{data_path}}argo-{{ item.key | lower }}-consumer/
+Filename = argo-consumer_log_DATE.avro
+ErrorFilename = argo-consumer_error_log_DATE.avro
+WritePlaintext = False
+BulkSize = 1
