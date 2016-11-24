@@ -13,4 +13,4 @@
     - { role: mongodb, tags: mongodb }
     # Ingestion api is based on messaging api
     - { role: messaging_api, tags: messaging_api }
-    - { role: ingestion_api, tags: ingestion_api }
+    
