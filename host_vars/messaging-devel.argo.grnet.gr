@@ -1,0 +1,43 @@
+---
+
+iptables_rules:
+  input:
+    - { dport: "443",   proto: "tcp", policy: "accept"}
+    - { dport: "5666",  proto: "tcp", policy: "accept"}
+    - { dport: "27017", proto: "tcp", policy: "accept"}
+
+mongo_bind_interfaces: 127.0.0.1
+
+enabled_argo_repo: argo-devel
+
+#messages retention 
+kafka_log_retention_hours: 72
+
+ca_bundle_install: false
+
+argo_msg_bind_ip: ''
+argo_msg_port: 443
+argo_msg_store_host: 'localhost'
+argo_msg_store_db: 'argo_msg'
+
+
+messaging_api_projects:
+  -  name: ARGO
+     uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
+
+messaging_api_users:
+  -  username: default_project_admin
+     uuid: c5e4ce83-bd97-40ca-a450-95b4bd4836d3
+     projects:
+       - project_uuid: 3d8cd49d-d671-4d71-9f43-96a8770af9c9
+         roles:
+          - project_admin
+     key: 4affb0cbb75032261bcfb3e6a959fa90bba495ff
+     email: project_admin@argo.example.foo
+     created_by: 2f6dda7a-d636-452a-89db-92013a7eccfb
+  -  username: default_service_admin
+     uuid: 2f6dda7a-d636-452a-89db-92013a7eccfb
+     key: ffdb37e45fe8994dd6b0262464968093f2857a0b
+     service_roles:
+       - service_admin
+     email: service_admin@argo.example.foobar
