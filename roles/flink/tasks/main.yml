@@ -1,0 +1,58 @@
+---
+
+- name: Setup hosts file
+  template: dest="/etc/hosts" src=hosts.j2
+  tags: flink_install
+
+- name: Install OpenJDK
+  yum: name=java-1.7.0-openjdk state=present
+  tags: flink_install
+
+
+- name: setup group
+  group: name=flink system=yes
+  tags: flink_install
+
+- name: Setup user
+  user: name=flink system=yes group=flink
+  tags: flink_install
+
+- name: Change ownership on flink
+  file: path="{{flink_dir}}" state=directory owner=flink group=flink recurse=yes
+  tags: flink_install
+
+- name: Remove older downloaded flink
+  command: rm -f {{flink_dir}}/flink-{{flink_version}}.tgz
+  tags: flink_install
+  ignore_errors: True
+
+- name: Download Flink
+  get_url: url={{flink_url}} dest={{flink_dir}}/flink-{{flink_version}}.tgz timeout=100
+  tags: flink_install
+
+- name: Unpack tarball
+  command: tar xzf {{flink_dir}}/flink-{{flink_version}}.tgz --strip-components=1 chdir={{flink_dir}} creates={{flink_dir}}/bin
+  tags: flink_install
+
+- name: Setup flink-conf
+  template: dest="{{flink_dir}}/conf/flink-conf.yaml" src=flink-conf.yaml.j2
+  tags: flink_install
+
+- name: Setup conf masters file
+  template: dest="{{flink_dir}}/conf/masters" src=masters.j2
+  tags: flink_install
+
+- name: Setup conf slaves file
+  template: dest="{{flink_dir}}/conf/slaves" src=slaves.j2
+  tags: flink_install
+
+- name: Open Webui port
+  command: firewall-cmd --zone=dmz --add-port=8080/tcp
+  tags: flink_install
+
+- name: Open Webui port
+  command: firewall-cmd --runtime-to-permanent
+  tags: flink_install
+
+
+- meta: flush_handlers
