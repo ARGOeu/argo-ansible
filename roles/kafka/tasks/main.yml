@@ -47,6 +47,14 @@
   file: path={{kafka_data_dir}} state=directory owner=kafka group=kafka mode=755
   tags: kafka_config
 
+- name: Open firewalld port 9092 for zookeeper
+  command: firewall-cmd --zone=public --add-port=9092/tcp --permanent
+  tags: kafka_config
+  
+- name: restart firewalld 
+  command: service firewalld restart
+  tags: kafka_config
+  
 - name: Create log_dir
   file: path={{kafka_log_dir}} state=directory owner=kafka group=kafka mode=755
   tags: kafka_config
@@ -67,6 +75,10 @@
 
 - name: create server.properties
   template: dest="{{kafka_conf_dir}}/server.properties" owner=kafka group=kafka mode=640 src=server.properties.j2
+  tags: kafka_config
+  
+- name: create meta.properties
+  template: dest="{{kafka_data_dir}}/meta.properties" owner=kafka group=kafka mode=640 src=meta.properties.j2
   notify:
     - restart kafka
   tags: kafka_config
