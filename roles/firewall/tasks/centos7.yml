@@ -1,10 +1,16 @@
 ---
 
-- name: Enable required ports
+- name: Enable required services (services dict)
   command: firewall-cmd --zone=public --add-service={{item}} --permanent
   with_items: services
   when: services is defined
 
+
+- name: Enable required ports (iptables_rules dict) 
+  command: firewall-cmd --zone=public --add-port={{item.dport}}/{{item.proto}} --permanent
+  with_items: iptables_rules
+  when: iptables_rules is defined
+  
 - name: Restart firewalld
   command: systemctl restart firewalld
   
