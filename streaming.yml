@@ -5,4 +5,4 @@
   roles:
     - { role: selinux, tags: selinux_disable}
     - { role: timezone, tags: timezone}
-    - { role: flink, tags: flink_install}
+    - { role: flink, task: deploy}
