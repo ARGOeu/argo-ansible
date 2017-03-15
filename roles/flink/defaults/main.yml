@@ -8,6 +8,7 @@ flink_url: http://www-eu.apache.org/dist/flink/flink-{{flink_version}}/flink-{{f
 
 flink_master: master.example
 flink_master_ip: 192.168.0.1
+flink_task_slots: 4
 
 java_home: /usr/lib/jvm/jre-1.7.0-openjdk
 
