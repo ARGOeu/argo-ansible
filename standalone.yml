@@ -3,13 +3,14 @@
 - hosts: standalone
   sudo: true
   roles:
-    - { role: firewall        , tags: firewall        }
-    - { role: repos           , tags: repos           }
-    - { role: ca_bundle       , tags: ca_bundle       }
-    - { role: has_certificate , tags: has_certificate }
-    - { role: consumer        , task: deploy        }
+    #- { role: firewall        , tags: firewall        }
+    #- { role: repos           , tags: repos           }
+    #- { role: ca_bundle       , tags: ca_bundle       }
+    #- { role: has_certificate , tags: has_certificate }
+#    - { role: consumer        , task: deploy        }
     - { role: consumer        , task: connectors        }
-    - { role: consumer        , task: cron_jobs        }
-    - { role: logging_config  , tags: logging_config  }
-    - { role: mongodb         , tags: mongodb         }
-    - { role: webapi          , tags: webapi          }
+#    - { role: consumer        , task: cron_jobs        }
+    #- { role: logging_config  , tags: logging_config  }
+    #- { role: mongodb         , tags: mongodb         }
+    #- { role: webapi          , tags: webapi          }
+    - { role: consumer        , task: delete_files        }
