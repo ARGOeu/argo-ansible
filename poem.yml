@@ -7,5 +7,6 @@
     - { role: selinux, tags: selinux }
     - { role: repos,    tags: repos    }
     - { role: users, tags: init_users}
+#    - { role: is_monitored, tags: init_users}
     - { role: has_certificate, tags: certificate }
     - { role: poem,     tags: poem     }

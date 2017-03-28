@@ -46,7 +46,7 @@
   copy: src=etc/yum.repos.d/mongodb-org-3.2.repo
         dest=/etc/yum.repos.d/mongodb-org-3.2.repo backup=no
         owner=root group=root mode=0644
-  when: (inventory_hostname in groups.messaging or inventory_hostname in groups.ingestion) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+  when: (inventory_hostname in groups.messaging ) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
 
 
 - name: Install EGI-trustanchors repository definitions
@@ -77,3 +77,31 @@
   yum: name=http://repository.egi.eu/sw/production/umd/3/sl6/x86_64/updates/umd-release-3.0.1-1.el6.noarch.rpm
        state=present
   when: inventory_hostname in groups.monitoring_engine and nagios_plugins_umd is defined
+
+- name: Install promoo repo
+  tags: monitoring_engine_repo
+  copy: src=etc/yum.repos.d/promoo.repo
+        dest=/etc/yum.repos.d/promoo.repo backup=no
+        owner=root group=root mode=0644
+  when: inventory_hostname in groups.monitoring_engine
+
+- name: Install rocci repo
+  tags: monitoring_engine_repo
+  copy: src=etc/yum.repos.d/rocci.repo
+        dest=/etc/yum.repos.d/rocci.repo backup=no
+        owner=root group=root mode=0644
+  when: inventory_hostname in groups.monitoring_engine
+  
+- name: Install qcg repo
+  tags: monitoring_engine_repo
+  copy: src=etc/yum.repos.d/qcg.repo
+        dest=/etc/yum.repos.d/qcg.repo backup=no
+        owner=root group=root mode=0644
+  when: inventory_hostname in groups.monitoring_engine
+
+- name: Install unicore repo
+  tags: monitoring_engine_repo
+  copy: src=etc/yum.repos.d/unicore-7.repo
+        dest=/etc/yum.repos.d/unicore-7.repo backup=no
+        owner=root group=root mode=0644
+  when: inventory_hostname in groups.monitoring_engine

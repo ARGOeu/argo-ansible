@@ -20,13 +20,14 @@
   tags: install_poem
 
 - name: Create poem.ini file
+  tags: install_poem
   template: src=poem.ini.j2
             dest=/etc/poem/poem.ini backup=yes
             owner=root group=root mode=0644
             
 - name: upload certificate 
   tags: poem_certificate
-  copy: src=DigiCertCA.crt
+  copy: src=private_files/DigiCertCA.crt
         dest=/etc/pki/tls/certs/DigiCertCA.crt backup=yes
         owner=root group=root mode=0400
         
@@ -41,3 +42,11 @@
 - name: Start and enable httpd service
   service: name=httpd state=started enabled=yes
 
+- stat: path=/etc/grid-security/hostkey.pem
+  tags: poem_certificate, poem_cert
+  register: hostkey_file
+  
+- name: change hostkey permissions
+  tags: poem_certificate, poem_cert
+  file: path=/etc/grid-security/hostkey.pem  mode=0404 
+  when: hostkey_file.stat.exists
