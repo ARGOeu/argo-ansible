@@ -114,23 +114,24 @@ $ ansible-playbook -v webui.yml
 
 ## POEM deployment
 
-Contains Ansible playbook for the deployment of the ARGO POEM service. The play is split into four (4) roles:
+Contains Ansible playbook for the deployment of the ARGO POEM service. The play is split into five (5) roles:
 - firewall (configures iptables firewall rules)
+- selinux (disables selinux for centos7). Please restart you vm after sucessful installation
 - repos (includes tasks for the installation of the required repository definitions)
 - has_certificate (task for uploading the certificate file onto the host under the appropriate path)
 - poem (installs and bootstraps poem service)
 
 ### Things to do before deployment
 
-- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `{{inventory_hostname}}.key` and `{{inventory_hostname}}.pem` respectively. As `{{inventory_hostname}}` use the exact name used within the `inventory` file. 
+- Obtain a key/certificate pair from a trusted CA and after place them both under roles/has_certificate/files with names `{{inventory_hostname}}.key` and `{{inventory_hostname}}.pem` respectively. As `{{inventory_hostname}}` use the exact name used within the `inventory` file. If you don't add a certificate the http service will not start. 
 - Edit inventory and replace `poem.node` with the hostname that you intend to deploy the POEM service onto. 
 - Create a `host_vars/{{inventory_hostname}}` file and place therein the variables found within the `roles/poem/defaults/main.yml` file in order to overwrite them. 
   - In order to generate a uuid to be used in the place of the `poem_secret` variable you may use the `uuidgen` linux cli utility. 
+  - Dont forget to add the correct URL to topology tool (like gocdb)
 
 ### Prerequisites
 
-- Deploy against CentOS 6.x node
-- Make sure `libselinux-python` is installed on the target node
+- Deploy against CentOS 7.x node
 - Ansible version used is `1.9.2`
 
 ### How to deploy
@@ -138,6 +139,17 @@ Contains Ansible playbook for the deployment of the ARGO POEM service. The play 
 ```bash
 $ ansible-playbook -v poem.yml
 ```
+
+Then **restart your vm**
+
+### How to Initialize your poem instance
+
+ - The superadmin user data is located at /etc/poem/poem.ini . Dont forget to change the password.
+ - Run  poem-createdb to initialize the poem instance (superadmin, poem data)
+ - poem-syncvo, poem-syncservtype - scripts need to be executed as root immediately after an installation. Subsequent syncs from both sources are executed every hour as a part of a cron job.
+ - Please check poem log files at /var/log/poem/poem.log to ensure that everything is working properly. 
+ 
+ Visit [Guides](http://argoeu.github.io/guides/) to learn more about poem installation. 
 
 ## Full standalone deployment
 
