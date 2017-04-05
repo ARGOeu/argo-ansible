@@ -1,18 +1,1 @@
-{% for poem in poem_servers %}
-[PoemServer{{ loop.index }}]
-Host = {{ poem.host }}
-VO = {{ poem.vos|join(', ') }}
-
-{% endfor %}
-
-
-[FetchProfiles]
-List = {{ poem_fetch_profiles|join(', ')|upper }}
-
-[PrefilterData]
-AllNGI1 = opsmon.egi.eu
-AllNGIProfiles1 = ch.cern.sam.OPS_MONITOR, ch.cern.sam.OPS_MONITOR_CRITICAL
-AllNGI2 = argo-mon.egi.eu
-AllNGIProfiles2 = ch.cern.sam.ARGO_MON, ch.cern.sam.ARGO_MON_OPERATORS, ch.cern.sam.ARGO_MON_CRITICAL, ch.cern.sam.CLOUD-MON, ch.cern.sam.CLOUD-MON_CRITICAL
-AllNGI3 = argo-mon2.egi.eu
-AllNGIProfiles3 = ch.cern.sam.ARGO_MON, ch.cern.sam.ARGO_MON_OPERATORS, ch.cern.sam.ARGO_MON_CRITICAL, ch.cern.sam.CLOUD-MON, ch.cern.sam.CLOUD-MON_CRITICAL
+{% include "private_files/" + ansible_fqdn + "/templates/poem-connector.conf.j2"  %}
