@@ -36,6 +36,21 @@
         state=present disabled={{cron_status}}
   with_dict: tenants
 
+- name: downtimes-connector cron job
+  tags: 
+    - connectors_config
+    - connectors
+    - downtimes_cron
+    - cron_jobs
+  cron: cron_file=downtimes_{{ item.key | lower }}
+        name=downtimes_{{ item.key | lower }}
+        minute=15
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/downtimes-gocdb-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf -d $(date "+\%Y-\%m-\%d")"
+        state=present disabled={{cron_status}}
+  with_dict: tenants
+  
 - name: Configure weights connector per tenant cron job
   tags: 
     - connectors_config
@@ -91,3 +106,4 @@
         user=root
         job="/usr/libexec/ar-compute/bin/poller_ar.py -t EGI"
         state=present disabled={{cron_status}}
+ 
