@@ -16,6 +16,10 @@ lavoisier.ssl.keyStorePassword={{ keystore_password }}
 # Key used to interact with the ARGO API
 argo.api.key={{ argo_api_key }}
 
+# Key used to interact with the ARGO API for test tenant
+{% if ngihr.api.key is defined %}
+ngihr.api.key={{ ngihr.api.key }}
+{% endif %}
 
 # Host of the service, used to generate relative urls
 server.baseUrl=http://{{ inventory_hostname }}
