@@ -14,6 +14,7 @@ db.roles.insert([
 {"resource" : "projects:delete", "roles" : [ "service_admin","project_admin" ] },
 {"resource" : "topics:list", "roles" : ["project_admin" ] },
 {"resource" : "topics:publish", "roles" : [ "project_admin","publisher" ] },
+{"resource" : "topics:metrics", "roles" : [ "project_admin","publisher" ] },
 {"resource" : "topics:list", "roles" : [ "project_admin" ] },
 {"resource" : "topics:show", "roles" : [ "project_admin" ] },
 {"resource" : "topics:create", "roles" : [ "project_admin" ] },
@@ -27,6 +28,9 @@ db.roles.insert([
 {"resource" : "subscriptions:acknowledge", "roles" : [ "project_admin", "consumer" ] },
 {"resource" : "subscriptions:show", "roles" : [ "project_admin" ] },
 {"resource" : "subscriptions:pull", "roles" : [ "project_admin","consumer" ] },
+{"resource" : "subscriptions:offsets", "roles" : [ "project_admin","consumer" ] },
+{"resource" : "subscriptions:modifyOffset", "roles" : [ "project_admin","consumer" ] },
+{"resource" : "subscriptions:metrics", "roles" : [ "project_admin","consumer" ] },
 {"resource" : "subscriptions:acl", "roles" : [ "project_admin" ] },
 {"resource" : "subscriptions:modifyAcl", "roles" : [ "project_admin" ] },
 {"resource" : "subscriptions:modifyPushConfig", "roles" : [ "project_admin" ] }
