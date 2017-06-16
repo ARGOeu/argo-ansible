@@ -29,6 +29,16 @@
     curl -L https://api.github.com/repos/swagger-api/swagger-ui/tarball
     | tar xz -C /tmp/swagger --strip-components 1
 
+- name: Remove stage directory
+  shell: rm -rf /var/www/html/{{ item.name }}.old
+  with_items: '{{swagger_docs}}'
+  ignore_errors: True
+  
+- name: Stage old data 
+  command: mv /var/www/html/{{ item.name }} /var/www/html/{{ item.name }}.old
+  with_items: '{{swagger_docs}}'
+
+
 - name: Create swagger directories
   tags: swagger
   file: path=/var/www/html/{{ item.name }} state=directory owner=root group=root mode=0755
