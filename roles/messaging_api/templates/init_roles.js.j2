@@ -7,6 +7,7 @@ db.roles.insert([
 {"resource" : "users:update", "roles" : [ "service_admin","project_admin" ] },
 {"resource" : "users:refreshToken", "roles" : [ "service_admin","project_admin" ] },
 {"resource" : "users:delete", "roles" : [ "service_admin","project_admin" ] },
+{"resource" : "projects:metrics", "roles" : [ "service_admin", "project_admin"] },
 {"resource" : "projects:list", "roles" : [ "service_admin"] },
 {"resource" : "projects:create", "roles" : [ "service_admin" ] },
 {"resource" : "projects:show", "roles" : [ "service_admin","project_admin" ] },
@@ -14,7 +15,7 @@ db.roles.insert([
 {"resource" : "projects:delete", "roles" : [ "service_admin","project_admin" ] },
 {"resource" : "topics:list", "roles" : ["project_admin" ] },
 {"resource" : "topics:publish", "roles" : [ "project_admin","publisher" ] },
-{"resource" : "topics:metrics", "roles" : [ "project_admin","publisher" ] },
+{"resource" : "topics:metrics", "roles" : [ "service_admin", "project_admin","publisher" ] },
 {"resource" : "topics:list", "roles" : [ "project_admin" ] },
 {"resource" : "topics:show", "roles" : [ "project_admin" ] },
 {"resource" : "topics:create", "roles" : [ "project_admin" ] },
@@ -30,8 +31,9 @@ db.roles.insert([
 {"resource" : "subscriptions:pull", "roles" : [ "project_admin","consumer" ] },
 {"resource" : "subscriptions:offsets", "roles" : [ "project_admin","consumer" ] },
 {"resource" : "subscriptions:modifyOffset", "roles" : [ "project_admin","consumer" ] },
-{"resource" : "subscriptions:metrics", "roles" : [ "project_admin","consumer" ] },
+{"resource" : "subscriptions:metrics", "roles" : [ "service_admin", "project_admin","consumer" ] },
 {"resource" : "subscriptions:acl", "roles" : [ "project_admin" ] },
 {"resource" : "subscriptions:modifyAcl", "roles" : [ "project_admin" ] },
-{"resource" : "subscriptions:modifyPushConfig", "roles" : [ "project_admin" ] }
+{"resource" : "subscriptions:modifyPushConfig", "roles" : [ "project_admin" ] },
+{"resource" : "ams:metrics", "roles" : [ "service_admin", "project_admin"] }
 ])
