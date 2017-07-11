@@ -10,6 +10,6 @@
     - { role: repos, tags: repos }
     - { role: zookeeper, tags: zookeeper }
     - { role: kafka, tags: kafka_install,kafka_config }
-    - { role: mongodb, task: mongodb }
+    - { role: mongodb, task: deploy }
     - { role: mongodb, task: init_messaging }
     - { role: messaging_api, task: deploy ,tags: messaging}
