@@ -16,7 +16,7 @@
   tags: 
     - ar-packages
     - consumer_config
-  yum: name=argo-egi-consumer state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
+  yum: name=argo-egi-consumer state=present enablerepo={{ enabled_argo_repo }} 
   notify: restart all consumers
 
 - name: Create consumer configuration directories
@@ -45,6 +45,7 @@
 - name: Consumer configuration
   tags: 
     - consumer_config
+    - consumer_conf_config
   template: src=consumer.conf.j2
             dest=/etc/argo-{{ item.key | lower }}-consumer/consumer.conf
             owner=root group=root mode=0644
@@ -103,7 +104,6 @@
     - mapred-site.xml
     - ssl-client.xml
     - topology.map
-
     
 - name: Copy out compute engine jobs configuration files
   tags: ce_config_2

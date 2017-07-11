@@ -19,4 +19,6 @@
 - name: delete unecessary files from /etc/cron.d/topology-vo
   tags: delete-files
   file: path=/etc/cron.d/topology-vo state=absent
+  
+
 

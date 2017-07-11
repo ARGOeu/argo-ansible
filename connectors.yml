@@ -1,8 +1,0 @@
----
-
-- hosts: standalone
-  sudo: true
-  roles:
-    - { role: consumer, task: connectors, tags: connectors }
-    - { role: consumer, task: cron_jobs.yml }
- 

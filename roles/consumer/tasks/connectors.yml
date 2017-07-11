@@ -1,14 +1,20 @@
 ---
 
-- name: Install argo-egi-connectors from ar project
+- name: update connectors
+  shell: yum -y makecache
   tags: 
-    - ar-packages
-    - connectors
-  yum: name=argo-egi-connectors state=latest enablerepo={{ enabled_argo_repo }} update_cache=yes
+    - connectors_config_main
+    - connectors 
+
+- name: update connectors
+  shell: yum update -y argo-egi-connectors
+  tags: 
+    - connectors_config_main
+    - connectors 
 
 - name: Configure connectors
   tags: 
-    - connectors_config
+    - connectors_config_main
     - connectors
   template: src=customer.conf.j2
             dest=/etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf
