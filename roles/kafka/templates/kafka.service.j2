@@ -9,6 +9,7 @@ Group=kafka
 LimitNOFILE=32768
 Restart=on-failure
 Environment="KAFKA_HEAP_OPTS={{ kafka_heap_opts }}"
+Environment="KAFKA_OPTS=-Djava.net.preferIPv4Stack=true"
 ExecStart=/opt/kafka_{{ kafka_scala_version }}-{{ kafka_version }}/bin/kafka-server-start.sh /etc/kafka/server.properties
 
 [Install]
