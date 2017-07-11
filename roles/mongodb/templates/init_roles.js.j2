@@ -1,4 +1,4 @@
-use argo_msg
+use {{argo_msg_store_db}}
 db.roles.drop()
 db.roles.insert([
 {"resource" : "users:list", "roles" : [ "service_admin","project_admin" ] },
