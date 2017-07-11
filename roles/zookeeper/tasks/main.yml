@@ -68,6 +68,11 @@
     - restart zookeeper
   tags: zookeeper_config
 
+- name: Setup java.env
+  template: dest="{{zookeeper_conf_dir}}/java.env" src=java.env.j2
+  notify:
+    - restart zookeeper
+  tags: zookeeper_config
 
 - name: Create log_dir
   file: path={{zookeeper_log_dir}} state=directory owner=zookeeper group=zookeeper mode=755
