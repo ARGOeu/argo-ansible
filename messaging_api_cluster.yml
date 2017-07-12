@@ -1,5 +1,13 @@
 ---
 
+- hosts: mongod
+  sudo: true
+  roles:
+    - { role: firewall, tags: firewall }
+    - { role: has_certificate, tags: has_certificate}
+    - { role: mongodb, task: deploy }
+    - { role: mongodb, task: init_messaging }
+
 - hosts: messaging
   sudo: true
   roles:
@@ -10,6 +18,5 @@
     - { role: repos, tags: repos }
     - { role: zookeeper, tags: zookeeper }
     - { role: kafka, tags: kafka_install,kafka_config }
-    - { role: mongodb, task: deploy }
-    - { role: mongodb, task: init_messaging }
     - { role: messaging_api, task: deploy ,tags: messaging}
+
