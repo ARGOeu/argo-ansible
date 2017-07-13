@@ -73,6 +73,10 @@
     - restart kafka
   tags: kafka_config
 
+- name: remove server.properties
+  file: dest="{{kafka_conf_dir}}/server.properties" state=absent
+  tags: kafka_config
+
 - name: create server.properties
   template: dest="{{kafka_conf_dir}}/server.properties" owner=kafka group=kafka mode=640 src=server.properties.j2
   tags: kafka_config
