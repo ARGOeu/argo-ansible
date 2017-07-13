@@ -5,11 +5,31 @@
   with_items: services
   when: services is defined
 
-
+- name: Enable new services (new_services dict)
+  command: firewall-cmd --new-service={{item.service}} --permanent
+  with_items: new_services
+  when: new_services is defined
+  ignore_errors: True
+  
+- name: Enable required services in internal zone (new_services dict)
+  command: firewall-cmd --zone={{item.zone}} --add-service={{item.service}} --permanent
+  with_items: new_services
+  when: new_services is defined
+  
+- name: Enable required ports (iptables_rules dict) 
+  command: firewall-cmd --service={{item.service}} --add-port={{item.dport}}/{{item.proto}} --permanent
+  with_items: new_services_iptables
+  when: new_services_iptables is defined
+  
 - name: Enable required ports (iptables_rules dict) 
   command: firewall-cmd --zone=public --add-port={{item.dport}}/{{item.proto}} --permanent
   with_items: iptables_rules
   when: iptables_rules is defined
+
+  
+- name: Restart firewalld
+  command: firewall-cmd --reload
+  
   
 - name: Restart firewalld
   command: systemctl restart firewalld
