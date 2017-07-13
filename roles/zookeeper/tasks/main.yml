@@ -61,6 +61,12 @@
     - restart zookeeper
   tags: zookeeper_config
 
+- name: Setup myid
+  template: dest="{{zookeeper_data_dir}}/myid" src=myid.j2
+  notify:
+    - restart zookeeper
+  tags: zookeeper_config
+  
 
 - name: Setup environment
   template: dest="{{zookeeper_conf_dir}}/environment" src=environment.j2
