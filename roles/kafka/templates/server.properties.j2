@@ -111,6 +111,10 @@ zookeeper.connect={{zookeeper_hosts}}
 zookeeper.connection.timeout.ms={{zookeeper_connection_timeout_ms}}
 
 ############################# Replication #############################
-
 # default replication factors for automatically created topics
-default.replication.factor={{replication_factor}}
+
+{% if ( groups['kafka'] | length ) >= 3 -%}
+default.replication.factor=3
+{%- else -%}
+default.replication.factor=1    
+{% endif %}
