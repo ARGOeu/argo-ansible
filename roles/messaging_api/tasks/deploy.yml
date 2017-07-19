@@ -27,14 +27,21 @@
   template: src=check-metrics.sh.j2
             dest=/var/www/argo-messaging/check-metrics.sh backup=yes
             owner=root group=root mode=0755
-  tags: messaging_api
+  tags:
+    - messaging_api
+    - metrics_cron
 
-- cron:
-  name: "check-metrics.sh"
-  minute: "15"
-  hour: "*"
-  job: "/var/www/argo-messaging/check-metrics.sh"
-  tags: messaging_api
+- name: Check metrics cron job
+  tags:
+    - messaging_api
+    - metrics_cron
+  cron: cron_file=ams_check_metrics
+        name=ams_check_metrics
+        minute=15
+        hour=*
+        user=root
+        job="/var/www/argo-messaging/check-metrics.sh"
+        state=present
 
 - name: Start argo-messaging service
   service: name=argo-messaging state=started
