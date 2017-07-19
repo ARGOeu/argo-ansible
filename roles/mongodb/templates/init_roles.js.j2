@@ -1,6 +1,7 @@
 use {{argo_msg_store_db}}
 db.roles.drop()
 db.roles.insert([
+{"resource" : "users:byToken", "roles" : [ "service_admin"] },
 {"resource" : "users:list", "roles" : [ "service_admin","project_admin" ] },
 {"resource" : "users:show", "roles" : [ "service_admin","project_admin" ] },
 {"resource" : "users:create", "roles" : [ "service_admin","project_admin" ] },
