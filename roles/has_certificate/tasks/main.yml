@@ -51,7 +51,7 @@
   when: (inventory_hostname in groups.messaging)
 
 - name: Create p12 key for web ui this is a ducplicate
-  command: openssl pkcs12 -export -in hostcert.pem -inkey hostkey.pem -password pass:{{ keystore_password }} -out server.p12
+  command: openssl pkcs12 -export -in {{cert_dir}}/{{ inventory_hostname }}.pem -inkey{{cert_dir}}/{{ inventory_hostname }}.key -password pass:{{ keystore_password }} -out {{cert_dir}}/server.p12
   when: inventory_hostname in groups.webui
   
 - name: Remove old p12 key for web ui
