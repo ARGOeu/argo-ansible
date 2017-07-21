@@ -3,3 +3,4 @@
 setup.sh
 .*.sw?
 roles/has_certificate/files/*.key
+*.retry

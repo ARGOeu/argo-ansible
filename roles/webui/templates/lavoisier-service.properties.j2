@@ -1,0 +1,16 @@
+lavoisier.http.disable=false
+lavoisier.http.port={{lavoisier_http_port}}
+lavoisier.https.port={{lavoisier_https_port}}
+
+
+
+#javax.net.debug=ssl
+
+### WORKAROUND FOR http://stackoverflow.com/questions/7615645/ssl-handshake-alert-unrecognized-name-error-since-upgrade-to-java-1-7-0
+jsse.enableSNIExtension=false
+
+lavoisier.resource.allow=security/lavoisier-resource-allow.txt
+lavoisier.routes=lavoisier-routes.properties
+
+#Duration of the HTTP session in seconds
+lavoisier.session.timeout=600

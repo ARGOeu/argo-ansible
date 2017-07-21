@@ -1,4 +1,5 @@
 ---
 
+cert_dir: /etc/grid-security/
 cert_path: /etc/grid-security/hostcert.pem
 key_path: /etc/grid-security/hostkey.pem

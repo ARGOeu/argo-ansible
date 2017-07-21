@@ -1,0 +1,22 @@
+---
+
+- hosts: mongod
+  sudo: true
+  roles:
+    - { role: firewall, tags: firewall }
+    - { role: has_certificate, tags: has_certificate}
+    - { role: mongodb, task: deploy }
+    - { role: mongodb, task: init_messaging }
+
+- hosts: messaging
+  sudo: true
+  roles:
+    - { role: selinux, tags: selinux_disable}
+    - { role: timezone, tags: timezone}
+    - { role: has_certificate, tags: has_certificate}
+    - { role: firewall, tags: firewall }
+    - { role: repos, tags: repos }
+    - { role: zookeeper, tags: zookeeper }
+    - { role: kafka, tags: kafka_install,kafka_config }
+    - { role: messaging_api, task: deploy ,tags: messaging}
+

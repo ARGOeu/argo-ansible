@@ -1,0 +1,9 @@
+---
+
+- name: Stop cluster
+  command: stop-cluster.sh
+  tags: flink_cluster_restart
+
+- name: Start cluster
+  command: start-cluster.sh
+  tags: flink_cluster_restart

@@ -1,6 +1,8 @@
 [CUSTOMER_{{item.key|upper}}]
 Name = {{item.key|upper}}
 OutputDir = {{item.value.outputdir}}
+AmsProject = {{item.value.AmsProject}}
+AmsToken = {{item.value.AmsToken}} 
 {% if item.value.jobs_all is defined %}
 Jobs = {{ item.value.jobs_all }}
 {% endif %}

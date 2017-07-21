@@ -1,0 +1,3 @@
+---
+- name: restart flink
+  service: name=flink state=restarted enabled=yes

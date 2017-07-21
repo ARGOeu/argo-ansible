@@ -1,0 +1,46 @@
+---
+
+- name: Configure apache web service
+  blockinfile:
+    dest: /etc/httpd/conf/httpd.conf
+    insertafter: EOF
+    block: |
+      <VirtualHost *:80>
+          ServerName api-doc.argo.grnet.gr
+          Redirect permanent / https://api-doc.argo.grnet.gr/
+          ServerAdmin webmaster@localhost
+          DocumentRoot /var/www/html
+          ErrorLog logs/error.log
+          CustomLog logs/access.log combined
+      </VirtualHost>
+  notify: restart apache
+
+- name: Disable SSLv3
+  lineinfile:
+    dest: /etc/httpd/conf.d/ssl.conf
+    regexp: "^SSLProtocol"
+    line: "SSLProtocol all -SSLv2 -SSLv3"
+  notify: restart apache
+
+- name: Use strong cipher suite
+  lineinfile:
+    dest: /etc/httpd/conf.d/ssl.conf
+    regexp: "^SSLCipherSuite"
+    line: 'SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4"'
+  notify: restart apache
+
+- name: Respect cipher order
+  lineinfile:
+    dest: /etc/httpd/conf.d/ssl.conf
+    regexp: "^SSLHonorCipherOrder"
+    line: "SSLHonorCipherOrder on"
+    insertbefore: "^SSLCipherSuite"
+  notify: restart apache
+
+- name: Define intermediate CA
+  lineinfile:
+    dest: /etc/httpd/conf.d/ssl.conf
+    regexp: "^SSLCertificateChainFile"
+    line: "SSLCertificateChainFile /etc/pki/tls/certs/DigiCertCA.crt"
+    insertafter: "^#SSLCertificateChainFile"
+  notify: restart apache
