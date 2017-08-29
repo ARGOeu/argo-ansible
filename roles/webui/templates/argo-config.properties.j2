@@ -2,6 +2,10 @@
 # ARGO API methods
 ###########################################
 
+{% if api_factor is defined %}
+api.computation.power={{api_factor}}
+{% endif %}
+
 ## to fix timezone and avoid local one
 user.timezone=UTC
 

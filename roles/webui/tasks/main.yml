@@ -65,6 +65,7 @@
   notify: restart webui
 
 - name: Copy etc/argo-config.properties file
+  tags: argo_config
   template: src=argo-config.properties.j2
             dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/argo-config.properties
             owner=root group=root mode=0644
