@@ -3,6 +3,7 @@ SchemaDir = /etc/argo-egi-connectors/schemas/
 EGIDir = {{argo_sync_path}}/EGI
 
 
+{% if AMS_enabled %}
 [General]
 PublishAms = {{ams_configuration.PublishAms}}
 WriteAvro = {{ams_configuration.WriteAvro}}
@@ -11,6 +12,7 @@ WriteAvro = {{ams_configuration.WriteAvro}}
 Host = {{ams_configuration.ams_host}}
 Topic = {{ams_configuration.ams_type_of_data}}
 Bulk = {{ams_configuration.ams_num_of_bulk}}
+{% endif %}
 
 [Authentication]
 VerifyServerCert = False
