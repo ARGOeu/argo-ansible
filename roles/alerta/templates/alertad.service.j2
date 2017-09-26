@@ -1,0 +1,9 @@
+[Unit]
+Description=alertad
+
+[Service]
+Type=simple
+ExecStart={{alerta_server_dir}}/bin/alertad
+
+[Install]
+WantedBy=multi-user.target

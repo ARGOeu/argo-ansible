@@ -1,0 +1,11 @@
+---
+
+- hosts: alerta
+  sudo: true
+  roles:
+    - { role: selinux, tags: selinux_disable}
+    - { role: timezone, tags: timezone}
+    - { role: repos, tags: mongodb_repo}
+    - { role: httpd, tags: httpd, task: deploy}
+    - { role: mongodb, tags: mongodb, task: deploy }
+    - { role: alerta, tags: alerta, task: deploy}

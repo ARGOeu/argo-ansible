@@ -1,0 +1,11 @@
+---
+mail_to : ''
+mail_form: ''  
+smpt_username: ''
+smpt_password: ''
+alerta_server_dir: '/opt/alerta'
+alerta_wsgi_root_dir: '/var/www'
+alerta_dashboard_dir: '/var/www/alerta'
+alerta_dashboard_repo: https://github.com/alerta/angular-alerta-webui.git
+www_url: 'localhost'
+www_alias: 'localhost'

@@ -1,0 +1,13 @@
+[alerta-mailer]
+key = {{alerta_secret.stdout}}
+mail_to = {{mail_to}}
+mail_from = {{mail_from}}
+amqp_url = mongodb://localhost:27017/amqp
+dashboard_url = http://l{{www_alias}}:8000
+smtp_username = {{smpt_username}}
+smtp_password = {{smpt_password}}
+smtp_use_ssl = False
+smpt_use_tle = true
+debug = True
+skip_mta = False
+email_type = text
