@@ -1,0 +1,9 @@
+---
+- name: restart httpd
+  service: name=httpd state=restarted enabled=yes
+
+- name: reload systemctl
+  shell: systemctl daemon-reload
+
+- name: reload firewalld
+  shell: firewall-cmd --reload

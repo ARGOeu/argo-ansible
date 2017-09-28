@@ -1,0 +1,209 @@
+---
+
+- name: Install basic tools
+  yum:
+    name:
+      - net-tools
+      - vim
+      - telnet
+      - screen
+    state: present
+  tags: alerta
+
+- name: Install python pip
+  yum:
+    name:
+      - python-pip
+    state: present
+  tags: alerta
+
+- name: Install mod_wsgi for httpd
+  yum:
+    name:
+      - mod_wsgi
+    state: present
+  tags: alerta
+
+- name: Install httpd tools
+  yum:
+    name:
+      - httpd-tools
+    state: present
+  tags: alerta
+
+- name: Install Virtualenv
+  tags: alerta
+  pip:
+    name: virtualenv
+    state: present
+
+- name: Install Alerta.
+  tags: alerta
+  pip:
+    name:
+      - alerta
+      - alerta-server
+    virtualenv: '{{ alerta_server_dir }}'
+
+- name: Install Alerta-amq and Alerta-mailer
+  tags: alerta
+  shell: '{{alerta_server_dir}}/bin/pip2 install git+https://github.com/alerta/alerta-contrib.git#subdirectory=plugins/amqp'
+
+- name: Install Alerta-amq and Alerta-mailer
+  tags: alerta
+  shell: '{{alerta_server_dir}}/bin/pip2 install git+https://github.com/alerta/alerta-contrib.git#subdirectory=integrations/mailer'
+
+
+- name: generate secret key for alerta
+  shell : LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 32 && echo
+  register: alerta_secret
+
+- name: generate token for alerta-cli
+  shell : LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 32 && echo
+  register: alerta_token
+
+- name: Establish alertad service script
+  template: src=alertad.service.j2 dest=/lib/systemd/system/alertad.service
+  notify: reload systemctl
+  tags: alerta
+
+- name: create symlink for alerta.service
+  tags: alerta
+  file:
+    src: /lib/systemd/system/alertad.service
+    dest: /etc/systemd/system/alertad.service
+    state: link
+
+- name: Establish alerta-mailer service script
+  template: src=alerta-mailer.service.j2 dest=/lib/systemd/system/alerta-mailer.service
+  notify: reload systemctl
+  tags: alerta
+
+- name: create symlink for alerta-mailer.service
+  tags: alerta
+  file:
+    src: /lib/systemd/system/alerta-mailer.service
+    dest: /etc/systemd/system/alerta-mailer.service
+    state: link
+
+- name: Setup alerta log directory
+  tags: alerta
+  file:
+    path: '/var/log/alerta'
+    state: directory
+
+- name: configure alertad
+  template: src=alertad.conf.j2 dest=/etc/alertad.conf
+  tags: alerta
+
+- name: configure alerta cli
+  template: src=alerta.conf.j2 dest=/root/.alerta.conf
+  tags: alerta
+
+- name: configure alerta-mailer
+  template: src=alertad.conf.j2 dest=/etc/.alerta-mailer.conf
+  tags: alerta
+
+
+- name: create alerta wsgi root
+  tags: alerta
+  file:
+    path: '{{ alerta_wsgi_root_dir }}'
+    state: directory
+
+- name: Setup httpd sites available directory
+  tags: alerta
+  file:
+    path: '/etc/httpd/sites-available'
+    state: directory
+
+- name: Setup httpd sites enabled directory
+  tags: alerta
+  file:
+    path: '/etc/httpd/sites-enabled'
+    state: directory
+
+- name: deploy new httpd configuration file
+  template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+  notify: restart httpd
+  tags: alerta
+
+
+- name: configure vhost for aletra
+  tags: alerta
+  notify: restart httpd
+  template:
+    src: vhost.conf.j2
+    dest: '/etc/httpd/sites-available/{{www_alias}}.conf'
+    mode: 0444
+
+- name: create symlink for alerta vhost
+  tags: alerta
+  notify: restart httpd
+  file:
+    src: /etc/httpd/sites-available/snf-771834.vm.okeanos.grnet.gr.conf
+    dest: /etc/httpd/sites-enabled/snf-771834.vm.okeanos.grnet.gr.conf
+    state: link
+
+
+- name: configure wsgi for alerta
+  tags: alerta
+  notify: restart httpd
+  template:
+    src: api.wsgi.j2
+    dest: '{{ alerta_wsgi_root_dir }}/api.wsgi'
+    mode: 0444
+
+- name: Install git
+  tags: alerta
+  yum:
+    name:
+      - git
+    state: present
+  tags: alerta
+
+
+- name: clean dashboard repo folder
+  tags: alerta
+  file:
+    path: '{{ alerta_dashboard_dir }}'
+    state: absent
+
+- name: get alerta dashboard from git repo
+  tags: alerta
+  git:
+    repo: '{{ alerta_dashboard_repo }}'
+    dest: '{{ alerta_dashboard_dir }}'
+    force: yes
+    version: master
+
+- name: Configure Alerta Dashboard
+  tags: alerta
+  template:
+    src: config.js.j2
+    dest: '{{ alerta_dashboard_dir }}/app/config.js'
+    mode: 0444
+
+- name: Open http port
+  notify: reload firewalld
+  tags: alerta
+  firewalld:
+    port: 80/tcp
+    permanent: true
+    state: enabled
+
+- name: Open https port
+  notify: reload firewalld
+  tags: alerta
+  firewalld:
+    port: 443/tcp
+    permanent: true
+    state: enabled
+
+- name: Open api port
+  notify: reload firewalld
+  tags: alerta
+  firewalld:
+    port: 8080/tcp
+    permanent: true
+    state: enabled

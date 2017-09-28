@@ -3,7 +3,7 @@
 - name: Install epel repo files
   yum: name={{ epel_release }}
        state=present
-  when: (ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6') 
+  when: (ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6')
 
 - name: Install EPEL repo.
   yum:
@@ -32,21 +32,21 @@
 - name: Install argo repository definitions
   tags: argo_repo
   template: src=argo.repo.j2 dest=/etc/yum.repos.d/argo.repo backup=no owner=root group=root mode=0644
-  when: ( ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6' ) 
+  when: ( ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6' )
 
 - name: Install mongodb repo
   tags: mongodb_repo
   copy: src=etc/yum.repos.d/mongodb_3.repo
         dest=/etc/yum.repos.d/mongodb_3.repo backup=no
         owner=root group=root mode=0644
-  when: ( inventory_hostname in groups.standalone or inventory_hostname in groups.webapi ) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  when: ( inventory_hostname in groups.standalone or inventory_hostname in groups.webapi  ) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
 
 - name: Install mongodb 3.2 repo
   tags: mongodb_repo
   copy: src=etc/yum.repos.d/mongodb-org-3.2.repo
         dest=/etc/yum.repos.d/mongodb-org-3.2.repo backup=no
         owner=root group=root mode=0644
-  when: (inventory_hostname in groups.messaging ) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+  when: (inventory_hostname in groups.messaging or inventory_hostname in groups.alerta) and ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
 
 
 - name: Install EGI-trustanchors repository definitions
@@ -54,8 +54,8 @@
   copy: src=etc/yum.repos.d/EGI-trustanchors.repo
         dest=/etc/yum.repos.d/EGI-trustanchors.repo backup=no
         owner=root group=root mode=0644
-  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webui or 
-        (ca_bundle_install is defined and ca_bundle_install) or 
+  when: inventory_hostname in groups.standalone or inventory_hostname in groups.webui or
+        (ca_bundle_install is defined and ca_bundle_install) or
         inventory_hostname in groups.poem
 
 - name: Install cloudera-cdh5 repo
@@ -91,7 +91,7 @@
         dest=/etc/yum.repos.d/rocci.repo backup=no
         owner=root group=root mode=0644
   when: inventory_hostname in groups.monitoring_engine
-  
+
 - name: Install qcg repo
   tags: monitoring_engine_repo
   copy: src=etc/yum.repos.d/qcg.repo
