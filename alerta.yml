@@ -5,6 +5,7 @@
   roles:
     - { role: selinux, tags: selinux_disable}
     - { role: timezone, tags: timezone}
+    - { role: has_certificate, tags: has_certificate}
     - { role: repos, tags: mongodb_repo}
     - { role: httpd, tags: httpd, task: deploy}
     - { role: mongodb, tags: mongodb, task: deploy }
