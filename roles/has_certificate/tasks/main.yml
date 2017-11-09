@@ -41,18 +41,14 @@
   copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.pem
         dest={{ argo_msg_path }}certs/localhost.crt backup=yes
         owner=argo-messaging group=argo-messaging
-  when: (inventory_hostname in groups.messaging)
+  when: (inventory_hostname in groups.messaging) and ( argo_msg_path is defined )
 
 - name: Copy host x509 key onto host
   tags: msg_certificate
   copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.key
         dest={{ argo_msg_path }}certs/localhost.key backup=yes
         owner=argo-messaging group=argo-messaging
-  when: (inventory_hostname in groups.messaging)
-
-- name: Create p12 key for web ui
-  command: openssl pkcs12 -export -in hostcert.pem -inkey hostkey.pem -password pass:{{ keystore_password }} -out server.p12
-  when: inventory_hostname in groups.webui
+  when: (inventory_hostname in groups.messaging) and ( argo_msg_path is defined )
   
 - name: Remove old p12 key for web ui
   shell: rm /etc/grid-security/server.p12
