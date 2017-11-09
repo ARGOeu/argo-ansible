@@ -15,7 +15,7 @@
 - name: Configure connectors
   tags: 
     - connectors_config_main
-    - connectros_customer
+    - connectors_customer
     - connectors
   template: src=customer.conf.j2
             dest=/etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf
