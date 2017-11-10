@@ -38,19 +38,19 @@ global
 # SSL global configuration
 
     # LS config
-         
+
     ssl-default-server-options no-tls-tickets
     ssl-default-bind-options no-sslv3
 
 	## Disabling Session Tickets Although disabling session tickets will undoubtedly have a negative performance impact, for the moment being you will need to do that in order to provide forward secrecy
-	
+
     tune.ssl.default-dh-param 2048
     ssl-server-verify none
-   
+
     # ssl ciphers first test
     ssl-default-bind-ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH
 
-	
+
 #---------------------------------------------------------------------
 # common defaults that all the 'listen' and 'backend' sections will
 # use if not designated in their block
@@ -75,7 +75,7 @@ defaults
     timeout check           {{haproxy_timeout_check}}
     maxconn                 {{haproxy_maxconn}}
 
-	
+
 # Statistics Interface Setup
 
 listen stats {{ inventory_hostname }}:{{haproxy_stats_port}}
@@ -92,13 +92,13 @@ listen stats {{ inventory_hostname }}:{{haproxy_stats_port}}
         stats show-node
         stats auth {{haproxy_stats_username}}:{{haproxy_stats_password}}
         stats uri  /haproxy?stats
-	
+
 #---------------------------------------------------------------------
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
 
 
-#frontend 
+#frontend
 frontend  {{haproxy_frontend}}
    bind *:{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}/{{inventory_hostname}}.crt no-sslv3
    bind *:{{haproxy_port_bind}}
@@ -115,11 +115,11 @@ frontend  {{haproxy_frontend}}
 #---------------------------------------------------------------------
 
 
-{% for backendserver in haproxy_backends.input %}
-backend {{backendserver.backend_name}}
- balance {{backendserver.backend_algorithm}}
-    {%for server in haproxy_back_servers.input %}
-    server {{server.back_srv_name}} {{server.back_srv_host}} check {{server.back_srv_opts}}
+{% for backend in haproxy_backends %}
+backend {{backend.name}}
+ balance {{backend.algorithm}}
+    {%for server in backend.servers %}
+    server {{server.name}} {{server.host}} {{server.opts}}
     {% endfor %}
 
 {% endfor %}
