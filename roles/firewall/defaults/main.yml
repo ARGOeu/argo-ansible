@@ -3,3 +3,7 @@
 services:
   - http
   - https
+
+zones:
+  - name: internal
+    nic: eth1

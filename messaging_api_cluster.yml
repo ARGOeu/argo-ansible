@@ -1,22 +1,32 @@
 ---
 
-- hosts: mongod
-  sudo: true
+- hosts: msg_cluster
+  become: true
   roles:
-    - { role: firewall, tags: firewall }
-    - { role: has_certificate, tags: has_certificate}
-    - { role: mongodb, task: deploy }
-    - { role: mongodb, task: init_messaging }
-
-- hosts: messaging
-  sudo: true
-  roles:
+    - { role: basic_utils, tags: basic_utils_install}
     - { role: selinux, tags: selinux_disable}
     - { role: timezone, tags: timezone}
     - { role: has_certificate, tags: has_certificate}
+    - { role: gen_priv_hosts, tags: gen_priv_hosts}
     - { role: firewall, tags: firewall }
     - { role: repos, tags: repos }
+
+
+- hosts: mongod
+  become: true
+  roles:
+    - { role: mongodb, task: deploy }
+    - { role: mongodb, task: init_messaging }
+
+
+- hosts: messaging
+  become: true
+  roles:
     - { role: zookeeper, tags: zookeeper }
     - { role: kafka, tags: kafka_install,kafka_config }
     - { role: messaging_api, task: deploy ,tags: messaging}
 
+- hosts: haproxy
+  become: true
+  roles:
+    - { role: haproxy,    tags: haproxy }

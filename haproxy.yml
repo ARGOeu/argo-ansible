@@ -3,7 +3,9 @@
 - hosts: haproxy
   user: root
   roles:
-    - { role: has_certificate, tags: has_certificate }
+    - {role: selinux}
+    - {role: timezone}
+    #- { role: has_certificate, tags: has_certificate }
     - { role: repos, tags: repos }
     - { role: firewall, tags: firewall }
     - { role: rsyslog, tags: rsyslog }
