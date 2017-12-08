@@ -20,9 +20,9 @@
   tags: install_poem
 
 - name: Create poem.ini file
-  tags: install_poem
+  tags: install_poem_conf
   template: src=poem.ini.j2
-            dest=/etc/poem/poem.ini backup=yes
+            dest=/etc/poem/poem.conf backup=yes
             owner=root group=root mode=0644
             
 - name: upload certificate 
@@ -35,7 +35,11 @@
   template: src=ssl.conf.j2
             dest=/etc/httpd/conf.d/ssl.conf backup=yes
             owner=root group=root mode=0644
-
+            
+- name: update aai metadata
+  tags: poem_aai_metadata
+  shell: wget {{AAI_metadata}} -O /etc/poem/metadata-checkin.xml 
+  
 - name: Run db creation script
   shell: poem-createdb creates={{ db_path }}
 
