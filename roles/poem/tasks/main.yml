@@ -70,13 +70,3 @@
   tags: poem_certificate, poem_cert
   file: path=/etc/grid-security/hostkey.pem  mode=0404 
   when: hostkey_file.stat.exists
-  
-- name: check secret_key 
-  stat: path=/etc/poem/secret_key
-  tags: poem_secret_key
-  register: poem_secret_key
-
-- name: create secret_key 
-  shell: poem-genseckey -f /etc/poem/secret_key
-  tags: poem_secret_key
-  when: poem_secret_key.stat.islnk is not defined 
