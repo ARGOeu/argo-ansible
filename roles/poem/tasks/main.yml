@@ -25,6 +25,22 @@
             dest=/etc/poem/poem.conf backup=yes
             owner=root group=root mode=0644
             
+- name: check secret_key 
+  stat: path=/etc/poem/secret_key
+  tags: poem_secret_key
+  register: poem_secret_key
+
+- name: create secret_key 
+  shell: poem-genseckey -f /etc/poem/secret_key
+  tags: poem_secret_key
+  when: poem_secret_key.stat.islnk is not defined 
+
+- name: copy secret_key 
+  tags: poem_secret_key
+  copy: src=private_files/{{inventory_hostname}}/secret_key
+        dest=/etc/poem/secret_key
+  when: poem_secret_key.stat.islnk is  defined 
+
 - name: upload certificate 
   tags: poem_certificate
   copy: src=private_files/DigiCertCA.crt
