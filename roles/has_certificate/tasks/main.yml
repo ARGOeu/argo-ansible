@@ -29,6 +29,18 @@
         path=/etc/pki/tls/private/localhost.key
   when: (inventory_hostname in groups.standalone) or (inventory_hostname in groups.messaging)
 
+- name: ensure haproxy group
+  group:
+    name: haproxy
+    state: present
+  when: (inventory_hostname in groups.haproxy)
+
+- name: ensure haproxy user
+  user:
+    name: haproxy
+    group: haproxy
+  when: (inventory_hostname in groups.haproxy)
+
 - name: Copy host x509 certificate onto host
   tags: msg_certificate
   copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.pem
@@ -45,7 +57,7 @@
 
 - name: Bundle x509 crt and key in a single pem file
   tags: msg_certificate
-  shell: cat /{{ cert_dir }}/{{ inventory_hostname }}.pem /{{cert_dir}}/{{inventory_hostname}}.key > /{{cert_dir}}/{{inventory_hostname}}.crt 
+  shell: cat /{{ cert_dir }}/{{ inventory_hostname }}.pem /{{cert_dir}}/{{inventory_hostname}}.key > /{{cert_dir}}/{{inventory_hostname}}.crt
   when: (inventory_hostname in groups.haproxy)
 
 
