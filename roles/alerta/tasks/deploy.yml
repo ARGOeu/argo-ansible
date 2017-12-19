@@ -7,6 +7,7 @@
       - vim
       - telnet
       - screen
+      - lsof
     state: present
   tags: alerta
 
@@ -18,6 +19,13 @@
   tags: alerta
 
 - name: Install mod_wsgi for httpd
+  yum:
+    name:
+      - mod_wsgi
+    state: present
+  tags: alerta
+
+- name: Install mod_ssl for httpd
   yum:
     name:
       - mod_wsgi
@@ -54,13 +62,6 @@
   shell: '{{alerta_server_dir}}/bin/pip2 install git+https://github.com/alerta/alerta-contrib.git#subdirectory=integrations/mailer'
 
 
-- name: generate secret key for alerta
-  shell : LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 32 && echo
-  register: alerta_secret
-
-- name: generate token for alerta-cli
-  shell : LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 32 && echo
-  register: alerta_token
 
 - name: Establish alertad service script
   template: src=alertad.service.j2 dest=/lib/systemd/system/alertad.service
@@ -122,17 +123,6 @@
     path: '{{ alerta_wsgi_root_dir }}'
     state: directory
 
-- name: Setup httpd sites available directory
-  tags: alerta
-  file:
-    path: '/etc/httpd/sites-available'
-    state: directory
-
-- name: Setup httpd sites enabled directory
-  tags: alerta
-  file:
-    path: '/etc/httpd/sites-enabled'
-    state: directory
 
 - name: deploy new httpd configuration file
   template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
@@ -140,22 +130,21 @@
   tags: alerta
 
 
-- name: configure vhost for aletra
+- name: configure ssl.conf for aletra
   tags: alerta
   notify: restart httpd
   template:
-    src: vhost.conf.j2
-    dest: '/etc/httpd/sites-available/{{www_alias}}.conf'
+    src: ssl.conf.j2
+    dest: '/etc/httpd/conf.d/ssl.conf'
     mode: 0444
 
-- name: create symlink for alerta vhost
+- name: configure non-ssl.conf for aletra
   tags: alerta
   notify: restart httpd
-  file:
-    src: /etc/httpd/sites-available/snf-771834.vm.okeanos.grnet.gr.conf
-    dest: /etc/httpd/sites-enabled/snf-771834.vm.okeanos.grnet.gr.conf
-    state: link
-
+  template:
+    src: non-ssl.conf.j2
+    dest: '/etc/httpd/conf.d/non-ssl.conf'
+    mode: 0444
 
 - name: configure wsgi for alerta
   tags: alerta
@@ -218,3 +207,10 @@
     port: 8080/tcp
     permanent: true
     state: enabled
+
+- name: Install argo-alert tools
+  tags: alerta
+  pip:
+    name:
+      - '{{argo_alert_repo}}'
+    virtualenv: '{{ alerta_server_dir }}'
