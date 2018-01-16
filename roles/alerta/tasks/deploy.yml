@@ -8,6 +8,7 @@
       - telnet
       - screen
       - lsof
+      - git
     state: present
   tags: alerta
 
@@ -18,26 +19,15 @@
     state: present
   tags: alerta
 
-- name: Install mod_wsgi for httpd
+- name: mod_wsgi, httpd-tools
   yum:
     name:
+      - mod_ssl
       - mod_wsgi
-    state: present
-  tags: alerta
-
-- name: Install mod_ssl for httpd
-  yum:
-    name:
-      - mod_wsgi
-    state: present
-  tags: alerta
-
-- name: Install httpd tools
-  yum:
-    name:
       - httpd-tools
     state: present
   tags: alerta
+
 
 - name: Install Virtualenv
   tags: alerta
@@ -53,15 +43,13 @@
       - alerta-server
     virtualenv: '{{ alerta_server_dir }}'
 
-- name: Install Alerta-amq and Alerta-mailer
+- name: Install Alerta-amqp
   tags: alerta
-  shell: '{{alerta_server_dir}}/bin/pip2 install git+https://github.com/alerta/alerta-contrib.git#subdirectory=plugins/amqp'
+  shell: '{{alerta_server_dir}}/bin/pip2 install git+https://github.com/alerta/alerta-contrib.git@{{alerta_amqp_release}}#subdirectory=plugins/amqp'
 
-- name: Install Alerta-amq and Alerta-mailer
+- name: Install Alerta-mailer
   tags: alerta
-  shell: '{{alerta_server_dir}}/bin/pip2 install git+https://github.com/alerta/alerta-contrib.git#subdirectory=integrations/mailer'
-
-
+  shell: '{{alerta_server_dir}}/bin/pip2 install git+https://github.com/alerta/alerta-contrib.git@{{alerta_mailer_release}}#subdirectory=integrations/mailer'
 
 - name: Establish alertad service script
   template: src=alertad.service.j2 dest=/lib/systemd/system/alertad.service
@@ -116,13 +104,23 @@
   template: src=alertad.conf.j2 dest=/etc/.alerta-mailer.conf
   tags: alerta
 
+- name: create sites-available directory
+  file:
+    path: '/etc/httpd/sites-available'
+    state: directory
+  tags: alerta
+
+- name: create sites-enabled directory
+  file:
+    path: '/etc/httpd/sites-enabled'
+    state: directory
+  tags: alerta
 
 - name: create alerta wsgi root
   tags: alerta
   file:
     path: '{{ alerta_wsgi_root_dir }}'
     state: directory
-
 
 - name: deploy new httpd configuration file
   template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
@@ -154,15 +152,6 @@
     dest: '{{ alerta_wsgi_root_dir }}/api.wsgi'
     mode: 0444
 
-- name: Install git
-  tags: alerta
-  yum:
-    name:
-      - git
-    state: present
-  tags: alerta
-
-
 - name: clean dashboard repo folder
   tags: alerta
   file:
@@ -175,7 +164,7 @@
     repo: '{{ alerta_dashboard_repo }}'
     dest: '{{ alerta_dashboard_dir }}'
     force: yes
-    version: master
+    version: '{{alerta_ui_release}}'
 
 - name: Configure Alerta Dashboard
   tags: alerta
@@ -185,28 +174,46 @@
     mode: 0444
 
 - name: Open http port
-  notify: reload firewalld
-  tags: alerta
   firewalld:
     port: 80/tcp
     permanent: true
     state: enabled
-
-- name: Open https port
   notify: reload firewalld
   tags: alerta
+
+- name: Open https port
   firewalld:
     port: 443/tcp
     permanent: true
     state: enabled
-
-- name: Open api port
   notify: reload firewalld
   tags: alerta
+
+- name: Open api port
   firewalld:
     port: 8080/tcp
     permanent: true
     state: enabled
+  notify: reload firewalld
+  tags: alerta
+
+- name: establish argo-alert config directory
+  tags: alerta
+  file:
+    path: '/etc/argo-alert'
+    state: directory
+
+- name: establish argo-alert mail config directory
+  tags: alerta
+  file:
+    path: '/etc/argo-alert/mail-rules'
+    state: directory
+
+- name: establish argo-alert log directory
+  tags: alerta
+  file:
+    path: '/var/log/argo-alert'
+    state: directory
 
 - name: Install argo-alert tools
   tags: alerta
@@ -214,3 +221,45 @@
     name:
       - '{{argo_alert_repo}}'
     virtualenv: '{{ alerta_server_dir }}'
+
+- name: Deploy argo-alert configurations
+  tags: alerta
+  template:
+    src: argo-alert.conf.j2
+    dest: '/etc/argo-alert/argo-alert-{{item.key}}.conf'
+    mode: 0444
+  with_dict: '{{tenants}}'
+
+- name: Deploy updated hosts
+  tags: alerta
+  template:
+    src: hosts.j2
+    dest: '/etc/hosts'
+
+- name: Install supervisord to control alert-publishing scripts
+  tags: alerta
+  pip:
+    name:
+      - supervisor
+
+- name: Configure supervisord
+  tags: alerta
+  template:
+    src: supervisord.conf.j2
+    dest: '/etc/supervisord.conf'
+    mode: 0444
+  notify: restart supervisord
+
+- name: enable and start supervisord
+  systemd:
+    name: supervisord
+    enabled: yes
+    state: started
+    masked: no
+
+- name: enable and start apache
+  systemd:
+    name: httpd
+    enabled: yes
+    state: started
+    masked: no
