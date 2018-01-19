@@ -238,9 +238,10 @@
 
 - name: Install supervisord to control alert-publishing scripts
   tags: alerta
-  pip:
+  yum:
     name:
       - supervisor
+    state: present
 
 - name: Configure supervisord
   tags: alerta
