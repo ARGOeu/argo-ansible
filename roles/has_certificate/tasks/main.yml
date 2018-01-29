@@ -75,6 +75,12 @@
         owner=argo-messaging group=argo-messaging
   when: (inventory_hostname in groups.messaging) and ( argo_msg_path is defined )
 
+- name: Copy ca-chain file to host
+  tags: alerta-ca-chain
+  copy: src=private_files/{{ inventory_hostname }}/DigiCertCA.crt
+        dest=/etc/grid-security/DigiCertCA.crt
+  when: (inventory_hostname in groups.alerta)
+
 - name: Remove old p12 key for web ui
   shell: rm /etc/grid-security/server.p12
   ignore_errors: True
