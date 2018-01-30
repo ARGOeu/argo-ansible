@@ -7,7 +7,6 @@ zookeeper_hosts: "localhost:2181"
 argo_msg_kafka_znode: ''
 argo_msg_path: '/var/www/argo-messaging/'
 argo_msg_per_resource_auth: 'true'
-argo_msg_service_token: 'b328c3861f061f87cbd34cf34f36ba2ae20883a5'
 argo_msg_log_level: 'INFO'
 
 messaging_api_projects:
