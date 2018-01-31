@@ -103,6 +103,7 @@ frontend  {{haproxy_frontend}}
    bind *:{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}/{{inventory_hostname}}.crt no-sslv3
    bind *:{{haproxy_port_bind}}
    redirect scheme https if !{ ssl_fc }
+   http-response set-header Strict-Transport-Security max-age=31536000     
    option http-server-close
    option forwardfor
    reqadd X-Forwarded-Proto:\ https
