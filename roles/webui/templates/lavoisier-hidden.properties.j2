@@ -22,7 +22,7 @@ ngihr.api.key={{ ngihr_api_key }}
 {% endif %}
 
 # Host of the service, used to generate relative urls
-server.baseUrl=http://{{ inventory_hostname }}
+server.baseUrl={{ inventory_hostname }}
 
 # Email contact used to send emails for recomputation
 contact.email={{ contact_email }}

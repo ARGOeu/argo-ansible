@@ -4,8 +4,9 @@ services:
   - http
   - https
   
-lavoisier_http_port: 80
-lavoisier_https_port: 443
+lavoisier_http_port: 80 # http port used at lavoisier-service.properties
+lavoisier_https_port: 443 #https port  used at lavoisier-service.properties
+lavoisier_http_disable: false # default false. true when enable https used at lavoisier-service.properties
 
 
 tenant_name: einfraname

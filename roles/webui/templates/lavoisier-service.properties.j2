@@ -1,4 +1,8 @@
+{% if lavoisier_http_disable is defined %}
+lavoisier.http.disable={{lavoisier_http_disable}}
+{% else %}
 lavoisier.http.disable=false
+{% endif %}
 lavoisier.http.port={{lavoisier_http_port}}
 lavoisier.https.port={{lavoisier_https_port}}
 
