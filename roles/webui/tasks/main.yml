@@ -59,6 +59,7 @@
   when: download_out is defined and download_out.changed
 
 - name: Copy etc/lavoisier-hidden.properties file
+  tags: argo_config
   template: src=lavoisier-hidden.properties.j2
             dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
             owner=root group=root mode=0644
@@ -72,6 +73,7 @@
   notify: restart webui
   
 - name: Copy etc/lavoisier-service.properties file
+  tags: argo_config
   template: src=lavoisier-service.properties.j2
             dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-service.properties
             owner=root group=root mode=0644
