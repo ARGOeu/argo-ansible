@@ -37,37 +37,37 @@
    - webui-shell
   git:
     repo: https://github.com/ARGOeu/argo-egi-web.git #"{{repository}}"
-    dest: '{{lavoisier_home}}/{{ argo_web }}-{{ branch_name }}'
+    dest: '{{lavoisier_home}}/{{ argo_web }}'
     version: '{{branch_name}}'
     force: yes
   register: git_finished
 
 - name: Create logs directory
-  file: path={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/jsw/lavoisier/logs/ state=directory
+  file: path={{ lavoisier_home }}/{{ argo_web }}/jsw/lavoisier/logs/ state=directory
   
 - name: Copy etc/lavoisier-hidden.properties file
   tags: argo_config
   template: src=lavoisier-hidden.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
+            dest={{ lavoisier_home }}/{{ argo_web }}/etc/lavoisier-hidden.properties
             owner=root group=root mode=0644
   notify: restart webui
 
 - name: Copy etc/argo-config.properties file
   tags: argo_config
   template: src=argo-config.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/argo-config.properties
+            dest={{ lavoisier_home }}/{{ argo_web }}/etc/argo-config.properties
             owner=root group=root mode=0644
   notify: restart webui
   
 - name: Copy etc/lavoisier-service.properties file
   tags: argo_config
   template: src=lavoisier-service.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-service.properties
+            dest={{ lavoisier_home }}/{{ argo_web }}/etc/lavoisier-service.properties
             owner=root group=root mode=0644
   notify: restart webui
 
 - name: Configure etc/security/passwords.properties
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/security/passwords.properties
+  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}/etc/security/passwords.properties
               line='admin={{ admin_password_md5 }}'
               regexp='^admin'
               state=present
@@ -75,5 +75,5 @@
 
 - name: Start webui
   command: ./bin/lavoisier.sh start
-           chdir={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}
+           chdir={{ lavoisier_home }}/{{ argo_web }}
   ignore_errors: True
