@@ -1,5 +1,5 @@
 {% if lavoisier_http_disable is defined %}
-lavoisier.http.disable={{lavoisier_http_disable}}
+lavoisier.http.disable={{lavoisier_http_disable|lower}}
 {% else %}
 lavoisier.http.disable=false
 {% endif %}
