@@ -37,32 +37,45 @@
    - webui-shell
   git:
     repo: https://github.com/ARGOeu/argo-egi-web.git #"{{repository}}"
-    dest: '{{lavoisier_home}}/{{ argo_web }}'
+    dest: '{{lavoisier_home}}{{ argo_web }}'
     version: '{{branch_name}}'
     force: yes
+    update: yes
   register: git_finished
+  
+- name: WEB-UI | fetch origin branch_name. Ensure local repo is actually up to date
+  tags: 
+   - webui
+   - webui-shell
+  shell: cd '{{lavoisier_home}}{{ argo_web }}' &&  git fetch origin {{branch_name}}
+
+- name: WEB-UI | merge origin branch_name changes
+  tags: 
+   - webui
+   - webui-shell
+  shell: cd '{{lavoisier_home}}{{ argo_web }}' &&  git merge origin/{{branch_name}}
 
 - name: Create logs directory
-  file: path={{ lavoisier_home }}/{{ argo_web }}/jsw/lavoisier/logs/ state=directory
+  file: path={{ lavoisier_home }}{{ argo_web }}/jsw/lavoisier/logs/ state=directory
   
 - name: Copy etc/lavoisier-hidden.properties file
   tags: argo_config
   template: src=lavoisier-hidden.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}/etc/lavoisier-hidden.properties
+            dest={{ lavoisier_home }}{{ argo_web }}/etc/lavoisier-hidden.properties
             owner=root group=root mode=0644
   notify: restart webui
 
 - name: Copy etc/argo-config.properties file
   tags: argo_config
   template: src=argo-config.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}/etc/argo-config.properties
+            dest={{ lavoisier_home }}{{ argo_web }}/etc/argo-config.properties
             owner=root group=root mode=0644
   notify: restart webui
   
 - name: Copy etc/lavoisier-service.properties file
   tags: argo_config
   template: src=lavoisier-service.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}/etc/lavoisier-service.properties
+            dest={{ lavoisier_home }}{{ argo_web }}/etc/lavoisier-service.properties
             owner=root group=root mode=0644
   notify: restart webui
 
