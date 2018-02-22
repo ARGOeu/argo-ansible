@@ -39,6 +39,7 @@
     repo: https://github.com/ARGOeu/argo-egi-web.git #"{{repository}}"
     dest: '{{lavoisier_home}}{{ argo_web }}'
     version: '{{branch_name}}'
+    recursive: yes
     force: yes
     update: yes
   register: git_finished
