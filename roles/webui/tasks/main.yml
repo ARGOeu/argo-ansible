@@ -48,7 +48,7 @@
   tags: 
    - webui
    - webui-shell
-  shell: cd {{lavoisier_home}}{{ argo_web }} &&  git pull origin devel 
+  shell: cd {{lavoisier_home}}{{ argo_web }} &&  git pull origin {{branch_name}}
 
 - name: Create logs directory
   file: path={{ lavoisier_home }}{{ argo_web }}/jsw/lavoisier/logs/ state=directory
