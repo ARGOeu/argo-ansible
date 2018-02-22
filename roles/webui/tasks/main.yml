@@ -48,13 +48,7 @@
   tags: 
    - webui
    - webui-shell
-  shell: cd {{lavoisier_home}}{{ argo_web }} &&  git fetch origin &&  git merge origin/{{branch_name}}
-
-- name: WEB-UI | merge origin branch_name changes
-  tags: 
-   - webui
-   - webui-shell
-  shell: cd '{{lavoisier_home}}{{ argo_web }}' &&  git merge origin/{{branch_name}}
+  shell: cd {{lavoisier_home}}{{ argo_web }} &&  git pull origin devel 
 
 - name: Create logs directory
   file: path={{ lavoisier_home }}{{ argo_web }}/jsw/lavoisier/logs/ state=directory
