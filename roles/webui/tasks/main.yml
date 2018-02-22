@@ -47,7 +47,7 @@
   tags: 
    - webui
    - webui-shell
-  shell: cd '{{lavoisier_home}}{{ argo_web }}' &&  git fetch origin {{branch_name}}
+  shell: cd '{{lavoisier_home}}{{ argo_web }}' &&  git fetch origin 
 
 - name: WEB-UI | merge origin branch_name changes
   tags: 
