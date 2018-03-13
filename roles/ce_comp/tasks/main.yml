@@ -1,0 +1,61 @@
+---
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: set timezone to Europe/Athens
+  timezone:
+    name: Europe/Athens
+  notify:
+    - restart cron after timezone change
+    
+- name: "install git"
+  yum: 
+    name: git
+    state: latest
+    
+- name: "install pip"
+  yum: 
+    name: python-pip
+    state: latest
+    enablerepo: epel
+
+- name : "upgrade pip"
+  pip:
+    name: pip
+    extra_args: --upgrade
+
+- name: "create directory for script"
+  file:
+    path: ~/utils/ce_comp
+    state: directory 
+
+- name: "create directory for the generated html reports"
+  file:
+    path: /var/www/html/ce_comp
+    state: directory
+
+- name: "clone the script's repo"
+  git:
+   repo: https://github.com/ARGOeu/ce_comp.git
+   dest: ~/utils/ce_comp/
+   version: devel
+
+- name : "get the required libraries"
+  pip:
+    requirements: ~/utils/ce_comp/requirements.txt
+
+- name: "template configuration"
+  template: 
+   src: conf.template.j2
+   dest: ~/utils/ce_comp/conf.cfg
+
+- name: "set up cron"
+  cron:
+    cron_file: ce_comp_{{ item.key | lower }}
+    name: "set up cron for {{ item.key }}"
+    user: root
+    hour: 4
+    job: "cd ~/utils/ce_comp && ./ce_comp.py -t {{ item.key }} -s html -c conf.cfg -sd $(date --date yesterday '+\\%Y-\\%m-\\%d') -ed $(date --date yesterday '+\\%Y-\\%m-\\%d') -sp /var/www/html/ce_comp/"
+  with_dict: "{{ tenants }}"
