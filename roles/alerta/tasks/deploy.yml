@@ -203,11 +203,32 @@
     path: '/etc/argo-alert'
     state: directory
 
-- name: establish argo-alert mail config directory
-  tags: alerta
+- name: establish argo-alert mail template directories
+  tags: alerta, mailer
   file:
-    path: '/etc/argo-alert/mail-rules'
+    path: '/etc/argo-alert/mail/templates'
     state: directory
+
+- name: establish argo-alert mail rule directories
+  tags: alerta, mailer
+  file:
+    path: '/etc/argo-alert/mail/mailer-{{item.key}}.conf.rules.d'
+    state: directory
+  with_dict: ' {{tenants}} '
+
+- name: deploy argo-alert mail configurations
+  tags: alerta, mailer
+  template:
+    src: 'alerta-mailer.conf.j2'
+    dest: '/etc/argo-alert/mail/mailer-{{item.key}}.conf'
+  with_dict: ' {{tenants}} '
+
+- name: Copy mail templates
+  tags: certificate
+  copy: src=private_files/{{ inventory_hostname }}/mail-templates/
+        dest=/etc/argo-alert/mail/templates/ directory_mode=yes
+        owner=root group=root mode=0400
+
 
 - name: establish argo-alert log directory
   tags: alerta
@@ -223,7 +244,7 @@
     virtualenv: '{{ alerta_server_dir }}'
 
 - name: Deploy argo-alert configurations
-  tags: alerta
+  tags: alerta, argo-alert
   template:
     src: argo-alert.conf.j2
     dest: '/etc/argo-alert/argo-alert-{{item.key}}.conf'

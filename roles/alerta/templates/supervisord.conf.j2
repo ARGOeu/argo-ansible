@@ -148,10 +148,18 @@ serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
 ;files = relative/directory/*.ini
 
 {% for key, value in tenants.iteritems() %}
-[program:alert-{{key}}]
+[program:alert-pub-{{key}}]
 command={{ alerta_server_dir }}/bin/python {{ alerta_server_dir }}/bin/argo-alert-publisher -c /etc/argo-alert/argo-alert-{{key}}.conf
-autostart=true
+autostart=false
 autorestart=true
-stderr_logfile=/var/log/argo-alert/argo-alert-{{key}}.err.log
-stdout_logfile=/var/log/argo-alert/argo-alert-{{key}}.out.log
+stderr_logfile=/var/log/argo-alert/alert-pub-{{key}}.err.log
+stdout_logfile=/var/log/argo-alert/alert-pub-{{key}}.out.log
+
+[program:alert-mail-{{key}}]
+command={{alerta_server_dir}}/bin/python {{alerta_server_dir}}/bin/alerta-mailer
+autostart=false
+autorestart=true
+environment=ALERTA_CONF_FILE=/etc/argo-alert/mail/mailer-{{key}}.conf
+stderr_logfile=/var/log/argo-alert/alert-mail-{{key}}.err.log
+stdout_logfile=/var/log/argo-alert/alert-mail-{{key}}.out.log
 {% endfor %}

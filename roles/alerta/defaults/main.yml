@@ -1,9 +1,4 @@
 ---
-mail_to : ''
-mail_form: ''
-smtp_debug: True
-smtp_relay: ''
-smtp_alias: ''
 alerta_secret: ''
 alerta_token: ''
 alerta_server_dir: '/opt/alerta'
@@ -15,6 +10,10 @@ alerta_amqp_release: 'cb04fb6'
 alerta_mailer_release: 'e52f4f9'
 www_url: 'localhost'
 www_alias: 'localhost'
+alerta_main_mail: ''
+alerta_mail_from: ''
+alerta_smpt_host: ''
+alerta_smtp_port: 587
 
 # default: use pip to install argo-alert from github repo using devel branch
 argo_alert_repo: 'git+https://github.com/ARGOeu/argo-alert@devel#egg=argoalert'
@@ -22,7 +21,16 @@ argo_alert_repo: 'git+https://github.com/ARGOeu/argo-alert@devel#egg=argoalert'
 argo_alert_kafka: 'kafka.node.foo'
 argo_alert_token: 'secret_token'
 
+ca_bundle: /etc/grid-security/certificates
+hostcert: /etc/grid-security/hostcert.pem
+hostkey: /etc/grid-security/hostkey.pem
+
 tenants:
   foo:
     contact_api_type: 'contact.api.type'
     contact_api_endpoint: 'https://contact.api.foo'
+    mail_template: ~/alerta-foo.tmpl
+    mail_html_temlate: ~/alerta-foo.html.tmpl
+    mail_type: html
+    mail_debug: true
+    mail_rule: ~/alerta-foo/mail-rules/mail-foo-rules.json
