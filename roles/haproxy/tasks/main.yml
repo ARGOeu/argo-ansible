@@ -8,7 +8,7 @@
     name: haproxy
     state: present
 
-- name: create haproxy user 
+- name: create haproxy user
   user:
     name: haproxy
     group: haproxy
@@ -18,9 +18,11 @@
   notify: reload haproxy
   tags: haproxy
 
+- name: configure haproxy log
+  template: src=rsyslog_haproxy.conf.j2 dest=/etc/rsyslog.d/haproxy.conf backup=yes
+  notify: restart rsyslog
+  tags: haproxy
+
 - name: start haproxy
   service: name=haproxy state=running
   tags: haproxy
-
-
-
