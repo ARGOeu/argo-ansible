@@ -12,6 +12,7 @@ WriteAvro = {{ams_configuration.WriteAvro}}
 Host = {{ams_configuration.ams_host}}
 Topic = {{ams_configuration.ams_type_of_data}}
 Bulk = {{ams_configuration.ams_num_of_bulk}}
+PackSingleMsg = {{ams_configuration.PackSingleMsg}}
 {% endif %}
 
 [Authentication]
@@ -20,6 +21,9 @@ CAPath = /etc/grid-security/certificates
 CAFile = /etc/pki/tls/certs/ca-bundle.crt
 HostKey = /etc/grid-security/hostkey.pem
 HostCert = /etc/grid-security/hostcert.pem
+UsePlainHttpAuth = False
+HttpUser = xxxx
+HttpPass = xxxx
 
 [Connection]
 Timeout = 180
