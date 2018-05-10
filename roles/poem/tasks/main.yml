@@ -43,9 +43,9 @@
 
 - name: upload certificate 
   tags: poem_certificate
-  copy: src=private_files/DigiCertCA.crt
+  copy: src=private_files/{{inventory_hostname}}/DigiCertCA.crt
         dest=/etc/pki/tls/certs/DigiCertCA.crt backup=yes
-        owner=root group=root mode=0400
+        owner=root group=root mode=0404
         
 - name: Create ssl.conf file
   template: src=ssl.conf.j2
@@ -55,9 +55,7 @@
 - name: update aai metadata
   tags: poem_aai_metadata
   shell: wget {{AAI_metadata}} -O /etc/poem/metadata-checkin.xml 
-  
-- name: Run db creation script
-  shell: poem-createdb creates={{ db_path }}
+
 
 - name: Start and enable httpd service
   service: name=httpd state=started enabled=yes
