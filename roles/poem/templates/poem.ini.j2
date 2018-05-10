@@ -9,8 +9,28 @@ Password = {{ db_pass }}
 Email = {{ db_mail }}
 
 [SYNC]
-ServiceType = https://goc.egi.eu/gocdbpi/private/?method=get_service_types
+ServiceType = {{ServiceType}}
+##https://goc.egi.eu/gocdbpi/private/?method=get_service_types
 VO = http://operations-portal.egi.eu/xml/voIDCard/public/all/true
+
+{% if UsePlainHttpAuth is defined %}
+UsePlainHttpAuth = {{ UsePlainHttpAuth }}
+{% else %}
+UsePlainHttpAuth = False
+{% endif %}
+
+{% if HttpUser is defined %}
+HttpUser = {{ HttpUser }}
+{% else %}
+HttpUser = xxxx
+{% endif %}
+
+{% if HttpPass is defined %}
+HttpPass = {{ HttpPass }}
+{% else %}
+HttpPass = xxxx
+{% endif %}
+
 
 [SECURITY]
 AllowedHosts = {{ALLOWED_HOSTS}}
