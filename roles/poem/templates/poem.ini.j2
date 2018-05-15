@@ -2,6 +2,11 @@
 Namespace = {{ poem_namespace }}                                                                                  
 Debug = {{ poem_debug }} 
 TimeZone = {{ poem_timezone }}
+{% if SamlLoginString is defined %}
+SamlLoginString = {{ SamlLoginString }}
+{% else %}
+SamlLoginString = Log in using EGI CHECK-IN
+{% endif %}
 
 [SUPERUSER]
 Name =  {{ db_user }}

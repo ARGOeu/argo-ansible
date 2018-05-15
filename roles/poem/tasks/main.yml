@@ -1,5 +1,8 @@
 ---
 
+- name: clean yum 
+  shell: yum clean all
+  
 - name: Install requirements
   yum: name={{ item }} state=present
   with_items:
