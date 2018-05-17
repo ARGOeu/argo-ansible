@@ -42,6 +42,8 @@
       - alerta
       - alerta-server
     virtualenv: '{{ alerta_server_dir }}'
+    state: forcereinstall
+
 
 - name: Install Alerta-amqp
   tags: alerta
