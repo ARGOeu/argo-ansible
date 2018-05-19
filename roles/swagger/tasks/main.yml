@@ -37,6 +37,7 @@
 - name: Stage old data 
   command: mv /var/www/html/{{ item.name }} /var/www/html/{{ item.name }}.old
   with_items: '{{swagger_docs}}'
+  ignore_errors: yes 
 
 
 - name: Create swagger directories
