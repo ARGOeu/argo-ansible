@@ -21,6 +21,10 @@
     - lavoisier.sh
     - lavoisier.csh
 
+- name: Backup lavoisier directory
+  command: mv {{ lavoisier_home }} {{lavoisier_home}}.old
+  ignore_errors: True
+
 - name: Create download directory
   file: path={{ lavoisier_home }} state=directory
 
