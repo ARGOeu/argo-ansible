@@ -19,6 +19,10 @@ lavoisier.routes=lavoisier-routes.properties
 #Duration of the HTTP session in seconds
 lavoisier.session.timeout=600
 
+{% if tls_ephemeralDHKeySize is defined %}
 jdk.tls.ephemeralDHKeySize={{tls_ephemeralDHKeySize}}
+{% endif %}
 
+{% if ssl_ciphers is defined %}
 lavoisier.ssl.ciphers={{ssl_ciphers}}
+{% endif %}

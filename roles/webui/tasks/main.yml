@@ -75,10 +75,15 @@
   notify: restart webui
 
 - name: Configure etc/security/passwords.properties
+  shell: touch {{ lavoisier_home }}/{{ argo_web }}/etc/security/passwords.properties
+  ignore_errors: True
+  
+- name: Configure etc/security/passwords.properties
   lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}/etc/security/passwords.properties
               line='admin={{ admin_password_md5 }}'
               regexp='^admin'
               state=present
+  ignore_errors: True
   notify: restart webui
 
 - name: Start webui
