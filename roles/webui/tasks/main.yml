@@ -36,7 +36,7 @@
    - webui
    - webui-shell
   git:
-    repo: https://github.com/ARGOeu/argo-egi-web.git #"{{repository}}"
+    repo: {{repository}} #"{{repository}}"
     dest: '{{lavoisier_home}}{{ argo_web }}'
     version: '{{branch_name}}'
     recursive: yes
