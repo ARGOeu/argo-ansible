@@ -22,7 +22,7 @@
     - lavoisier.csh
 
 - name: Backup lavoisier directory
-  command: mv {{ lavoisier_home }} {{lavoisier_home}}.old
+  command: rm {{lavoisier_home}}{{ argo_web }}
   ignore_errors: True
 
 - name: Create download directory
