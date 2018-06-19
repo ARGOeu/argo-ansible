@@ -12,4 +12,4 @@ haproxy_stats_port: 9000
 haproxy_port_bind_ssl: 443
 haproxy_port_bind: 80
 haproxy_authn_host: authn.foo
-haproxy_authn_port: 8080
+haproxy_authn_port: 8443
