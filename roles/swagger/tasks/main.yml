@@ -79,7 +79,7 @@
 - name: Point swagger-ui to corresponding swagger definitions on host
   tags: swagger-update
   replace: dest=/var/www/html/{{ item.name }}/index.html
-           regexp='"http:\/\/petstore\.swagger\.io\/v2\/swagger\.json"'
+           regexp='"https:\/\/petstore\.swagger\.io\/v2\/swagger\.json"'
            replace='"https://{{ inventory_hostname }}/{{ item.name }}/swagger.json"'
            backup=yes
   with_items: '{{swagger_docs}}'
