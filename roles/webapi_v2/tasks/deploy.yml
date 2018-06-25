@@ -1,5 +1,4 @@
 ---
-
 # Set timezone
 - name: Set timezone to Europe/Athens
   timezone:
@@ -11,7 +10,6 @@
   command: firewall-cmd --permanent --new-zone="{{item}}"
   with_items: "{{firewall_zones}}"
   notify: reload firewall
-  when: firewall_zones is defined
   tags: firewall
   ignore_errors: yes
 
@@ -19,7 +17,6 @@
   command: firewall-cmd --permanent --new-service="{{item.name}}"
   with_items: "{{firewall_services}}"
   notify: reload firewall
-  when: firewall_services is defined
   tags: firewall
   ignore_errors: yes
 
@@ -27,7 +24,6 @@
   command: firewall-cmd --permanent --service="{{item.name}}" --add-port={{item.port}}
   with_items: "{{firewall_services}}"
   notify: reload firewall
-  when: firewall_services is defined
   tags: firewall
   ignore_errors: yes
 
@@ -38,7 +34,6 @@
     permanent: true
     state: enabled
   with_items: "{{firewall_services_zones}}"
-  when: firewall_services_zones is defined
   tags: firewall
   notify: reload firewall
 
@@ -49,7 +44,6 @@
     permanent: true
     state: enabled
   with_items: "{{firewall_sources}}"
-  when: firewall_sources is defined
   tags: firewall
   notify: reload firewall
 
@@ -60,7 +54,6 @@
     permanent: true
     state: enabled
   with_items: "{{firewall_interfaces}}"
-  when: firewall_interfaces is defined
   tags: firewall
   notify: reload firewall
 
@@ -153,20 +146,28 @@
 
 - name: Copy localhost key
   copy:
-    src: /etc/pki/tls/private/localhost.key
-    dest: /var/www/argo-web-api/certs
+    src: /etc/grid-security/hostkey.pem
+    dest: /var/www/argo-web-api/certs/localhost.key
     owner: argo-web-api
     group: argo-web-api
+    remote_src: true
   tags: api
 
 - name: Copy localhost cert
   copy:
-    src: /etc/pki/tls/certs/localhost.crt
-    dest: /var/www/argo-web-api/certs
+    src: /etc/grid-security/hostcert.pem
+    dest: /var/www/argo-web-api/certs/localhost.crt
+    owner: argo-web-api
+    group: argo-web-api
+    remote_src: true
+  tags: api
+
+- name: set argo-web-api binary to argo-web-api users
+  file:
+    path: /var/www/argo-web-api/argo-web-api
     owner: argo-web-api
     group: argo-web-api
   tags: api
-
 
 - name: allow bind port 443
   shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-web-api/argo-web-api
@@ -175,7 +176,7 @@
 - name: Configure argo-web-api
   template: src=argo-web-api.conf.j2
             dest=/etc/argo-web-api.conf backup=yes
-            owner=root group=root mode=0644
+            owner=argo-web-api group=argo-web-api mode=0644
   notify: restart argo-web-api service
   tags: api
 

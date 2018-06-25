@@ -10,7 +10,7 @@ use {{argo_core}}
 
 ;
 
-db.authentication.update("name" : "{{user.name}}"},{"name":"{{user.name}}","email" : "{{user.email}}", "api_key" : "{{user.api_key}}" },{"upsert":"true"})
+db.authentication.update({"name" : "{{user.name}}"},{"name":"{{user.name}}","email" : "{{user.email}}", "api_key" : "{{user.api_key}}" },{"upsert":"true"})
 
 
 {%- endfor -%}
