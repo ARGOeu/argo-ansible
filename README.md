@@ -324,3 +324,25 @@ is the same as for users to add, but the only required field is `username`.
 However, it is recommended that you also keep the `uid` field for reference so
 that numeric user ids are not accidentally reused.
 
+## Argo Authentication Service
+In case you would like to provide extra authentication mechanisms for your argo services
+ypu could set up the argo-api-authn service. This playbook contains (1) roles.
+
+- Set up the ams-create-users-from-gocdb script
+
+### Things to do before deployment
+
+In the `roles/argo-api-authn/defaults/main.yml` replace:
+
+- the virtual_env_installation, which refers to the folder that will contain the virtual environment
+e.g. with the current default configuration it will be created under `/var/www/argo-api-authn/Envs/authn-env`
+- the service_configuration_folder, which refers to where the service's configuration files are being kept
+
+### Prerequisites
+- Deploy against CentOS 7.x
+- Ansible version used: 2.2
+
+if you want to run the script:
+```bash
+$ ansible-playbook -i <your_inventory> authn-setup.yml -vvv 
+``` 
