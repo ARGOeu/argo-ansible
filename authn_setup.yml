@@ -1,0 +1,6 @@
+---
+
+- hosts: haproxy
+  user: root
+  roles:
+    - argo-api-authn

@@ -1,5 +1,8 @@
 ---
 
+data_path: "/var/lib/"
+cron_status: "false" #needed for cron jobs false to start , true to disable the cron jobs
+
 tenants:
   TenantA:
     topics:
@@ -14,6 +17,7 @@ tenants:
     outputdir: "/var/lib/argo-connectors/TenantA/"
     jobs_all: "JOB_TenantA_ALL, JOB_TenantA_PART"
     prefilter: "prefilter-tenantA.py"
+    cron_weight_minute: 30
     jobs_details:
       - name: "JOB_TenantA_ALL"
         Directory: "TenantA_ALL"
@@ -40,6 +44,7 @@ tenants:
       - "broker3.example.com"
     outputdir: "/var/lib/argo-connectors/TenantB/"
     jobs_all: "JOB_TenantB_SERVICES"
+    cron_weight_minute: 35
     jobs_details:
       - name: "JOB_TenantB_SERVICES"
         Directory: "SERVICES"
@@ -50,6 +55,8 @@ tenants:
         TopoSelectGroupOfEndpoints: "Production:Y, Monitored:Y, Scope:TenantB"
         TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantB"
         DowntimesFeed: "https://goc.example.com/gocdbpi/"
+
+tenants_delete: []
 
 poem_servers:
   - host: "poemA.example.com"
@@ -68,6 +75,7 @@ mongo_host_or_ip: "127.0.0.1"
 mongo_port_number: "27017"
 argo_compute_mode: "local"
 prefilter_clean_bool: "false"
+consumer_path: "/var/lib/argo-egi-consumer"
 argo_sync_conf_path: "/etc/argo-egi-connectors"
 argo_sync_path: "/var/lib/argo-connectors"
 argo_exec_path: "/usr/libexec/argo-egi-connectors"

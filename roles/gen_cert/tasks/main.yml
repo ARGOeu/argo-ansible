@@ -1,0 +1,36 @@
+---
+- name: make sure there is no old cert folder in pwd
+  file:
+    path: ~/certs
+    state: absent
+  tags: gen_cert_self
+
+- name: create fresh cert folder in pwd
+  file:
+    path: ~/certs
+    state: directory
+  tags: gen_cert_self
+
+- name: Generate self-signed cert
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ~/certs/{{ansible_fqdn}}.key -outform PEM -out ~/certs/{{ansible_fqdn}}.pem -subj "{{cert_subject}}"
+  tags: gen_cert_self
+
+- name: fetch the key
+  fetch:
+    src: ~/certs/{{ansible_fqdn}}.key
+    dest: ./private_files/{{ansible_fqdn}}/
+    flat: yes
+  tags: gen_cert_self
+
+- name: fetch the cert
+  fetch:
+    src: ~/certs/{{ansible_fqdn}}.pem
+    dest: ./private_files/{{ansible_fqdn}}/
+    flat: yes
+  tags: gen_cert_self
+
+- name: clear certs folder from node
+  file:
+    path: ~/certs
+    state: absent
+  tags: gen_cert_self

@@ -1,0 +1,31 @@
+---
+argo_msg_bind_ip: ''
+argo_msg_port: 443
+argo_msg_store_host: 'localhost'
+argo_msg_store_db: 'argo_msg'
+zookeeper_hosts: "localhost:2181"
+argo_msg_kafka_znode: ''
+argo_msg_path: '/var/www/argo-messaging/'
+argo_msg_per_resource_auth: 'true'
+argo_msg_log_level: 'INFO'
+
+messaging_api_projects:
+  -  name: TEST #the project name
+     uuid: project_UUID #the project UUID
+
+messaging_api_users:
+  -  username: default_service_admin
+     uuid: user_UUID1 #the user's UUID
+     key:  user_key #the user's key
+     service_roles:
+       - service_admin
+     email: service_admin@argo.example.foo
+  -  username: default_project_admin
+     uuid: user_UUID2 #the users UUID
+     projects:
+       - project_uuid: project_UUID #the project UUID
+         roles:
+          - project_admin
+     key: 4d5c37781694ae20298554be8ba1e1d0a25a8c43
+     email: project_admin@argo.example.foo
+     created_by: user_UUID1

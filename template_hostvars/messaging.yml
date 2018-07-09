@@ -1,0 +1,41 @@
+---
+iptables_rules: #for firewall role
+  input:
+    - { dport: "443",   proto: "tcp", policy: "accept"}
+    - { dport: "5666",  proto: "tcp", policy: "accept"}
+    - { dport: "27017", proto: "tcp", policy: "accept"}
+
+mongo_bind_interfaces: 127.0.0.1
+
+enabled_argo_repo: argo-devel #for repos role
+
+ca_bundle_install: false #for repos role
+
+# for messaging role.
+
+argo_msg_bind_ip: ''
+argo_msg_port: 443
+argo_msg_store_host: 'localhost'
+argo_msg_store_db: 'msg_store'
+zookeeper_hosts: "localhost:2181"
+argo_msg_path: '/var/www/argo-messaging/'
+
+messaging_api_projects:
+  -  name: TEST #the project name
+     uuid: project_UUID #the project UUID
+
+messaging_api_users:
+  -  username: default_service_admin
+     uuid: user_UUID #the user's UUID
+     key:  user_key #the user's key
+     service_roles:
+       - service_admin
+     email: service_admin@argo.example.foo
+  -  username: default_project_admin
+     uuid: user_UUID #the users UUID
+     projects:
+       - project_uuid: project_UUID #the project UUID
+         roles:
+          - project_admin
+     key:  user_key #the user's key
+     email: project_admin@argo.example.foo

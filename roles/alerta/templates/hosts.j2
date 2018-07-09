@@ -1,0 +1,7 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+# kafka cluster in private lan
+{% for host_priv in kafka_cluster_priv %}
+{{host_priv.address}} {{host_priv.alias}}
+{% endfor %}

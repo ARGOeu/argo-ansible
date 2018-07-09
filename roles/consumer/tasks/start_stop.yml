@@ -1,0 +1,50 @@
+---
+####################
+# Start_stop: Start stop a service or a group of services 
+# if you want to stop egi service you should run 
+# ansible-playbook standalone-start-stop.yml -vvv  --tags stop_egi_consumer'
+#
+# to start eudat consumer
+# ansible-playbook standalone-start-stop.yml -vvv --extra-vars "consumer_name=eudat" --tags start_consumer
+####################
+
+
+- name: stop egi consumer
+  tags: stop_egi_consumer
+  service: name=argo-egi-consumer state=stopped
+
+- name: stop all consumers
+  tags: stop_all_consumer
+  service: name=argo-{{ item.key | lower }}-consumer state=stopped
+  with_dict: tenants
+
+- name: stop all non egi consumers
+  tags: stop_non_egi_consumer
+  service: name=argo-{{ item.key | lower }}-consumer state=stopped
+  with_dict: tenants
+  when: item.key|lower != "egi"
+
+- name: stop a consumer
+  tags: stop_consumer
+  service: name=argo-{{ consumer_name }}-consumer state=stopped
+
+- name: start egi consumer
+  tags: start_egi_consumer
+  service: name=argo-egi-consumer state=restarted
+
+- name: start all consumers
+  tags: start_all_consumer
+  service: name=argo-{{ item.key | lower }}-consumer state=restarted
+  with_dict: tenants
+
+- name: start all non egi consumers
+  tags: start_non_egi_consumer
+  service: name=argo-{{ item.key | lower }}-consumer state=restarted
+  with_dict: tenants
+  when: item.key|lower != "egi"
+
+- name: start a consumer
+  tags: start_consumer
+  service: name=argo-{{ consumer_name }}-consumer state=restarted
+
+  

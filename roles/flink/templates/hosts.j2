@@ -1,0 +1,11 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+
+{{flink_master_ip}} {{flink_master}}{{newln}}
+
+{%- for slave in flink_slaves -%}
+
+{{slave.ip}} {{slave.hostname}}{{newln}}
+
+{%- endfor -%}

@@ -1,0 +1,37 @@
+---
+
+- name: Move init_roles.js script
+  template: dest="/tmp/init_roles.js" owner=root group=root mode=640 src=init_roles.js.j2
+  tags:
+    - init_messaging
+    - init_roles
+
+- name: Run init_roles.js script
+  shell: mongo < /tmp/init_roles.js
+  tags:
+    - init_messaging
+    - init_roles
+
+- name: Move init_projects.js script
+  template: dest="/tmp/init_projects.js" owner=root group=root mode=640 src=init_projects.js.j2
+  tags:
+    - init_messaging
+    - init_projects
+
+- name: Run init_projects.js script
+  shell: mongo < /tmp/init_projects.js
+  tags:
+    - init_messaging
+    - init_projects
+
+- name: Move init_users.js script
+  template: dest="/tmp/init_users.js" owner=root group=root mode=640 src=init_users.js.j2
+  tags:
+    - init_messaging
+    - init_users
+
+- name: Run init_users.js script
+  shell: mongo < /tmp/init_users.js
+  tags:
+    - init_messaging
+    - init_users

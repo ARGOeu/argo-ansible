@@ -1,0 +1,9 @@
+[Unit]
+Description=alerta-mailer
+
+[Service]
+Type=simple
+ExecStart={{alerta_server_dir}}/bin/alerta-mailer
+
+[Install]
+WantedBy=multi-user.target

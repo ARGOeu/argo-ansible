@@ -1,6 +1,17 @@
 [CUSTOMER_{{item.key|upper}}]
 Name = {{item.key|upper}}
 OutputDir = {{item.value.outputdir}}
+{% if item.value.HTTPAuth is defined %}
+AuthenticationUsePlainHttpAuth = {{item.value.AuthenticationUsePlainHttpAuth}}
+AuthenticationHttpUser = {{item.value.AuthenticationHttpUser}}
+AuthenticationHttpPass = {{item.value.AuthenticationHttpPass}}
+{% endif %}
+
+
+{% if AMS_enabled %}
+AmsProject = {{item.value.AmsProject}}
+AmsToken = {{item.value.AmsToken}} 
+{% endif %}
 {% if item.value.jobs_all is defined %}
 Jobs = {{ item.value.jobs_all }}
 {% endif %}
@@ -12,6 +23,7 @@ Dirname = {{job.Directory}}
 Profiles = {{job.Profiles}}
 TopoType = {{job.TopoType}}
 TopoFeed = {{job.TopoFeed}}
+TopoFeedPaging = {{job.TopoFeedPaging}}
 TopoFetchType = {{job.TopoFetchType}}
 TopoSelectGroupOfEndpoints = {{job.TopoSelectGroupOfEndpoints}}
 TopoSelectGroupOfGroups = {{job.TopoSelectGroupOfGroups}}
@@ -19,3 +31,4 @@ DowntimesFeed = {{job.DowntimesFeed}}
 
 {% endfor %}
 {% endif %}
+

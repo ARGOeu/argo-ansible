@@ -1,0 +1,9 @@
+{
+  "port":8444,
+  "broker_hosts":["localhost:9092"],
+  "store_host":"localhost",
+  "store_db":"argo_msg",
+  "use_authorization":true,
+  "use_authentication":true,
+  "use_ack":false
+}

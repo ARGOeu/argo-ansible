@@ -1,0 +1,11 @@
+---
+
+- name: Disable selinux using ansible module (might need restart)
+  selinux: state=disabled
+  tags: selinux_disable
+
+- name: Disable selinunx right now (Centos 7)
+  command: setenforce 0
+  tags: selinux_disable
+  ignore_errors: true
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'

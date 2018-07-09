@@ -3,9 +3,10 @@
 - name: Install requirements
   yum: name={{ item }} state=present
   with_items:
-    - java-1.7.0-openjdk.x86_64
+    - java-1.8.0-openjdk.x86_64
     - wget
     - unzip
+    - git
   tags: install_requirements
 
 - name: Install CAs metapackage
@@ -15,59 +16,81 @@
 
 - name: Copy files to setup HOME_LAVOISIER
   template: src={{ item }}.j2 dest=/etc/profile.d/{{ item }}
-            owner=root group=root mode=0644
+            owner=root group=root mode=0755
   with_items:
     - lavoisier.sh
     - lavoisier.csh
 
+- name: Backup lavoisier directory
+  command: rm {{lavoisier_home}}{{ argo_web }}
+  ignore_errors: True
+
 - name: Create download directory
   file: path={{ lavoisier_home }} state=directory
+
+- name: Clear cache directory
+  command: rm -rf {{ cache_directory }} 
+  ignore_errors: True
 
 - name: Create cache directory
   file: path={{ cache_directory }} state=directory
 
-- name: Remove older downloaded lavoisier zip file
-  command: rm -f {{ lavoisier_home }}/{{ branch_name }}.zip
-  ignore_errors: True
+- name: WEB-UI | Clone/Pull repo
+  tags: 
+   - webui
+   - webui-shell
+  git:
+    repo: '{{repository}}' 
+    dest: '{{lavoisier_home}}{{ argo_web }}'
+    version: '{{branch_name}}'
+    recursive: yes
+    force: yes
+    update: yes
+  register: git_finished
   
-- name: Download lavoisier zip file
-  get_url: url=https://github.com/ARGOeu/{{ argo_web }}/archive/{{ branch_name }}.zip
-           dest={{ lavoisier_home }}/{{ branch_name }}.zip
-           mode=0640
-  register: download_out
-  notify: restart webui
+- name: WEB-UI | fetch origin branch_name. Ensure local repo is actually up to date
+  tags: 
+   - webui
+   - webui-shell
+  shell: cd {{lavoisier_home}}{{ argo_web }} &&  git pull origin {{branch_name}}
 
-- name: Stage old directory if download target has changed
-  command: mv {{ argo_web }}-{{ branch_name }} {{ argo_web }}-{{ branch_name }}.old
-           chdir={{ lavoisier_home }}
-  when: download_out is defined and download_out.changed
-  ignore_errors: True
-
-- name: Unzip zip file
-  command: unzip {{ branch_name }}.zip
-           chdir={{ lavoisier_home }}
-  when: download_out is defined and download_out.changed
-
+- name: Create logs directory
+  file: path={{ lavoisier_home }}{{ argo_web }}/jsw/lavoisier/logs/ state=directory
+  
 - name: Copy etc/lavoisier-hidden.properties file
+  tags: argo_config
   template: src=lavoisier-hidden.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/lavoisier-hidden.properties
+            dest={{ lavoisier_home }}{{ argo_web }}/etc/lavoisier-hidden.properties
             owner=root group=root mode=0644
   notify: restart webui
 
 - name: Copy etc/argo-config.properties file
+  tags: argo_config
   template: src=argo-config.properties.j2
-            dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/argo-config.properties
+            dest={{ lavoisier_home }}{{ argo_web }}/etc/argo-config.properties
+            owner=root group=root mode=0644
+  notify: restart webui
+  
+- name: Copy etc/lavoisier-service.properties file
+  tags: argo_config
+  template: src=lavoisier-service.properties.j2
+            dest={{ lavoisier_home }}{{ argo_web }}/etc/lavoisier-service.properties
             owner=root group=root mode=0644
   notify: restart webui
 
 - name: Configure etc/security/passwords.properties
-  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}/etc/security/passwords.properties
+  shell: touch {{ lavoisier_home }}/{{ argo_web }}/etc/security/passwords.properties
+  ignore_errors: True
+  
+- name: Configure etc/security/passwords.properties
+  lineinfile: dest={{ lavoisier_home }}/{{ argo_web }}/etc/security/passwords.properties
               line='admin={{ admin_password_md5 }}'
               regexp='^admin'
               state=present
+  ignore_errors: True
   notify: restart webui
 
 - name: Start webui
   command: ./bin/lavoisier.sh start
-           chdir={{ lavoisier_home }}/{{ argo_web }}-{{ branch_name }}
+           chdir={{ lavoisier_home }}/{{ argo_web }}
   ignore_errors: True

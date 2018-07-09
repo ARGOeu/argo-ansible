@@ -1,0 +1,5 @@
+---
+
+- name: Change all subscriptions to pull mode
+  command: mongo argo_msg --eval 'db.subscriptions.update({},{$set:{"push_endpoint":""}},{"multi":"true"})'
+  tags: clear_messaging_api

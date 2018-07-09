@@ -2,6 +2,16 @@
 # ARGO API methods
 ###########################################
 
+{% if api_factor is defined %}
+api.computation.power={{api_factor}}
+{% endif %}
+
+## to fix timezone and avoid local one
+user.timezone=UTC
+
+## Variable to distinguish prod and test instances
+instance.status={{instancestatus}}
+
 ### Generic Url Availability
 
 api.group.availability=https://{{ argo_api_host }}/api/v2/results/
