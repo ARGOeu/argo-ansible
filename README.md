@@ -8,6 +8,11 @@ The administrator of the ARGO product being deployed via these Ansible playbooks
 - `host_vars/{inventory_hostname}`
 
 Per ARGO product more details on prerequisites and variables are given in the following subsections.
+## Sysprep the VM
+- Disable Selinux:  Vi /etc/sycoconfig/selinux change SELINUX=enforcing to SELINUX=disabled
+- Allocate interfaces to zones: e.g. firewall-cmd  --zone=internal --change-interface=eth2 --permanent 
+- Upload Public keys inclunding GRNET_CI
+- Reboot
 
 <<<<<<< HEAD
 ## Messaging API
