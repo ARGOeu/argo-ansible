@@ -1,0 +1,5 @@
+[unicore-7.5.0]
+name=QCG repository
+baseurl=http://unicoresoft.nebula.grid.icm.edu.pl/repository/dist/UNICORE/7.5.0/centos/el6/x86_64/base/
+enabled=1
+gpgcheck=0
