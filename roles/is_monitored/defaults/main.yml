@@ -1,6 +1,0 @@
----
-
-nrpe_conf_path: /etc/nrpe.d
-
-# Comma separated list of monitoring hosts (either IPs or FQDNs)
-nrpe_allowed_hosts: 8.8.8.8,host.example.com

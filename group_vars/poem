@@ -1,5 +1,0 @@
----
-
-iptables_rules:
-  input:
-    - { dport: "443",   proto: "tcp", policy: "accept"}

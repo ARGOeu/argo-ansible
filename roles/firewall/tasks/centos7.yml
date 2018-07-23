@@ -1,7 +1,0 @@
----
-
-- name: Enable required ports
-  firewalld: service={{ item }} immediate=true permanent=true state=enabled
-  with_items: services
-  when: services is defined
-

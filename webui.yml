@@ -1,9 +1,0 @@
----
-
-- hosts: webui
-  user: root
-  roles:
-    - { role: firewall, tags: firewall }
-    - { role: repos,    tags: repos    }
-    - { role: has_certificate, tags: certificate }
-    - { role: webui,    tags: webui    }

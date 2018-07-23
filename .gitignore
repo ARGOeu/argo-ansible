@@ -1,5 +1,0 @@
-*~
-.DS_Store
-setup.sh
-.*.sw?
-roles/has_certificate/files/*.key
