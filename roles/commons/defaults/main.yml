@@ -1,0 +1,8 @@
+---
+# defaults file for commons
+
+firewall_sources: []
+firewall_interfaces: []
+firewall_zones: []
+firewall_services: []
+firewall_services_zones: []
