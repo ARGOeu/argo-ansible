@@ -1,6 +1,0 @@
----
-
-- name: Install EGI CA certificates
-  tags: ca_bundle
-  yum: name=ca-policy-egi-core state=latest
-
