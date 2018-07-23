@@ -1,0 +1,12 @@
+---
+- name: Install basic utils
+  yum:
+   name: "{{ item }}"
+   state: present
+  loop:
+    - vim
+    - wget
+    - net-tools
+    - lsof
+    - telnet
+  tags: basic_utils_install
