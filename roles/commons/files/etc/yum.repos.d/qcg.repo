@@ -1,0 +1,5 @@
+[qcg]
+name=QCG repository
+baseurl=http://www.qoscosgrid.org/qcg-packages/sl6/x86_64/
+enabled=1
+gpgcheck=0
