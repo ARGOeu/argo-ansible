@@ -1,12 +1,17 @@
 ---
 # defaults file for commons
 
+# firewall default vars
 firewall_sources: []
 firewall_interfaces: []
 firewall_zones: []
 firewall_services: []
 firewall_services_zones: []
 
+# firewall
+cert_dir: /etc/grid-security/
+cert_path: /etc/grid-security/hostcert.pem
+cert_key_path: /etc/grid-security/hostkey.pem
 
 #defaults for role repos
 
