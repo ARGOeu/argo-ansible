@@ -1,3 +1,9 @@
 ---
+<<<<<<< HEAD
 
 httpd_version: "2.4.6"
+=======
+# defaults file for httpd
+
+configure_nagios_apache: false
+>>>>>>> Httpd role
