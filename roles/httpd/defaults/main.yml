@@ -1,2 +1,4 @@
 ---
 # defaults file for httpd
+
+configure_nagios_apache: false
