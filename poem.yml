@@ -1,0 +1,11 @@
+---
+
+- hosts: poem
+  become: yes
+  roles:
+    - { role: commons, task: timezone }
+    - { role: commons, task: repos }
+    - { role: commons, task: basic_utils }
+    - { role: commons, task: firewall }
+    - { role: poem }
+    - { role: httpd }
