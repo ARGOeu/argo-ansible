@@ -79,18 +79,6 @@
     - fail2ban-jails
 
 - name: start and enable service
-  systemd:
-    name: fail2ban
-    state: started
-    enabled: true
-  tags:
-    - configuration
-    - fail2ban
-    - fail2ban-start-enable-service
-  when: ansible_service_mgr == 'systemd'
-
-
-- name: start and enable service
   service:
     name: fail2ban
     state: started
@@ -99,4 +87,3 @@
     - configuration
     - fail2ban
     - fail2ban-start-enable-service
-  when: ansible_service_mgr != 'systemd'

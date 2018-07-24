@@ -12,12 +12,12 @@ poem_secret: bbc2ac55-e3aa-4b89-9038-e1acc4baf232
 poem_debug: "True"
 poem_timezone: Europe/Athens
 ca_bundle_install: true
-SamlLoginString: "Log in using EGI" #the text button
+SamlLoginString: "Log in using EGI"  # the text button
 
-AAI_metadata: https://unity.eudat-aai.fz-juelich.de:8443/saml-idp/metadata #the metadata list of AAI 
-ServiceType: https://goc-sdc.argo.grnet.gr/gocdbpi/private/?method=get_service_types #list of service types
+AAI_metadata: https://unity.eudat-aai.fz-juelich.de:8443/saml-idp/metadata  # the metadata list of AAI
+ServiceType: https://goc-sdc.argo.grnet.gr/gocdbpi/private/?method=get_service_types  # list of service types
 
-ALLOWED_HOSTS: poem-test.argo.grnet.gr #the domain name of the poem needed 
+ALLOWED_HOSTS: poem-test.argo.grnet.gr  # the domain name of the poem needed
 
 ca_bundle: true
 cert_path: "/etc/httpd/"

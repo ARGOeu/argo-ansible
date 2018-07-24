@@ -7,11 +7,6 @@
     name: fail2ban
     state: restarted
   listen: "restart fail2ban"
-  when: ansible_service_mgr != 'systemd'
 
-- name: restart fail2ban (with systemd)
-  systemd:
-    name: fail2ban
-    state: restarted
-  listen: "restart fail2ban"
-  when: ansible_service_mgr == 'systemd'
+- name: reload firewall
+  command: "firewall-cmd --reload"

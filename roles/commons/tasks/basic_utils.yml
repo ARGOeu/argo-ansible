@@ -1,29 +1,37 @@
 ---
+
 - name: Install basic utils
   yum:
    name: "{{ item }}"
    state: present
   loop:
-    - vim
-    - wget
-    - net-tools
-    - lsof
-    - telnet
-    - tmux
-    - unzip
-    - zsh
-    - logrotate
+   - vim
+   - wget
+   - net-tools
+   - lsof
+   - telnet
+   - tmux
+   - unzip
+   - zsh
+   - logrotate
   tags: basic_utils_install
 
 - name: Install EGI CA certificates
   yum:
-    name: epel-release
-    state: latest
+   name: epel-release
+   state: latest
   tags: basic_utils_install
 
-- name: "install pip"
+- name: Install pip
   yum:
-    name: python-pip
-    state: latest
-    enablerepo: epel
+   name: python-pip
+   state: latest
+   enablerepo: epel
+  tags: basic_utils_install
+
+- name: Install fail2ban
+  yum:
+   name: fail2ban
+   state: latest
+   enablerepo: epel
   tags: basic_utils_install

@@ -1,11 +1,10 @@
 ---
 # tasks file for httpd
 
----
 - name: install httpd
   yum:
     name:
-         - httpd
+      - httpd
     state: present
   tags: httpd
 
@@ -26,16 +25,13 @@
             owner=root group=root mode=0644
   notify: restart httpd
   when: configure_nagios_apache
-  tags: 
+  tags:
     - config
     - config-apache
 
-
-  
 - name: httpd enable
   service:
     name: httpd
-    enabled: yes
+    enabled: true
     state: started
   tags: http
-
