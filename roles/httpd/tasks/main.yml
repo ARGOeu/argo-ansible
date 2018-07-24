@@ -1,2 +1,41 @@
 ---
 # tasks file for httpd
+
+---
+- name: install httpd
+  yum:
+    name:
+         - httpd
+    state: present
+  tags: httpd
+
+- name: deploy configuration file
+  template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+  notify: restart httpd
+  tags: httpd
+
+- name: Create ssl.conf file
+  template: src=ssl.conf.j2
+            dest=/etc/httpd/conf.d/ssl.conf backup=yes
+            owner=root group=root mode=0644
+  notify: reload httpd
+
+- name: create apache nagios conf
+  template: src=nagios_apache.conf.j2
+            dest=/etc/httpd/conf.d/nagios.conf
+            owner=root group=root mode=0644
+  notify: reload httpd
+  when: configure_nagios_apache
+  tags: 
+    - config
+    - config-apache
+
+
+  
+- name: httpd enable
+  service:
+    name: httpd
+    enabled: yes
+    state: started
+  tags: http
+
