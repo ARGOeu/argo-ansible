@@ -1,5 +1,5 @@
 ---
-# Firewall Rules argo-web-api, mongo trusted
+
 
 - name: Create firewall new zones
   command: firewall-cmd --permanent --new-zone="{{item}}"
