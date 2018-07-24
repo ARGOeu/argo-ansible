@@ -9,4 +9,20 @@
     - net-tools
     - lsof
     - telnet
+    - tmux
+    - unzip
+    - zsh
+  tags: basic_utils_install
+
+- name: Install EGI CA certificates
+  yum:
+    name: epel-release
+    state: latest
+  tags: basic_utils_install
+
+- name: "install pip"
+  yum:
+    name: python-pip
+    state: latest
+    enablerepo: epel
   tags: basic_utils_install
