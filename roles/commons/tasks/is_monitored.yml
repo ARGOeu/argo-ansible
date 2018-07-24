@@ -11,7 +11,7 @@
     - nagios-plugins-load
 
 - name: Copy nrpe configuration file on host
-  tags: 
+  tags:
     - monitoring
     - nrpe_checks
   template: src=nrpe.cfg.j2
@@ -20,7 +20,7 @@
   notify: restart nrpe
 
 - name: Modify nrpe configuration itself
-  tags: 
+  tags:
     - monitoring
     - nrpe_hosts
   lineinfile: dest=/etc/nagios/nrpe.cfg

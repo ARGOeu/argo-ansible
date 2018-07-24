@@ -1,3 +1,5 @@
+---
+
 - name: set timezone to Europe/Athens
   timezone:
     name: Europe/Athens
