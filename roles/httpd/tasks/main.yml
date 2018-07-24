@@ -18,13 +18,13 @@
   template: src=ssl.conf.j2
             dest=/etc/httpd/conf.d/ssl.conf backup=yes
             owner=root group=root mode=0644
-  notify: reload httpd
+  notify: restart httpd
 
 - name: create apache nagios conf
   template: src=nagios_apache.conf.j2
             dest=/etc/httpd/conf.d/nagios.conf
             owner=root group=root mode=0644
-  notify: reload httpd
+  notify: restart httpd
   when: configure_nagios_apache
   tags: 
     - config
