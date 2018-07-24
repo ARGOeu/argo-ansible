@@ -14,7 +14,6 @@ Per ARGO product more details on prerequisites and variables are given in the fo
 - Upload Public keys inclunding GRNET_CI
 - Reboot
 
-<<<<<<< HEAD
 ## Messaging API
 
 Contains Ansible playbook for the deployment of the ARGO Messaging API. The play is split into the following roles:
@@ -352,36 +351,3 @@ if you want to run the script:
 ```bash
 $ ansible-playbook -i <your_inventory> authn-setup.yml -vvv 
 ``` 
-=======
-## Run or Develop Ansible Playbooks
-
-- In order to run an ansible playbook, you need to make sure that you are using `ansible 2.6`.
-
-- In order to develop new playbooks you will also need to have `docker` and `molecule`.
-
-To make the set up process easier, you will have to create a virtual environment executing the following steps:
- 
- - Make sure you have `python2.7` installed
- 
- - Update `pip`
- 
- `pip install --upgrade pip`
- 
- - Install the virtualenv package
- `pip install virtualenv`
- 
- -  Create the new virtual environment 
- 
- `virtualenv --python=/usr/bin/python2.7 ./argo-ansible-env`
- 
- - Navigate inside the virtual environment and activate it
- 
- `cd argo-ansible-env && source ./bin/activate`
- 
- - Clone the repo and install the appropriate packages
-  
-  After cloning the repo,navigate inside it, and issue the command
-  
-  `pip install -r requirements.txt`
- 
->>>>>>> Set up

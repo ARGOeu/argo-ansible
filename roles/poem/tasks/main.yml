@@ -1,30 +1,9 @@
 ---
-<<<<<<< HEAD
-=======
 # tasks file for poem
->>>>>>> New poem role
 
 - name: clean yum 
   shell: yum clean all
   
-<<<<<<< HEAD
-- name: Install requirements
-  yum: name={{ item }} state=present
-  with_items:
-    - vim
-    - wget
-    - unzip
-    - python-pip
-    - tmux
-    - zsh
-  tags: install_requirements
-
-- name: Install EGI-trustanchors packages
-  tags: trustanchors-packages
-  yum: name=ca-policy-egi-core state=present
-  
-=======
->>>>>>> New poem role
 - name: Install poem package from argo repository
   yum: name=poem state=latest enablerepo={{ enabled_argo_repo }}  update_cache=yes
   tags: install_poem
@@ -35,21 +14,11 @@
             dest=/etc/poem/poem.conf backup=yes
             owner=root group=root mode=0644
             
-<<<<<<< HEAD
-- name: check secret_key 
-  stat: path=/etc/poem/secret_key
-  tags: poem_secret_key
-  register: poem_secret_key
-
-=======
->>>>>>> New poem role
 - name: create secret_key 
   shell: poem-genseckey -f /etc/poem/secret_key
   tags: poem_secret_key
   when: poem_secret_key.stat.islnk is not defined 
 
-<<<<<<< HEAD
-=======
 - name: fetch the secret_key
   fetch:
     src: /etc/poem/secret_key
@@ -57,43 +26,12 @@
     flat: yes
   tags:poem_secret_key 
 
->>>>>>> New poem role
 - name: copy secret_key 
   tags: poem_secret_key
   copy: src=private_files/{{inventory_hostname}}/secret_key
         dest=/etc/poem/secret_key
   when: poem_secret_key.stat.islnk is  defined 
 
-<<<<<<< HEAD
-- name: upload certificate 
-  tags: poem_certificate
-  copy: src=private_files/{{inventory_hostname}}/DigiCertCA.crt
-        dest=/etc/pki/tls/certs/DigiCertCA.crt backup=yes
-        owner=root group=root mode=0404
-        
-- name: Create ssl.conf file
-  template: src=ssl.conf.j2
-            dest=/etc/httpd/conf.d/ssl.conf backup=yes
-            owner=root group=root mode=0644
-            
 - name: update aai metadata
   tags: poem_aai_metadata
   shell: wget {{AAI_metadata}} -O /etc/poem/metadata-checkin.xml 
-
-
-- name: Start and enable httpd service
-  service: name=httpd state=started enabled=yes
-
-- stat: path=/etc/grid-security/hostkey.pem
-  tags: poem_certificate, poem_cert
-  register: hostkey_file
-  
-- name: change hostkey permissions
-  tags: poem_certificate, poem_cert
-  file: path=/etc/grid-security/hostkey.pem  mode=0404 
-  when: hostkey_file.stat.exists
-=======
-- name: update aai metadata
-  tags: poem_aai_metadata
-  shell: wget {{AAI_metadata}} -O /etc/poem/metadata-checkin.xml 
->>>>>>> New poem role
