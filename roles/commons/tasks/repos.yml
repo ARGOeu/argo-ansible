@@ -1,56 +1,56 @@
 ---
 
 - name: Install argo repository definitions
-  tags: argo_repo
+  tags: repo_argo
   template: src=argo.repo.j2
             dest=/etc/yum.repos.d/argo.repo backup=no
             owner=root group=root mode=0644
 
 - name: Install mongodb 3.2 repo
-  tags: mongodb_repo
+  tags: repo_mongodb
   copy: src=etc/yum.repos.d/mongodb-org-3.2.repo
         dest=/etc/yum.repos.d/mongodb-org-3.2.repo backup=no
         owner=root group=root mode=0644
-  when: mongo_repo 
+  when: repo_mongo
 
 
 - name: Install EGI-trustanchors repository definitions
-  tags: ca_bundle_repo
+  tags: repo_ca_bundle
   copy: src=etc/yum.repos.d/EGI-trustanchors.repo
         dest=/etc/yum.repos.d/EGI-trustanchors.repo backup=no
         owner=root group=root mode=0644
   when: ca_bundle
 
 - name: Install UMD repo
-  tags: umd_repo
+  tags: repo_umd
   yum: name=http://repository.egi.eu/sw/production/umd/3/sl6/x86_64/updates/umd-release-3.0.1-1.el6.noarch.rpm
        state=present
-  when: umd_repo
+  when: repo_umd
 
 - name: Install promoo repo
-  tags: monitoring_engine_repo
+  tags: monitoring_engine
   copy: src=etc/yum.repos.d/promoo.repo
         dest=/etc/yum.repos.d/promoo.repo backup=no
         owner=root group=root mode=0644
-  when: promoo_repo
+  when: repo_promoo
 
 - name: Install rocci repo
-  tags: monitoring_engine_repo
+  tags: monitoring_engine
   copy: src=etc/yum.repos.d/rocci.repo
         dest=/etc/yum.repos.d/rocci.repo backup=no
         owner=root group=root mode=0644
-  when: rocci_repo
+  when: repo_rocci
 
 - name: Install qcg repo
-  tags: monitoring_engine_repo
+  tags: monitoring_engine
   copy: src=etc/yum.repos.d/qcg.repo
         dest=/etc/yum.repos.d/qcg.repo backup=no
         owner=root group=root mode=0644
-  when: qcg_repo
+  when: repo_qcg
 
 - name: Install unicore repo
-  tags: monitoring_engine_repo
+  tags: monitoring_engine
   copy: src=etc/yum.repos.d/unicore-7.repo
         dest=/etc/yum.repos.d/unicore-7.repo backup=no
         owner=root group=root mode=0644
-  when: unicore_repo
+  when: repo_unicore
