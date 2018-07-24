@@ -10,11 +10,11 @@ firewall_services_zones: []
 
 #defaults for role repos
 
-enabled_argo_repo: argo-devel #from which repo to get the packages (argo-devel or argo-prod)
-mongo_repo: true # if you want to install mongo repository
+repo_enabled_argo: argo-devel #from which repo to get the packages (argo-devel or argo-prod)
+repo_mongo: true # if you want to install mongo repository
 ca_bundle: false # if you want to install EGI-trustanchors repository
-qcg_repo: false
-unicore_repo: false
-umd_repo: false
-promoo_repo: false
-rocci_repo: false
+repo_qcg: false
+repo_unicore: false
+repo_umd: false
+repo_promoo: false
+repo_rocci: false
