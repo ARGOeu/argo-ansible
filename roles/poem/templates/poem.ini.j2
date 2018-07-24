@@ -17,19 +17,16 @@ Email = {{ db_mail }}
 ServiceType = {{ServiceType}}
 ##https://goc.egi.eu/gocdbpi/private/?method=get_service_types
 VO = http://operations-portal.egi.eu/xml/voIDCard/public/all/true
-
 {% if UsePlainHttpAuth is defined %}
 UsePlainHttpAuth = {{ UsePlainHttpAuth }}
 {% else %}
 UsePlainHttpAuth = False
 {% endif %}
-
 {% if HttpUser is defined %}
 HttpUser = {{ HttpUser }}
 {% else %}
 HttpUser = xxxx
 {% endif %}
-
 {% if HttpPass is defined %}
 HttpPass = {{ HttpPass }}
 {% else %}
@@ -39,8 +36,10 @@ HttpPass = xxxx
 
 [SECURITY]
 AllowedHosts = {{ALLOWED_HOSTS}}
-HostCert = /etc/grid-security/hostcert.pem
-HostKey = /etc/grid-security/hostkey.pem
+HostCert = {{cert_path}}/hostcert.pem
+HostKey = {{cert_path}}/hostkey.pem
+CAFile = {{cert_path}}/DigiCertCA.crt
+{% if ca_bundle %}
 CAPath = /etc/grid-security/certificates/
-CAFile = /etc/pki/tls/certs/DigiCertCA.crt
+{%endif%}
 SecretKeyPath = /etc/poem/secret_key
