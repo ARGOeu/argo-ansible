@@ -12,6 +12,7 @@
     - tmux
     - unzip
     - zsh
+    - logrotate
   tags: basic_utils_install
 
 - name: Install EGI CA certificates
