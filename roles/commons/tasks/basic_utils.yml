@@ -35,3 +35,8 @@
    state: latest
    enablerepo: epel
   tags: basic_utils_install
+
+- name: Install EGI-trustanchors packages
+  tags: trustanchors-packages
+  yum: name=ca-policy-egi-core state=present
+  when: ca_bundle
