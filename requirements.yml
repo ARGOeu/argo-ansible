@@ -1,0 +1,7 @@
+# install some needed roles from galaxy
+
+# basic modifications for increased security
+- src: dev-sec.os-hardening
+
+# role for handling logrotate configuration
+- src: nickhammond.logrotate
