@@ -20,4 +20,3 @@ ServiceType: https://goc-sdc.argo.grnet.gr/gocdbpi/private/?method=get_service_t
 ALLOWED_HOSTS: poem-test.argo.grnet.gr  # the domain name of the poem needed
 
 ca_bundle: true
-cert_path: "/etc/httpd/"
