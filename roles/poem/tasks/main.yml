@@ -16,14 +16,26 @@
             dest=/etc/poem/poem.conf backup=yes
             owner=root group=root mode=0644
 
+- name: check path of db
+  stat:
+    path: /var/lib/poem/poemserv.db
+  register: sym_db
+
 - name: create poem db
   command: poem-db -c
   tags: poem_create_db
+  when: sym_db.stat.islnk is not defined
+
+
+- name: check secret_key 
+  stat: path=/etc/poem/secret_key
+  tags: poem_secret_key
+  register: poem_secret_key
 
 - name: create secret_key
   command: poem-genseckey -f /etc/poem/secret_key
   tags: poem_secret_key
-  when: poem_secret_key_stat_islnk is not defined
+  when: poem_secret_key.stat.islnk is not defined
 
 - name: fetch the secret_key
   fetch:
@@ -36,7 +48,7 @@
   tags: poem_secret_key
   copy: src=private_files/{{inventory_hostname}}/secret_key
         dest=/etc/poem/secret_key
-  when: poem_secret_key_stat_islnk is  defined
+  when: poem_secret_key.stat.islnk is  defined
 
 - name: copy DigiCertCA
   tags: poem_digicert
@@ -45,4 +57,5 @@
 
 - name: update aai metadata
   tags: poem_aai_metadata
-  command: wget {{AAI_metadata}} -O /etc/poem/metadata-checkin.xml
+  get_url: url= {{AAI_metadata}} dest="/etc/poem/metadata-checkin.xml"
+
