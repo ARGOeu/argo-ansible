@@ -3,39 +3,39 @@ Namespace = {{ poem_namespace }}
 Debug = {{ poem_debug }} 
 TimeZone = {{ poem_timezone }}
 {% if SamlLoginString is defined %}
-SamlLoginString = {{ SamlLoginString }}
+SamlLoginString = {{ poem_SamlLoginString }}
 {% else %}
 SamlLoginString = Log in using EGI CHECK-IN
 {% endif %}
 
 [SUPERUSER]
-Name =  {{ db_user }}
-Password = {{ db_pass }}
-Email = {{ db_mail }}
+Name =  {{ poem_db_user }}
+Password = {{ poem_db_pass }}
+Email = {{ poem_db_mail }}
 
 [SYNC]
-ServiceType = {{ServiceType}}
+ServiceType = {{poem_ServiceType}}
 ##https://goc.egi.eu/gocdbpi/private/?method=get_service_types
 VO = http://operations-portal.egi.eu/xml/voIDCard/public/all/true
-{% if UsePlainHttpAuth is defined %}
-UsePlainHttpAuth = {{ UsePlainHttpAuth }}
+{% if poem_UsePlainHttpAuth is defined %}
+UsePlainHttpAuth = {{ poem_UsePlainHttpAuth }}
 {% else %}
 UsePlainHttpAuth = False
 {% endif %}
-{% if HttpUser is defined %}
-HttpUser = {{ HttpUser }}
+{% if poem_HttpUser is defined %}
+HttpUser = {{ poem_HttpUser }}
 {% else %}
 HttpUser = xxxx
 {% endif %}
 {% if HttpPass is defined %}
-HttpPass = {{ HttpPass }}
+HttpPass = {{ poem_HttpPass }}
 {% else %}
 HttpPass = xxxx
 {% endif %}
 
 
 [SECURITY]
-AllowedHosts = {{ALLOWED_HOSTS}}
+AllowedHosts = {{poem_ALLOWED_HOSTS}}
 HostCert = {{cert_path}}
 HostKey = {{cert_key_path}}
 CAFile = {{cert_dir}}/DigiCertCA.crt
