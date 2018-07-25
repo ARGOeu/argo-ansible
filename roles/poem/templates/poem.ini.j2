@@ -36,9 +36,9 @@ HttpPass = xxxx
 
 [SECURITY]
 AllowedHosts = {{ALLOWED_HOSTS}}
-HostCert = {{cert_path}}/hostcert.pem
-HostKey = {{cert_path}}/hostkey.pem
-CAFile = {{cert_path}}/DigiCertCA.crt
+HostCert = {{cert_path}}
+HostKey = {{cert_key_path}}
+CAFile = {{cert_dir}}/DigiCertCA.crt
 {% if ca_bundle %}
 CAPath = /etc/grid-security/certificates/
 {%endif%}
