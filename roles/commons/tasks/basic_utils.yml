@@ -16,7 +16,7 @@
    - logrotate
   tags: basic_utils_install
 
-- name: Install EGI CA certificates
+- name: Install epel-release
   yum:
    name: epel-release
    state: latest
