@@ -9,5 +9,6 @@
     - { role: commons, task: firewall, tags: firewall }
     - { role: commons, task: cert, tags: cert }
     - { role: commons, task: fail2ban, tags: fail2ban }
+    - { role: commons, task: logrotate, tags: logrotate }
     - { role: poem, tags: poem}
     - { role: httpd, tags: httpd }
