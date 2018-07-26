@@ -1,0 +1,45 @@
+---
+# tasks file for mongodb
+
+- name: Install mongoDB packages
+  tags: mongoDB-packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - mongodb-org
+    - mongodb-org-server
+
+- name: Bind mongod processes to one or more interfaces
+  lineinfile: >
+              dest=/etc/mongod.conf
+              regexp="\ \ bindIp"
+              line='  bindIp: {{ mongo_bind_interfaces }}'
+              state=present
+              backup=yes
+  notify: restart mongo
+
+- name: Fix issue with mongo init script
+  lineinfile: >
+              dest=/etc/mongod.conf
+              regexp="\ \ pidFilePath"
+              line='  pidFilePath: /var/run/mongodb/mongod.pid'
+              state=present
+              backup=yes
+  notify: restart mongo
+
+- name: Increase soft nproc limits
+  copy:
+    src: etc/security/limits.d/99-mongodb-nproc.conf
+    dest: /etc/security/limits.d/99-mongodb-nproc.conf
+    backup: no
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mongo
+
+- name: Enable and start mongoDB
+  service:
+    name: mongod
+    enabled: yes
+    state: started
