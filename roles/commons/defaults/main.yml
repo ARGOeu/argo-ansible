@@ -23,6 +23,7 @@ repo_unicore: false
 repo_umd: false
 repo_promoo: false
 repo_rocci: false
+repo_cloudera: false
 
 # defaults file for fail2ban
 

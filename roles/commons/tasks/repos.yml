@@ -28,28 +28,35 @@
   when: repo_umd
 
 - name: Install promoo repo
-  tags: monitoring_engine
+  tags: repo_cloudera
+  copy: src=etc/yum.repos.d/cloudera.repo
+        dest=/etc/yum.repos.d/cloudera.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_cloudera
+
+- name: Install promoo repo
+  tags: repo_monbox
   copy: src=etc/yum.repos.d/promoo.repo
         dest=/etc/yum.repos.d/promoo.repo backup=no
         owner=root group=root mode=0644
   when: repo_promoo
 
 - name: Install rocci repo
-  tags: monitoring_engine
+  tags: repo_monbox
   copy: src=etc/yum.repos.d/rocci.repo
         dest=/etc/yum.repos.d/rocci.repo backup=no
         owner=root group=root mode=0644
   when: repo_rocci
 
 - name: Install qcg repo
-  tags: monitoring_engine
+  tags: repo_monbox
   copy: src=etc/yum.repos.d/qcg.repo
         dest=/etc/yum.repos.d/qcg.repo backup=no
         owner=root group=root mode=0644
   when: repo_qcg
 
 - name: Install unicore repo
-  tags: monitoring_engine
+  tags: repo_monbox
   copy: src=etc/yum.repos.d/unicore-7.repo
         dest=/etc/yum.repos.d/unicore-7.repo backup=no
         owner=root group=root mode=0644
