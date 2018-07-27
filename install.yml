@@ -12,3 +12,16 @@
     - { role: nickhammond.logrotate, tags: logrotate}
     - { role: poem, tags: poem}
     - { role: httpd, tags: httpd }
+
+- hosts: haproxy
+  become: yes
+  roles:
+    - { role: commons, task: timezone, tags: timezone}
+    - { role: commons, task: repos, tags: repos }
+    - { role: commons, task: basic_utils, tags: basic_utils }
+    - { role: commons, task: firewall, tags: firewall }
+    - { role: commons, task: cert, tags: cert }
+    - { role: commons, task: fail2ban, tags: fail2ban }
+    - { role: nickhammond.logrotate, tags: logrotate}
+    - { role: haproxy, task: rsyslog}
+    - { role: haproxy, task: haproxy}

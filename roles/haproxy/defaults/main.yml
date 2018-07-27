@@ -1,0 +1,15 @@
+---
+# defaults file for haproxy
+
+haproxy_retries: 3
+haproxy_timeout_http_request: 5000
+haproxy_timeout_queue: 5000
+haproxy_timeout_connect: 5000
+haproxy_timeout_client: 10000
+haproxy_timeout_server: 10000
+haproxy_timeout_http_keep_alive: 10000
+haproxy_timeout_check: 10000
+haproxy_maxconn: 20
+haproxy_stats_port: 9000
+haproxy_port_bind_ssl: 443
+haproxy_port_bind: 80
