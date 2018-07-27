@@ -62,9 +62,6 @@ SSLSessionCacheTimeout  300
 #   Manual for more details.
 SSLRandomSeed startup file:/dev/urandom  256
 SSLRandomSeed connect builtin
-#SSLRandomSeed startup file:/dev/random  512
-#SSLRandomSeed connect file:/dev/random  512
-#SSLRandomSeed connect file:/dev/urandom 512
 
 #
 # Use "SSLCryptoDevice" to enable any supported hardware
@@ -74,7 +71,6 @@ SSLRandomSeed connect builtin
 # your accelerator is functioning properly. 
 #
 SSLCryptoDevice builtin
-#SSLCryptoDevice ubsec
 
 ##
 ## SSL Virtual Host Context
@@ -131,7 +127,7 @@ Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains
 # the certificate is encrypted, then you will be prompted for a
 # pass phrase.  Note that a kill -HUP will prompt again.  A new
 # certificate can be generated using the genkey(1) command.
-SSLCertificateFile {{ cert_path }}
+SSLCertificateFile {{cert_path}}
 
 #   Server Private Key:
 #   If the key is not combined with the certificate, use this
@@ -147,16 +143,17 @@ SSLCertificateKeyFile {{ cert_key_path }}
 #   the referenced file can be the same as SSLCertificateFile
 #   when the CA certificates are directly appended to the server
 #   certificate for convinience.
+{% if ansible_fqdn in groups['poem'] %}
 SSLCertificateChainFile {{ cert_dir }}/DigiCertCA.crt
+{% endif %}
 
 #   Certificate Authority (CA):
 #   Set the CA certificate verification path where to find CA
 #   certificates for client authentication or alternatively one
 #   huge file containing all of them (file must be PEM encoded)
 {% if ansible_fqdn in groups['monbox'] %}
-SSLCACertificateFile {{ca_bundle}}
-SSLCACertificatePath {{ ca_path }}
-SSLCARevocationPath {{ ca_path }}
+SSLCACertificatePath {{cert_dir}}/certificates/
+SSLCARevocationPath {{cert_dir}}/certificates/
 {% endif %}
 
 
@@ -268,7 +265,7 @@ RewriteEngine On
 {% if ansible_fqdn in groups['poem'] %}
 RewriteRule ^/$ /poem [R]
 {% elif ansible_fqdn in groups['monbox'] %}
-RewriteRule ^/$ https://%{SERVER_NAME}/nagios/ [L,R=301]
+RewriteRule ^/$ /nagios [R]
 {% endif %}
 </VirtualHost>                                  
 
