@@ -1,24 +1,54 @@
 ---
 
+- name: Set eth devices unmanaged by network manager
+  command: "nmcli dev set {{item}} managed no"
+  with_items: "{{firewall_unmanaged_interfaces}}"
+  tags: firewall
+
+- name: Clear firewall state
+  command: "rm -f /etc/firewalld/{{item}}/*"
+  with_items:
+    - services
+    - zones
+    - helpers
+    - icmptypes
+    - ipsets
+  tags: firewall
+  args:
+    warn: false
+
+- name: Add default services to public zone
+  firewalld:
+    zone: public
+    service: "{{item}}"
+    permanent: true
+    state: enabled
+  with_items:
+    - ssh
+    - dhcpv6-client
+  tags: firewall
+  notify: restart firewall
+
+- meta: flush_handlers
 
 - name: Create firewall new zones
   command: firewall-cmd --permanent --new-zone="{{item}}"
   with_items: "{{firewall_zones}}"
-  notify: reload firewall
+  notify: restart firewall
   tags: firewall
   ignore_errors: true
 
 - name: Create firewall new services
   command: firewall-cmd --permanent --new-service="{{item.name}}"
   with_items: "{{firewall_services}}"
-  notify: reload firewall
+  notify: restart firewall
   tags: firewall
   ignore_errors: true
 
 - name: Add port to services
   command: firewall-cmd --permanent --service="{{item.name}}" --add-port={{item.port}}
   with_items: "{{firewall_services}}"
-  notify: reload firewall
+  notify: restart firewall
   tags: firewall
   ignore_errors: true
 
@@ -30,7 +60,7 @@
     state: enabled
   with_items: "{{firewall_services_zones}}"
   tags: firewall
-  notify: reload firewall
+  notify: restart firewall
 
 - name: Add sources to zones
   firewalld:
@@ -40,7 +70,7 @@
     state: enabled
   with_items: "{{firewall_sources}}"
   tags: firewall
-  notify: reload firewall
+  notify: restart firewall
 
 - name: Add interfaces to zones
   firewalld:
@@ -50,4 +80,4 @@
     state: enabled
   with_items: "{{firewall_interfaces}}"
   tags: firewall
-  notify: reload firewall
+  notify: restart firewall
