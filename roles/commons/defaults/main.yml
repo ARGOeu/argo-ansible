@@ -12,6 +12,9 @@ firewall_services_zones: []
 cert_dir: /etc/grid-security/
 cert_path: /etc/grid-security/hostcert.pem
 cert_key_path: /etc/grid-security/hostkey.pem
+ca_path: /etc/pki/tls/certs/
+ca_path_bundle: /etc/pki/tls/certs/ca-bundle.crt
+
 
 # defaults for role repos
 
@@ -24,6 +27,7 @@ repo_umd: false
 repo_promoo: false
 repo_rocci: false
 repo_cloudera: false
+repo_nagios: false
 
 # defaults file for fail2ban
 
