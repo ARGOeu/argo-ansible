@@ -28,7 +28,7 @@
             owner=root group=root mode=0644
   notify: 
     - Reload service httpd, in all cases
-  when: configure_nagios_apache
+  when: monbox_configure_nagios_apache
   tags:
     - config
     - config-apache
