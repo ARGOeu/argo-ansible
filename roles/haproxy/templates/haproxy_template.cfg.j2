@@ -79,7 +79,7 @@ defaults
 # Statistics Interface Setup
 
 listen stats
-        bind :::9000 ssl crt {{cert_dir}}/{{inventory_hostname}}.crt no-sslv3
+        bind :::9000 ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
         mode            http
         log             global
         maxconn 10
@@ -101,7 +101,7 @@ listen stats
 
 #frontend
 frontend  {{haproxy_frontend}}
-   bind :::{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}/{{inventory_hostname}}.crt no-sslv3
+   bind :::{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
    bind :::{{haproxy_port_bind}}
    redirect scheme https if !{ ssl_fc }
    http-response set-header Strict-Transport-Security max-age=31536000
@@ -116,7 +116,7 @@ frontend  {{haproxy_frontend}}
 
    default_backend {{haproxy_default_backend}}
 
-
+{% if haproxy_authn_host is defined %}
 #---------------------------------------------------------------------
 # authn backend - authn service runs usually in 8080
 #---------------------------------------------------------------------
@@ -125,11 +125,11 @@ backend authn_backend
 	reqrep ^([^\ ]*\ /)authn[/]?(.*)     \1\2
 	server authn1  {{haproxy_authn_host}}:{{haproxy_authn_port}} ssl check port {{haproxy_authn_port}}
 
+{% endif %}
 
 #---------------------------------------------------------------------
 # round robin balancing between the various msg backends
 #---------------------------------------------------------------------
-
 
 {% for backend in haproxy_backends %}
 backend {{backend.name}}

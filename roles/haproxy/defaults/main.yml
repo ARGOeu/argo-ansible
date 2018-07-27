@@ -1,4 +1,6 @@
 ---
+# defaults file for haproxy
+
 haproxy_retries: 3
 haproxy_timeout_http_request: 5000
 haproxy_timeout_queue: 5000
@@ -11,5 +13,3 @@ haproxy_maxconn: 20
 haproxy_stats_port: 9000
 haproxy_port_bind_ssl: 443
 haproxy_port_bind: 80
-haproxy_authn_host: authn.foo
-haproxy_authn_port: 8443
