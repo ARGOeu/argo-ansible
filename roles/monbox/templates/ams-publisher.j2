@@ -1,0 +1,52 @@
+[General]
+Host = {{ inventory_hostname }}
+RunAsUser = nagios
+StatsEveryHour = 24
+PublishMsgFile = False
+PublishMsgFileDir = /published
+PublishArgoMessaging = True
+TimeZone = UTC
+StatSocket = /var/run/argo-nagios-ams-publisher/sock
+
+[Queue_Metrics]
+Directory = /var/spool/argo-nagios-ams-publisher/metrics/
+Rate = 10
+Purge = True
+PurgeEverySec = 300
+MaxTemp = 300
+MaxLock = 0
+Granularity = 60
+
+[Topic_Metrics]
+Host = {{monbox_messaging_service}}
+Key = {{monbox_messaging_token}}
+Project = {{monbox_messaging_project}}
+Bulksize = 100
+Topic = metric_data
+MsgType = metric_data
+Avro = True
+AvroSchema = /etc/argo-nagios-ams-publisher/metric_data.avsc
+Retry = 5
+Timeout = 60
+SleepRetry = 300
+
+[Queue_Alarms]
+Directory = /var/spool/argo-nagios-ams-publisher/alarms/
+Rate = 10
+Purge = True
+PurgeEverySec = 300
+MaxTemp = 300
+MaxLock = 0
+Granularity = 60
+
+[Topic_Alarms]
+Host = {{monbox_messaging_service}}
+Key = {{monbox_messaging_token}}
+Project = {{monbox_messaging_project}}
+Bulksize = 100
+Topic = alarms
+MsgType = alarm
+Avro = False
+Retry = 5
+Timeout = 60
+SleepRetry = 300
