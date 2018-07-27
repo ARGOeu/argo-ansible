@@ -1,23 +1,32 @@
-Role Name
+Commons
 =========
 
-A brief description of the role goes here.
+Commons role deploys some common stuff on all nodes
+
+Consists of the following task:
+- Firewall
+
+Firewall task manages the firewall rules on the node. It uses a combination of ansible command and firewalld modules.
+Sets desired interfaces to be unmanaged by NetworkManager and then resets FirewallD setting to the initial
+Centos 7 deployment configuration (only public zone with ssh and dchp6-client). Then according to the declared firewall_ prefixed host_vars generates new zones, services, interfaces and services to zones mappings.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should
-be mentioned here. For instance, if the role uses the EC2 module, it may be a
-good idea to mention in this section that the boto package is required.
+Selinux should be turned off
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including
-any variables that are in defaults/main.yml, vars/main.yml, and any variables
-that can/should be set via parameters to the role. Any variables that are read
-from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
-be mentioned here as well.
+Firewall-related:
+
+- firewall_unmanaged_nics: a list of interfaces to be unmanaged by NetworkManager
+- firewall_sources: a list of sources to be created
+- firewall_interfaces: a list of interfaces to be added to zones (items: {"interface":"ethX", "zone":"zone to map to"})
+- firewall_zones: a list of zones to be created
+- firewall_services: a list of services to be created (items: {"name": "service name", "port": "port_num/tcp"})
+- firewall_services_zones: a list that maps services to zones (items: {"service":"service name", "zone": "zone to map to"})
+
 
 Dependencies
 ------------
@@ -39,10 +48,9 @@ passed in as parameters) is always nice for users too:
 License
 -------
 
-BSD
+Apache 2.0
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a
-website (HTML is not allowed).
+GRNET
