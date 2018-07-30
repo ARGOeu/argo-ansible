@@ -5,7 +5,7 @@
             dest=/etc/nagios/nagios.cfg
             owner=nagios group=nagios mode=0644
   notify: reload nagios
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_nagios
     - monbox_config_nagios_cfg
@@ -15,67 +15,67 @@
             dest=/etc/nagios/cgi.cfg
             owner=nagios group=nagios mode=0644
   notify: reload nagios
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_nagios
     - monbox_config_nagios_cgi_cfg
-  
 
-- name: Create a cron job to restart apache 
-  cron: name=restart_httpd 
+
+- name: Create a cron job to restart apache
+  cron: name=restart_httpd
         user="root"
-        minute="53" hour="2,8,14,20" 
-        job="( /sbin/service httpd status && /sbin/service httpd graceful ) > /dev/null 2>&1" 
+        minute="53" hour="2,8,14,20"
+        job="( /sbin/service httpd status && /sbin/service httpd graceful ) > /dev/null 2>&1"
   when: ca_bundle
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_cronjob
-    
+
 - name: Create and copy ncg.conf file
   template: src=ncg.conf.j2
             dest=/etc/argo-ncg/ncg.conf
             owner=root group=root
   notify: reload nagios
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_ncg
 
 - name: Copy ncg.loacconf file
-  copy: 
-    src: private_files/{{inventory_hostname}}/files/ncg.localdb 
+  copy:
+    src: private_files/{{inventory_hostname}}/files/ncg.localdb
     dest: /etc/argo-ncg/ncg.localdb
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_ncg
     - monbox_config_ncg_localdb
   ignore_errors: true
-    
+
 - name: Creates /etc/nagios/plugins/ directory
   file: path=/etc/nagios/plugins/ state=directory
-  tags: 
+  tags:
     - config
     - config-ncg
 
 - name: Copy ncg.loacconf configuration files
-  copy: 
+  copy:
     src: private_files/{{inventory_hostname}}/files/plugins/
     dest: /etc/nagios/plugins/
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_ncg
   ignore_errors: true
-    
+
 - name: Run ncg.reload
   command: ncg.reload.sh
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_ncg
-    
+
 - name: Copy argo-nagios-ams-publisher - ams-publisher file
   template: src=ams-publisher.j2
             dest=/etc/argo-nagios-ams-publisher/ams-publisher.conf
             owner=nagios group=nagios
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_ams_publisher
 
@@ -83,38 +83,38 @@
   service: name={{ item }} state=started enabled=yes
   with_items:
     - nagios
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_enable_nagios
-  
+
 - name: Start fetch-crl cron
   service: name=fetch-crl-cron state=started enabled=yes
   when: ca_bundle
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_enable_fetch_cron
 
 - name: Start fetch-crl boot
   service: name=fetch-crl-boot state=started enabled=yes
   when: ca_bundle
-  ignore_errors: yes
-  tags: 
+  ignore_errors: true
+  tags:
     - monbox_config
     - monbox_config_enable_fetch_cron
 
 - name: Enable argo-nagios-ams-publisher on boot and start service
   service: name=ams-publisher state=started enabled=yes
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_enable_ams
   ignore_errors: true
-  
+
 - name: Copy broker-list file
   template: src=broker-list.j2
             dest=/var/cache/msg/broker-cache-file/broker-list
             owner=root group=root mode=0644
   when: monbox_broker_host is defined
-  tags: 
+  tags:
     - monbox_config
     - monbox_config_enable_ams
 
@@ -123,23 +123,23 @@
   copy:
     content: ""
     dest: /etc/nagios/htpasswd.users
-    force: no
+    force: false
     group: root
     owner: root
     mode: 0555
 
 - name: Copy htpasswd.users configuration files
-  copy: 
+  copy:
     src: private_files/{{inventory_hostname}}/etc/nagios/htpasswd.users
     dest: /etc/nagios/htpasswd.users
-  tags: 
+  tags:
     - monbox_config
-    - monbox_config_httpasswd    
+    - monbox_config_httpasswd
   ignore_errors: true
 
 - name: Copy pem certificate to globus folder to check CERT validity
   copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.pem
         dest=/etc/nagios/globus/hostcert.pem backup=yes
         owner=nagios group=nagios
-  tags: 
+  tags:
     - monbox_config

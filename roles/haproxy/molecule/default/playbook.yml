@@ -2,4 +2,6 @@
 - name: Converge
   hosts: all
   roles:
-    - role: haproxy
+    - { role: commons, task: cert}
+    - { role: haproxy, task: haproxy }
+    - { role: haproxy, task: rsyslog }

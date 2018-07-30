@@ -7,7 +7,7 @@
     warn: false
 
 - name: Install poem package from argo repository
-  yum: name=poem state=latest enablerepo={{ repo_enabled_argo }}  update_cache=yes 
+  yum: name=poem state=latest enablerepo={{ repo_enabled_argo }}  update_cache=yes
   tags: install_poem
 
 - name: Create poem.ini file
@@ -27,7 +27,7 @@
   when: sym_db.stat.islnk is not defined
 
 
-- name: check secret_key 
+- name: check secret_key
   stat: path=/etc/poem/secret_key
   tags: poem_secret_key
   register: poem_secret_key
@@ -58,4 +58,3 @@
 - name: update aai metadata
   tags: poem_aai_metadata
   get_url: url= {{poem_AAI_metadata}} dest="/etc/poem/metadata-checkin.xml"
-
