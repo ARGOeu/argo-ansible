@@ -28,3 +28,8 @@
   become: yes
   roles:
     - { role: zookeeper, tags: zookeeper_install }
+
+- hosts: kafka
+  become: yes
+  roles:
+    - { role: kafka, tags: kafka_install }
