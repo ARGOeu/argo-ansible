@@ -1,152 +1,30 @@
 ---
+# tasks file for kafka
 
-# Based on
-# https://github.com/hpcloud-mon/ansible-kafka
-# https://github.com/hpcloud-mon/ansible-zookeeper
-
-# Firewall Rules related to opening kafka to public ip for a specific source
-
-- name: Create firewall new zones
-  command: firewall-cmd --permanent --new-zone="{{item}}"
-  with_items: "{{firewall_zones}}"
-  notify: reload firewall
-  when: firewall_zones is defined
-  tags: firewall
-  ignore_errors: yes
-
-- name: Create firewall new services
-  command: firewall-cmd --permanent --new-service="{{item.name}}"
-  with_items: "{{firewall_services}}"
-  notify: reload firewall
-  when: firewall_services is defined
-  tags: firewall
-  ignore_errors: yes
-
-- name:  Add port to services
-  command: firewall-cmd --permanent --service="{{item.name}}" --add-port={{item.port}}
-  with_items: "{{firewall_services}}"
-  notify: reload firewall
-  when: firewall_services is defined
-  tags: firewall
-  ignore_errors: yes
-
-- name: Firewall add services to zones
-  firewalld:
-    zone: "{{item.zone}}"
-    service: "{{item.service}}"
-    permanent: true
-    state: enabled
-  with_items: "{{firewall_services_zones}}"
-  when: firewall_services_zones is defined
-  tags: firewall
-  notify: reload firewall
-
-- name: Add sources to zones
-  firewalld:
-    zone: "{{item.zone}}"
-    source: "{{item.source}}"
-    permanent: true
-    state: enabled
-  with_items: "{{firewall_sources}}"
-  when: firewall_sources is defined
-  tags: firewall
-  notify: reload firewall
-
-- name: Add interfaces to zones
-  firewalld:
-    zone: "{{item.zone}}"
-    interface: "{{item.interface}}"
-    permanent: true
-    state: enabled
-  with_items: "{{firewall_interfaces}}"
-  when: firewall_interfaces is defined
-  tags: firewall
-  notify: reload firewall
-
-# Deploy kafka
-
-- name: Install OpenJDK
-  yum: name=java-1.7.0-openjdk state=present
+- name: Install kafka package
+  yum:
+    name: "{{item}}"
+    state: present
+    enablerepo: cloudera-kafka
+  loop:
+    - kafka
+    - kafka-server
   tags: kafka_install
 
-- name: setup group
-  group: name=kafka system=yes
+
+- name: Update kafka configuration
+  template:
+    src: server.properties.j2
+    dest: /etc/kafka/conf/server.properties
+    owner: kafka
+    group: kafka
+    mode: 0644
+  notify: restart kafka
   tags: kafka_install
 
-- name: Setup user
-  user: name=kafka system=yes group=kafka
+- name: Start kafka service
+  service:
+    name: kafka-server
+    state: started
+    enabled: true
   tags: kafka_install
-
-- name: Change ownership on kafka directory.
-  file: path="{{kafka_dir}}" state=directory owner=kafka group=kafka recurse=yes
-  tags: kafka_install
-
-- name: Remove older downloaded kafka tgz file
-  command: rm -f {{kafka_dir}}/kafka_{{kafka_scala_version}}-{{kafka_version}}.tgz
-  tags: kafka_install
-  ignore_errors: True
-
-- name: Download Kafka version
-  get_url: url={{kafka_url}} dest={{kafka_dir}}/kafka_{{kafka_scala_version}}-{{kafka_version}}.tgz timeout=100
-  tags: kafka_install
-
-- name: Unpack tarball
-  command: tar xzf {{kafka_dir}}/kafka_{{kafka_scala_version}}-{{kafka_version}}.tgz --strip-components=1 chdir={{kafka_dir}} creates={{kafka_dir}}/bin
-  tags: kafka_install
-
-- name: Setup Kafka service
-  template: dest="/etc/systemd/system/kafka.service" src=kafka.service.j2
-  register: kafka_service
-  tags: kafka_install
-
-- name: reload systemd
-  command: /usr/bin/systemctl --system daemon-reload
-  when: kafka_service | changed
-  tags: kafka_install
-
-- name: Create data_dir
-  file: path={{kafka_data_dir}} state=directory owner=kafka group=kafka mode=755
-  tags: kafka_config
-
-- name: Open firewalld port 9092 for zookeeper
-  command: firewall-cmd --zone=public --add-port=9092/tcp --permanent
-  tags: kafka_config
-
-- name: restart firewalld
-  command: service firewalld restart
-  tags: kafka_config
-
-- name: Create log_dir
-  file: path={{kafka_log_dir}} state=directory owner=kafka group=kafka mode=755
-  tags: kafka_config
-
-- name: Link /opt/kafka to current kafka version
-  file: path=/opt/kafka state=link src=/opt/kafka_{{kafka_scala_version}}-{{kafka_version}}
-  tags: kafka_config
-
-- name: link conf_dir to /opt/kafka/config
-  file: path={{kafka_conf_dir}} state=link src=/opt/kafka/config
-  tags: kafka_config
-
-- name: create log4j.properties
-  template: dest="{{kafka_conf_dir}}/log4j.properties" owner=kafka group=kafka mode=644 src=log4j.properties.j2
-  notify:
-    - restart kafka
-  tags: kafka_config
-
-- name: remove server.properties
-  file: dest="{{kafka_conf_dir}}/server.properties" state=absent
-  tags: kafka_config
-
-- name: create server.properties
-  template: dest="{{kafka_conf_dir}}/server.properties" owner=kafka group=kafka mode=640 src=server.properties.j2
-  tags: kafka_config
-
-- name: create meta.properties
-  template: dest="{{kafka_data_dir}}/meta.properties" owner=kafka group=kafka mode=640 src=meta.properties.j2
-  notify:
-    - restart kafka
-  tags: kafka_config
-
-
-- meta: flush_handlers
