@@ -11,7 +11,7 @@
 
 - name: deploy configuration file
   template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
-  notify: 
+  notify:
     - Restart service httpd, in all cases
   tags: httpd
 
@@ -19,14 +19,14 @@
   template: src=ssl.conf.j2
             dest=/etc/httpd/conf.d/ssl.conf backup=yes
             owner=root group=root mode=0644
-  notify: 
+  notify:
     - Reload service httpd, in all cases
 
 - name: create apache nagios conf
   template: src=nagios_apache.conf.j2
             dest=/etc/httpd/conf.d/nagios.conf
             owner=root group=root mode=0644
-  notify: 
+  notify:
     - Reload service httpd, in all cases
   when: monbox_configure_nagios_apache
   tags:

@@ -41,17 +41,17 @@
   template:
     src: haproxy_template.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
-    backup: yes
+    backup: true
 
 - name: configure haproxy log(rsyslog)
   template:
     src: rsyslog_haproxy.conf.j2
     dest: /etc/rsyslog.d/haproxy.conf
-    backup: yes
+    backup: true
   notify: restart rsyslog
 
 - name: start haproxy
   service:
     name: haproxy
-    enabled: yes
+    enabled: true
     state: started

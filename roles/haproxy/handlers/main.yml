@@ -5,9 +5,9 @@
   service:
     name: rsyslog
     state: restarted
-    enabled: yes
+    enabled: true
 
--   name: restart rsyslog
-    service:
-      name: rsyslog
-      state: restared
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restared
