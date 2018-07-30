@@ -2,7 +2,7 @@
 
 monbox_httpd_plugins: []
 
-## NCG vars ##
+#  NCG vars
 monbox_nagios_admin_email: "contact@nagiosadmin.localhost"
 monbox_vo: ops
 monbox_enable_unicore_probes: "0"
@@ -21,15 +21,15 @@ monbox_include_proxy_checks: "0"
 monbox_include_msg_checks_recv: "0"
 monbox_backup_instance: "false"
 
-##broker-list
+# broker-list
 # monbox_broker_host
 
-## AMS - Publisher 
+# AMS - Publisher
 monbox_messaging_service: msg-devel.argo.grnet.gr
 monbox_messaging_token: token
 monbox_messaging_project: project_name
 
-## CGI vars ##
+# CGI vars
 monbox_authorized_for_all_service_commands:
   - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1"
   - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2"
@@ -38,7 +38,7 @@ monbox_authorized_for_all_host_commands:
   - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1"
   - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2"
 
-## Nagios.cfg vars ##
+# Nagios.cfg vars
 monbox_host_perfdata_file_processing_command: ncg-process-host-perfdata-file
 monbox_service_perfdata_file_processing_command: ncg-process-service-perfdata-file
 monbox_obsess_over_services: "1"

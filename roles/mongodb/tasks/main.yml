@@ -17,7 +17,7 @@
               regexp="\ \ bindIp"
               line='  bindIp: {{ mongo_bind_interfaces }}'
               state=present
-              backup=yes
+              backup=true
   notify: restart mongo
 
 - name: Fix issue with mongo init script
@@ -26,14 +26,14 @@
               regexp="\ \ pidFilePath"
               line='  pidFilePath: /var/run/mongodb/mongod.pid'
               state=present
-              backup=yes
+              backup=true
   notify: restart mongo
 
 - name: Increase soft nproc limits
   copy:
     src: etc/security/limits.d/99-mongodb-nproc.conf
     dest: /etc/security/limits.d/99-mongodb-nproc.conf
-    backup: no
+    backup: false
     owner: root
     group: root
     mode: 0644
@@ -42,5 +42,5 @@
 - name: Enable and start mongoDB
   service:
     name: mongod
-    enabled: yes
+    enabled: true
     state: started

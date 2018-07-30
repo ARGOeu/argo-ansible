@@ -4,6 +4,6 @@
   template:
     dest: "/etc/rsyslog.conf"
     src: rsyslog.j2
-    backup: yes
+    backup: true
   notify:
-   - restart rsyslog
+    - restart rsyslog
