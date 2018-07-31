@@ -1,0 +1,21 @@
+---
+
+- name: Configure argo-messaging check-metrics.sh
+  template: src=check-metrics.sh.j2
+            dest=/var/www/argo-messaging/check-metrics.sh backup=yes
+            owner=root group=root mode=0755
+  tags:
+    - ams_install
+    - metrics
+
+- name: Check metrics cron job
+  tags:
+    - ams_install
+    - metrics
+  cron: cron_file=ams_check_metrics
+        name=ams_check_metrics
+        minute=15
+        hour=*
+        user=root
+        job="/var/www/argo-messaging/check-metrics.sh"
+        state=present

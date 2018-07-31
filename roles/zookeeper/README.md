@@ -1,48 +1,55 @@
-Role Name
+Zookeeper
 =========
 
-A brief description of the role goes here.
+Installs a clustered zookeeper service 
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should
-be mentioned here. For instance, if the role uses the EC2 module, it may be a
-good idea to mention in this section that the boto package is required.
+Run commons role, Specify Cluster variables
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including
-any variables that are in defaults/main.yml, vars/main.yml, and any variables
-that can/should be set via parameters to the role. Any variables that are read
-from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
-be mentioned here as well.
+zookeeper_maxClientCnxns: 60
+zookeeper_myid: 1
+zookeeper_tickTime: 2000
+zookeeper_initLimit: 10
+zookeeper_syncLimit: 5
+zookeeper_dataDir: /var/lib/zookeeper
+zookeeper_data_logDir: /var/lib/zookeeper
+zookeeper_clientPort: 2181
+zookeeper_leaderPort: 2888
+zookeeper_electionPort: 3888
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in
-regards to parameters that may need to be set for other roles, or variables that
-are used from other roles.
+Private cluster Variables:
+
+You need to specify the ansible inventory group that will consist your cluster
+- cluster_group: zookeeper
+
+You need for each host to set up the following variable for the private interface
+private:
+ - hostname: foo.host.priv  # private hostname alias  
+   ip: 192.168.0.1 # private hostname
+   id: 1  # private
+
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables
-passed in as parameters) is always nice for users too:
-
-    - hosts: servers
+    - hosts: zookeeper
       roles:
-         - { role: zookeeper, x: 42 }
+         - { role: zookeeper, tags: zookeeper_install }
 
 License
 -------
 
-BSD
+Apache 2
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a
-website (HTML is not allowed).
+GRNET

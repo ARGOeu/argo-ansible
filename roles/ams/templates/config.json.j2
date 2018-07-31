@@ -1,0 +1,14 @@
+{
+  "bind_ip":"{{ams_bind_ip}}",
+  "port":{{ams_port}},
+  "zookeeper_hosts":[{% for host in groups[cluster_group] %}"{{hostvars[host]['private']['hostname']}}:2181"{% if not loop.last %},{% endif %}{% endfor %}],
+  "kafka_znode":"{{ams_kafka_znode}}",
+  "store_host":"{{ams_store_host}}",
+  "store_db":"{{ams_store_db}}",
+  "certificate":"/var/www/argo-messaging/hostcert.pem",
+  "certificate_key":"/var/www/argo-messaging/hostkey.pem",
+  "per_resource_auth":"{{ams_per_resource_auth}}",
+{% if ams_service_token %}  "service_token":"{{ams_service_token}}",
+{% endif %}
+  "log_level":"{{ams_log_level}}"
+}

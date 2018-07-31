@@ -1,0 +1,19 @@
+// Open Database
+use {{ams_store_db}}
+
+// Create projects
+
+{%- if ams_data_projects is defined -%}
+
+{%- for project in ams_data_projects -%}
+
+
+// Create projects
+db.projects.update({"name" : "{{project.name}}"},{ "name":"{{project.name}}","uuid" : "{{project.uuid}}", "created_on":new ISODate(), "modified_on": new ISODate()},{"upsert":"true"})
+
+
+
+{%- endfor -%}
+
+
+{%- endif -%}

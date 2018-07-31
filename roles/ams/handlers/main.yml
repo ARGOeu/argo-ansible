@@ -1,0 +1,5 @@
+---
+# handlers file for ams
+
+- name: restart argo-messaging
+  service: name=argo-messaging state=restarted
