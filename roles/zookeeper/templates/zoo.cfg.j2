@@ -30,6 +30,6 @@ clientPort=2181
 dataLogDir={{zookeeper_data_logDir}}
 
 
-{% for host in groups['zookeeper'] %}
-server.{{hostvars[host]['zookeeper_myid']}}={% if hostvars[host]['zookeeper_ip'] is defined %}{{ hostvars[host]['zookeeper_ip'] }}{% else %}{{ hostvars[host].ansible_default_ipv4.address }}{% endif %}:{{zookeeper_leaderPort}}:{{zookeeper_electionPort}}
+{% for host in groups[cluster_group] %}
+server.{{hostvars[host]['private']['id']}}={% if hostvars[host]['private']['ip'] is defined %}{{ hostvars[host]['private']['ip'] }}{% else %}{{ hostvars[host].ansible_default_ipv4.address }}{% endif %}:{{zookeeper_leaderPort}}:{{zookeeper_electionPort}}
 {% endfor %}

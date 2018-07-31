@@ -24,12 +24,17 @@
     - { role: haproxy, task: rsyslog}
     - { role: haproxy, task: haproxy}
 
-- hosts: zookeeper
+- hosts: ams_store
   become: yes
   roles:
-    - { role: zookeeper, tags: zookeeper_install }
+    - { role: mongodb }
+    - { role: ams, task: init_db, tags: ams_install }
 
-- hosts: kafka
+- hosts: ams
   become: yes
   roles:
+    - { role: private_hosts }
+    - { role: zookeeper, tags: zookeeper_install }
     - { role: kafka, tags: kafka_install }
+    - { role: ams, task: deploy, tags: ams_install }
+    - { role: ams, task: deploy_metrics, tags: ams_install }
