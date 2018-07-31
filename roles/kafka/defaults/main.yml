@@ -1,4 +1,1 @@
 ---
-# defaults file for kafka
-kafka_broker_id: 0
-kafka_zookeeper_connect: localhost:2181

@@ -1,0 +1,23 @@
+// Open Database
+use {{ams_store_db}}
+
+// Begin inserting new users
+
+{%- if ams_data_users is defined -%}
+
+{%- for user in ams_data_users -%}
+
+
+;
+
+
+
+
+db.users.update({"uuid":"{{user.uuid}}", "name" : "{{user.username}}"},{ "uuid":"{{user.uuid}}", "name":"{{user.username}}","email" : "{{user.email}}", {%- if user.projects is defined -%} "projects" : [ {%- for prole in user.projects -%} { "project_uuid":"{{prole.project_uuid}}" {%- if prole.roles is defined -%}, "roles": [ {%- for role in prole.roles -%} "{{role}}" {%- endfor -%} ] {%- endif -%}} {%- endfor -%}],{%- endif -%} {%- if user.service_roles is defined -%} "service_roles": [ {%- for role in user.service_roles -%} "{{role}}" {%- endfor -%}], {%- endif -%} "token" : "{{user.key}}", {%- if user.created_by is defined -%} "created_by":"{{user.created_by}}", {%- endif -%} "created_on":new ISODate(), "modified_on": new ISODate()},{"upsert":"true"})
+
+
+
+{%- endfor -%}
+
+
+{%- endif -%}

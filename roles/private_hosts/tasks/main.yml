@@ -1,0 +1,6 @@
+---
+# tasks file for private_hosts
+
+- name: Update /etc/hosts file with private aliases
+  template: dest="/etc/hosts" src=hosts.j2
+  tags: private_hosts

@@ -22,6 +22,8 @@
   notify: restart kafka
   tags: kafka_install
 
+- meta: flush_handlers
+
 - name: Start kafka service
   service:
     name: kafka-server
