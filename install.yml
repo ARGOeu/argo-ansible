@@ -11,7 +11,6 @@
     - { role: commons, task: fail2ban, tags: fail2ban }
     - { role: nickhammond.logrotate, tags: logrotate}
 
-
 - hosts: poem
   become: yes
   roles:
@@ -21,8 +20,8 @@
 - hosts: haproxy
   become: yes
   roles:
-    - { role: haproxy, task: rsyslog}
-    - { role: haproxy, task: haproxy}
+    - { role: haproxy, task: rsyslog }
+    - { role: haproxy, task: haproxy }
 
 - hosts: ams_store
   become: yes
@@ -38,3 +37,11 @@
     - { role: kafka, tags: kafka_install }
     - { role: ams, task: deploy, tags: ams_install }
     - { role: ams, task: deploy_metrics, tags: ams_install }
+
+
+- hosts: authn
+  become: yes
+  roles:
+    - { role: mongodb }
+    - { role: argo-api-authn, task: authn-setup }
+    - { role: argo-api-authn, task: ams-gocdb-users-create-script }
