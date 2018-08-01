@@ -1,4 +1,11 @@
 ---
+<<<<<<< HEAD
 
 virtual_env_installation: /var/www/argo-api-authn/Envs
 service_configuration_folder: /etc/argo-api-authn/conf.d
+=======
+# defaults file for argo-api-authn
+
+virtual_env_installation: /var/www/argo-api-authn/Envs
+service_configuration_folder: /etc/argo-api-authn/conf.d
+>>>>>>> ARGO-1367 Argo Api Authn role
