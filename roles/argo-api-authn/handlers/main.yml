@@ -1,0 +1,7 @@
+---
+# handlers file for argo-api-authn
+
+- name: restart argo-api-authn
+  service:
+    name: argo-api-authn
+    state: restarted
