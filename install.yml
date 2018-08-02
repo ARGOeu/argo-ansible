@@ -38,10 +38,15 @@
     - { role: ams, task: deploy, tags: ams_install }
     - { role: ams, task: deploy_metrics, tags: ams_install }
 
-
 - hosts: authn
   become: yes
   roles:
     - { role: mongodb }
     - { role: argo-api-authn, task: authn-setup }
     - { role: argo-api-authn, task: ams-gocdb-users-create-script }
+
+- hosts: metrics
+  become: yes
+  roles:
+    - { role: metrics, task: ams-metrics-ui }
+    - { role: metrics, task: ce_comp }

@@ -1,0 +1,234 @@
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules. See /usr/share/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+    server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        server_name  metrics-devel.argo.grnet.gr;
+        root         /var/www/ams-metrics-ui/build/;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+        location / {
+
+    # if the request included an Origin: header with an origin on the whitelist,
+    # then it is some kind of CORS request.
+
+    # specifically, this example allow CORS requests from
+    #  scheme    : http or https
+    #  authority : any authority ending in "mckinsey.com"
+    #  port      : nothing, or :<any_number>
+    #if ($http_origin ~* (https?://.*\.mckinsey\.com(:[0-9]+)?)) {
+        set $cors "true";
+    #}
+
+    # Nginx doesn't support nested If statements, so we use string
+    # concatenation to create a flag for compound conditions
+
+    # OPTIONS indicates a CORS pre-flight request
+    if ($request_method = 'OPTIONS') {
+        set $cors "${cors}options";
+    }
+
+    # non-OPTIONS indicates a normal CORS request
+    if ($request_method = 'GET') {
+        set $cors "${cors}get";
+    }
+    if ($request_method = 'POST') {
+        set $cors "${cors}post";
+    }
+
+    # if it's a GET or POST, set the standard CORS responses header
+    if ($cors = "trueget") {
+        # Tells the browser this origin may make cross-origin requests
+        # (Here, we echo the requesting origin, which matched the whitelist.)
+        add_header 'Access-Control-Allow-Origin' "$http_origin";
+        # Tells the browser it may show the response, when XmlHttpRequest.withCredentials=true.
+        add_header 'Access-Control-Allow-Credentials' 'true';
+        # # Tell the browser which response headers the JS can see, besides the "simple response headers"
+        # add_header 'Access-Control-Expose-Headers' 'myresponseheader';
+    }
+
+    # if it's OPTIONS, for a CORS preflight request, then respond immediately with no response body
+    if ($cors = "trueoptions") {
+        # Tells the browser this origin may make cross-origin requests
+        # (Here, we echo the requesting origin, which matched the whitelist.)
+        add_header 'Access-Control-Allow-Origin' "$http_origin";
+        # in a preflight response, tells browser the subsequent actual request can include user credentials (e.g., cookies)
+        add_header 'Access-Control-Allow-Credentials' 'true';
+
+        #
+        # Return special preflight info
+        #
+
+        # Tell browser to cache this pre-flight info for 20 days
+        add_header 'Access-Control-Max-Age' 1728000;
+
+        # Tell browser we respond to GET,POST,OPTIONS in normal CORS requests.
+        #
+        # Not officially needed but still included to help non-conforming browsers.
+        #
+        # OPTIONS should not be needed here, since the field is used
+        # to indicate methods allowed for "actual request" not the
+        # preflight request.
+        #
+        # GET,POST also should not be needed, since the "simple
+        # methods" GET,POST,HEAD are included by default.
+        #
+        # We should only need this header for non-simple requests
+        # methods (e.g., DELETE), or custom request methods (e.g., XMODIFY)
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+
+        add_header 'Access-Control-Allow-Headers' 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since';
+
+        # build entire response to the preflight request
+        # no body in this response
+        add_header 'Content-Length' 0;
+        # (should not be necessary, but included for non-conforming browsers)
+        add_header 'Content-Type' 'text/plain charset=UTF-8';
+        # indicate successful return with no content
+        return 204;
+        }
+ #  proxy_pass      http://localhost:3000;
+ #  proxy_http_version 1.1;
+ #  proxy_set_header Upgrade $http_upgrade;
+ #  proxy_set_header Connection "upgrade";
+ #  proxy_set_header Host $host;
+    }
+
+    # Redirect non-https traffic to https
+    if ($scheme != "https") {
+         return 301 https://$host$request_uri;
+     } # managed by Certbot
+
+}
+
+# Settings for a TLS enabled server.
+#
+#    server {
+#        listen       443 ssl http2 default_server;
+#        listen       [::]:443 ssl http2 default_server;
+#        server_name  ;
+#        root         /usr/share/nginx/html;
+#
+#        ssl_certificate "/etc/ssl/certs/apache-selfsigned.crt";
+#        ssl_certificate_key "/etc/ssl/private/apache-selfsigned.key";
+#        ssl_session_cache shared:SSL:1m;
+#        ssl_session_timeout  10m;
+#        ssl_ciphers HIGH:!aNULL:!MD5;
+#        ssl_prefer_server_ciphers on;
+#
+#        # Load configuration files for the default server block.
+#        include /etc/nginx/default.d/*.conf;
+#
+#        location / {
+#        }
+#        error_page 404 /404.html;
+#            location = /40x.html {
+#        }
+#
+#        error_page 500 502 503 504 /50x.html;
+#            location = /50x.html {
+#        }
+#    }
+
+server {
+  listen 443 default_server ssl;
+  server_name {{ inventory_hostname }};
+  root  /var/www/ams-metrics-ui/build/;
+
+  # Fake certs - fine for development purposes :-)
+  ssl_certificate /etc/grid-security/hostcert.pem; # managed by Certbot
+  ssl_certificate_key /etc/grid-security/hostkey.pem; # managed by Certbot
+  ssl_session_timeout 5m;
+
+  location / {
+    index index.html;
+    try_files $uri /index.html;
+  }
+
+  location /fixme {
+    # Nginx doesn't support nested If statements, so we
+    # concatenate compound conditions on the $cors variable
+    # and process later
+
+    # If request comes from allowed subdomain
+    # (*.mckinsey.com) then we enable CORS
+    #if ($http_origin ~* (https?://.*\.mckinsey\.com(:[0-9]+)?$)) {
+       set $cors "1";
+    #}
+
+    # OPTIONS indicates a CORS pre-flight request
+    if ($request_method = 'OPTIONS') {
+       set $cors "${cors}o";
+    }
+
+    # Append CORS headers to any request from
+    # allowed CORS domain, except OPTIONS
+    if ($cors = "1") {
+       add_header 'Access-Control-Allow-Origin: *' always;
+       add_header 'Access-Control-Allow-Credentials: true' always;
+     #  proxy_pass      http://localhost:3000;
+    }
+
+    # OPTIONS (pre-flight) request from allowed
+    # CORS domain. return response directly
+    if ($cors = "1o") {
+       add_header 'Access-Control-Allow-Origin: *' always;
+       add_header 'Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE' always;
+       add_header 'Access-Control-Allow-Credentials: true' always;
+        add_header 'Access-Control-Allow-Headers: Origin,Content-Type,Accept' always;
+       add_header Content-Length 0;
+       add_header Content-Type text/plain;
+       return 204;
+    }
+
+    # Requests from non-allowed CORS domains
+    #proxy_pass      http://localhost:3000;
+    #proxy_redirect off;
+    #proxy_set_header Host $host;
+    #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+
+	location /ce_comp/ {
+  		root   /var/www/html/;
+      autoindex on;
+    	index  index.html index.htm index.php;
+	}
+
+}
+
+}
