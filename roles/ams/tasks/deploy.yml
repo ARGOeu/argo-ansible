@@ -26,5 +26,5 @@
   notify: restart argo-messaging
 
 - name: Start argo-messaging service
-  service: name=argo-messaging state=started
+  service: name=argo-messaging state=started enabled=true
   tags: ams_install
