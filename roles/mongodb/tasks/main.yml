@@ -10,24 +10,30 @@
   loop:
     - mongodb-org
     - mongodb-org-server
+    - git
+    
+- name: install motop
+  pip:
+    name: git+https://github.com/tart/motop.git
 
-- name: Bind mongod processes to one or more interfaces
-  lineinfile: >
-              dest=/etc/mongod.conf
-              regexp="\ \ bindIp"
-              line='  bindIp: {{ mongo_bind_interfaces }}'
-              state=present
-              backup=true
+- name: create mongo replicated folder
+  file:
+    path: /var/lib/mongo_repl
+    state: directory
+    owner: mongod
+    group: mongod
+  tags:
+    - mongo_install
+  notify: restart mongo
+  when: mongo_replicated == true
+
+- name: configure mongo
+  template: dest="/etc/mongod.conf" owner=mongod group=mongod mode=640 src=mongod.conf.j2
+  tags:
+    - mongo_install
   notify: restart mongo
 
-- name: Fix issue with mongo init script
-  lineinfile: >
-              dest=/etc/mongod.conf
-              regexp="\ \ pidFilePath"
-              line='  pidFilePath: /var/run/mongodb/mongod.pid'
-              state=present
-              backup=true
-  notify: restart mongo
+
 
 - name: Increase soft nproc limits
   copy:
@@ -44,3 +50,27 @@
     name: mongod
     enabled: true
     state: started
+
+- name: Move init replication script
+  template: dest="/tmp/db_init_rs.js" owner=root group=root mode=640 src=db_init_rs.js.j2
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Run init roles script
+  shell: mongo < /tmp/db_init_rs.js
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Move rs add members script
+  template: dest="/tmp/db_rs_members.js" owner=root group=root mode=640 src=db_rs_members.js.j2
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Run rs add members script
+  shell: mongo < /tmp/db_rs_members.js
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname

@@ -34,12 +34,19 @@
        state=present
   when: repo_umd
 
-- name: Install promoo repo
+- name: Install cloudera repo
   tags: repo_cloudera
   copy: src=etc/yum.repos.d/cloudera.repo
         dest=/etc/yum.repos.d/cloudera.repo backup=no
         owner=root group=root mode=0644
   when: repo_cloudera
+
+- name: Install cloudera-kafka repo
+  tags: repo_cloudera_kafka
+  copy: src=etc/yum.repos.d/cloudera-kafka.repo
+        dest=/etc/yum.repos.d/cloudera-kafka.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_cloudera_kafka
 
 - name: Install promoo repo
   tags: repo_monbox

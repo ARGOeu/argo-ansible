@@ -1,8 +1,14 @@
 ---
 
-- name: Set eth devices unmanaged by network manager
-  command: "nmcli dev set {{item}} managed no"
-  with_items: "{{firewall_unmanaged_interfaces}}"
+- name: Register private connection uuid
+  command: "nmcli -g GENERAL.CON-UUID  d show {{item}}"
+  loop: "{{firewall_private_interfaces}}"
+  register: firewall_private_uuids
+  tags: firewall
+
+- name: Set zone internal to connections on network managed private interfaces
+  command: "nmcli connection modify {{item.stdout}} connection.zone internal"
+  loop: "{{firewall_private_uuids.results}}"
   tags: firewall
 
 - name: Clear firewall state

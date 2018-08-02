@@ -5,6 +5,11 @@
   yum: name=java-1.8.0-openjdk state=present
   tags: zookeeper_install
 
+- name: install zktop
+  pip:
+    name: zktop
+  tags: zookeeper_install
+
 - name: install zookeeper
   yum: name={{item}} state=present enablerepo=cloudera-cdh5
   with_items:
