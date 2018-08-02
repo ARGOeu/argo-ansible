@@ -1,0 +1,18 @@
+[LOGS]
+handler_path: {{logs.handler_path}}
+level: {{logs.log_level}}
+
+{% for value in tenants %}
+[{{value.name}}]
+hadoop: {{value.hadoop}}
+flink: {{value.flink}}
+hadoop_token: {{value.hadoop_token}}
+flink_token: {{value.flink_token}}
+{% endfor %}
+
+[PERIOD]
+start_date: {{start_date}}
+end_date: {{end_date}}
+
+[SaveLocation]
+path: {{save_location}}
