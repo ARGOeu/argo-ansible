@@ -1,0 +1,23 @@
+DEBUG = False
+BASE_URL = ''
+LOGGER_NAME = 'alerta'
+LOG_FILE = '/tmp/alerta.log'
+
+
+ADMIN_USERS = ['admin@{{www_url}}']
+
+MONGO_URI = 'mongodb://localhost:27017/monitoring'
+MONGO_DATABASE = 'monitoring'
+
+PLUGINS = ['amqp']
+AMQP_URL = 'mongodb://localhost:27017/amqp'
+AMQP_TOPIC = 'notify'
+
+SECRET_KEY = '{{alerta_secret}}'
+AUTH_REQUIRED = True
+
+CORS_ORIGINS = [
+    'http://localhost:8000',
+    'http://localhost',
+    'http://{{www_alias}}'
+]
