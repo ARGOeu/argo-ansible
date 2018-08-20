@@ -1,21 +1,4 @@
 ---
-<<<<<<< HEAD
-
-- name: update connectors
-  shell: yum -y makecache
-  tags: 
-    - connectors_config_main
-    - connectors 
-
-- name: update connectors
-  shell: yum update -y argo-egi-connectors
-  tags: 
-    - connectors_config_main
-    - connectors 
-
-- name: Configure connectors
-  tags: 
-=======
   
 - name: update connectors
   shell: yum -y makecache
@@ -36,7 +19,6 @@
 
 - name: Configure connectors
   tags:
->>>>>>> [AO-387] : consumer update role
     - connectors_config_main
     - connectors_customer
     - connectors
@@ -44,17 +26,10 @@
             dest=/etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf
             owner=root group=root mode=0644
             backup=yes
-<<<<<<< HEAD
-  with_dict: tenants
-  
-- name: Configure global connectors
-  tags: 
-=======
   with_dict: "{{ consumer_tenants }}"
 
 - name: Configure global connectors
   tags:
->>>>>>> [AO-387] : consumer update role
     - connectors_config
     - connectors
     - connectors_global
@@ -62,11 +37,7 @@
             dest=/etc/argo-egi-connectors/global.conf
             owner=root group=root mode=0644
             backup=yes
-<<<<<<< HEAD
-  with_dict: tenants
-=======
   with_dict: "{{ consumer_tenants }}"
->>>>>>> [AO-387] : consumer update role
 
 - name: POEM configuration
   tags:
@@ -76,8 +47,4 @@
   template: src=poem-connector.conf.j2
             dest=/etc/argo-egi-connectors/poem-connector.conf
             owner=root group=root mode=0644
-<<<<<<< HEAD
             backup=yes
-=======
-            backup=yes
->>>>>>> [AO-387] : consumer update role

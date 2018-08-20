@@ -103,14 +103,14 @@ SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+EC
 # the certificate is encrypted, then you will be prompted for a
 # pass phrase.  Note that a kill -HUP will prompt again.  A new
 # certificate can be generated using the genkey(1) command.
-SSLCertificateFile /etc/grid-security/hostcert.pem
+SSLCertificateFile {{ cert_path }}
 
 #   Server Private Key:
 #   If the key is not combined with the certificate, use this
 #   directive to point at the key file.  Keep in mind that if
 #   you've both a RSA and a DSA private key you can configure
 #   both in parallel (to also allow the use of DSA ciphers, etc.)
-SSLCertificateKeyFile /etc/grid-security/hostkey.pem
+SSLCertificateKeyFile {{ cert_key }}
 
 #   Server Certificate Chain:
 #   Point SSLCertificateChainFile at a file containing the
@@ -119,13 +119,13 @@ SSLCertificateKeyFile /etc/grid-security/hostkey.pem
 #   the referenced file can be the same as SSLCertificateFile
 #   when the CA certificates are directly appended to the server
 #   certificate for convinience.
-SSLCertificateChainFile /etc/grid-security/DigiCertCA.crt
+SSLCertificateChainFile {{ cert_dir }}DigiCertCA.crt
 
 #   Certificate Authority (CA):
 #   Set the CA certificate verification path where to find CA
 #   certificates for client authentication or alternatively one
 #   huge file containing all of them (file must be PEM encoded)
-#SSLCACertificateFile /etc/pki/tls/certs/ca-bundle.crt
+#SSLCACertificateFile {{ ca_path_bundle }}
 
 #   Client Authentication (Type):
 #   Client certificate verification type and depth.  Types are
