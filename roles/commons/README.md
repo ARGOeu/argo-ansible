@@ -20,7 +20,7 @@ Role Variables
 
 Firewall-related:
 
-- firewall_unmanaged_nics: a list of interfaces to be unmanaged by NetworkManager
+- firewall_private_interfaces: a list of interfaces to be in private networks
 - firewall_sources: a list of sources to be created
 - firewall_interfaces: a list of interfaces to be added to zones (items: {"interface":"ethX", "zone":"zone to map to"})
 - firewall_zones: a list of zones to be created
