@@ -3,3 +3,4 @@
 
 # Comma separated list of IPs mongo service should bind to
 mongo_bind_interfaces: 127.0.0.1
+mongo_replicated: false

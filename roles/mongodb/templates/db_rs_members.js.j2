@@ -1,0 +1,10 @@
+{%- for host in groups[cluster_group] -%}
+
+
+;
+
+rs.add("{{hostvars[host]['private']['hostname']}}:27017")
+
+
+
+{%- endfor -%}

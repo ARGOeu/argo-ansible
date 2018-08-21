@@ -26,6 +26,7 @@
 - hosts: ams_store
   become: yes
   roles:
+    - { role: private_hosts }
     - { role: mongodb }
     - { role: ams, task: init_db, tags: ams_install }
 
