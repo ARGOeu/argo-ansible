@@ -1,0 +1,24 @@
+---
+####################
+# delete_files: Files with default templates are created. We dont need these files.
+# This task deletes all unnecessary files.
+####################
+
+- name: delete unecessary files from /etc/cron.d/poem
+  tags: delete-files
+  file: path=/etc/cron.d/poem state=absent
+
+- name: delete unecessary files from /etc/cron.d/weights
+  tags: delete-files
+  file: path=/etc/cron.d/weights state=absent
+
+- name: delete unecessary files from /etc/cron.d/topology-gocdb
+  tags: delete-files
+  file: path=/etc/cron.d/topology-gocdb state=absent
+
+- name: delete unecessary files from /etc/cron.d/topology-vo
+  tags: delete-files
+  file: path=/etc/cron.d/topology-vo state=absent
+
+
+

@@ -1,0 +1,78 @@
+---
+  
+- name: Install avro from ar project
+  tags: ar-packages
+  yum: name=avro state=present enablerepo={{ repo_enabled_argo }}
+
+- name: Install pymongo fixed version
+  tags: ar-packages
+  pip: name=pymongo state=present version=3.2.2
+
+- name: Install egi consumer package from ar project
+  tags:
+    - ar-packages
+    - consumer_config
+  yum: name=argo-egi-consumer state=present enablerepo={{ repo_enabled_argo }}
+  notify: restart all consumers
+
+- name: Creates directory
+  file: path={{consumer_data_path}} state=directory
+
+- name: Create consumer configuration directories
+  file: path=/etc/argo-{{ item.key | lower }}-consumer
+        state=directory
+        owner=root group=root mode=0755
+  with_dict: "{{ consumer_tenants }}"
+  notify: restart all consumers
+
+- name: Copy metric avro specification for each tenant
+  tags:
+    - consumer_config
+  template: src=metric_data.avsc.j2
+            dest=/etc/argo-{{ item.key | lower }}-consumer/metric_data.avsc
+            owner=root group=root mode=0644
+  with_dict: "{{ consumer_tenants }}"
+  notify: restart all consumers
+
+- name: Create consumer output directories per tenant
+  tags: consumer_config
+  file: path=/var/lib/argo-{{ item.key | lower }}-consumer
+        state=directory
+        owner=arstats group=arstats mode=0755
+  with_dict: "{{ consumer_tenants }}"
+
+- name: Consumer configuration
+  tags:
+    - consumer_config
+    - consumer_conf_config
+  template: src=consumer.conf.j2
+            dest=/etc/argo-{{ item.key | lower }}-consumer/consumer.conf
+            owner=root group=root mode=0644
+  with_dict: "{{ consumer_tenants }}"
+  notify: restart all consumers
+
+# TODO: Make following task tenant unaware
+- name: Copy out init scripts for non egi consumers
+  tags:
+    - consumer_config
+  template: src=consumer.init.j2
+            dest=/etc/init.d/argo-{{ item.key | lower }}-consumer
+            owner=root group=root mode=0755
+  with_dict: "{{ consumer_tenants }}"
+  when: item.key|lower != "egi"
+  notify: restart all non egi consumers
+
+# TODO: Make following task tenant unaware
+- name: Create copies of python wrappers for non egi consumers
+  tags:
+    - consumer_config
+  file: path=/usr/bin/argo-{{ item.key | lower }}-wrapper-consumer.py
+        state=link src=/usr/bin/argo-egi-consumer.py
+  with_dict: "{{ consumer_tenants }}"
+  when: item.key|lower != "egi"
+
+- name: Enable and start consumer services
+  tags:
+    - consumer_config
+  service: name=argo-{{ item.key | lower }}-consumer enabled=on state=started
+  with_dict: "{{ consumer_tenants }}"

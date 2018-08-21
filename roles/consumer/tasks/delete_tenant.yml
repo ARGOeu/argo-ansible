@@ -1,0 +1,161 @@
+---
+#delete all relative configuration files of a tenant.
+# Step 1: check if exists
+# Step 2: delete it
+# /etc/argo-egi-connectors/egicentral-customer.conf
+# /etc/init.d/argo-egicentral-consumer
+# /etc/argo-egicentral-consumer/
+# cronjobs in /etc/cron.d/*_egicentral (poem_egicentral, topology_egicentral, weights_egicentral)
+# 1) Delete connectors configuration file /etc/argo-egi-connectors/{{ TENANT }}-customer.conf
+# 2) delete init scripts for non egi consumers /etc/init.d/argo-{{ TENANT }}-consumer
+# 3) /etc/cron.d a) poem_TENANT, b)topology_TENANT, c) weights_TENANT
+# 4) Delete directory with  metric avro specification for each tenant /etc/argo-{{ TENANT }}-consumer/metric_data.avsc and Consumer configuration /etc/argo-{{ TENANT }}-consumer/consumer.conf
+# 5) copies of python wrappers for non egi consumers /usr/bin/argo-{{ TENANT}}-wrapper-consumer.py
+# 6) Configure connectors /etc/argo-egi-connectors/{{ TENANT }}-customer.conf
+# 7) remove symlink for non-egi /usr/bin/argo-{{item.item.name}}-wrapper-consumer.py
+# 8) stop consumer services: argo-{{ TENANT}}-consumer
+# TODO) consumer output directories per tenant /var/lib/argo-{{TENANT }}-consumer #NOT NOW
+
+- name: Stat tenant-customer.conf
+  tags: delete_tenant
+  stat: path="/etc/argo-egi-connectors/{{item.name | lower}}-customer.conf"
+  with_items: "{{consumer_tenants_delete}}"
+  register: tenant_customer
+
+- name: Delete tenant-customer.conf
+  tags: delete_tenant
+  file: path=/etc/argo-egi-connectors/{{item.item.name | lower}}-customer.conf  state=absent
+  with_items: "{{tenant_customer.results}}"
+  when:
+   - not item is skipped
+   - item.stat.exists
+
+- name: Stat /etc/init.d/argo-tenant-consumer
+  tags: delete_tenant
+  stat: path=/etc/init.d/argo-{{item.name | lower}}-consumer
+  with_items: "{{consumer_tenants_delete}}"
+  register: tenant_consumer
+
+- name: Delete argo-tenant-consumer
+  tags: delete_tenant
+  file: path=/etc/init.d/argo-{{item.item.name | lower}}-consumer  state=absent
+  with_items: "{{tenant_consumer.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: Stat cronjob /etc/cron.d/downtimes_tenant
+  tags: delete_tenant
+  stat: path=/etc/cron.d/downtimes_{{item.name | lower}}
+  with_items: "{{consumer_tenants_delete}}"
+  register: downtimes_tenant
+
+- name: Delete cronjob /etc/cron.d/downtimes_tenant
+  file: path=/etc/cron.d/downtimes_{{item.item.name | lower}}  state=absent
+  with_items: "{{downtimes_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: Stat cronjob /etc/cron.d/poem_tenant
+  tags: delete_tenant
+  stat: path=/etc/cron.d/poem_{{item.name | lower}}
+  with_items: "{{consumer_tenants_delete}}"
+  register: poem_tenant
+
+- name: Delete cronjob /etc/cron.d/poem_tenant
+  file: path=/etc/cron.d/poem_{{item.item.name | lower}}  state=absent
+  with_items: "{{poem_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: Stat cronjob /etc/cron.d/topology_tenant
+  tags: [delete_tenant, delete_tenant_top]
+  stat: path=/etc/cron.d/topology_{{item.name | lower}}
+  with_items: "{{consumer_tenants_delete}}"
+  register: topology_tenant
+
+- name: Delete cronjob /etc/cron.d/topology_tenant
+  tags: [delete_tenant, delete_tenant_top]
+  file: path=/etc/cron.d/topology_{{item.item.name | lower}}  state=absent
+  with_items: "{{topology_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: Stat cronjob /etc/cron.d/weights_tenant
+  tags: delete_tenant
+  stat: path=/etc/cron.d/weights_{{item.name | lower}}
+  with_items: "{{consumer_tenants_delete}}"
+  register: weights_tenant
+
+- name: Delete cronjob /etc/cron.d/weights_tenant
+  tags: delete_tenant
+  file: path=/etc/cron.d/weights_{{item.item.name | lower}}  state=absent
+  with_items: "{{weights_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: folder with metric avro specification for each tenant
+  tags: [delete_tenant, delete_tenant_avro]
+  stat: path=/etc/argo-{{item.name | lower}}-consumer/metric_data.avsc
+  with_items: "{{consumer_tenants_delete}}"
+  register: metric_tenant
+
+- name: Delete folder with metric avro specification for each tenant
+  tags: [delete_tenant, delete_tenant_avro]
+  command: rm -rf /etc/argo-{{item.item.name | lower}}-consumer/
+  with_items: "{{metric_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: copies of python wrappers for non egi consumers /usr/bin/argo-TENANT-wrapper-consumer.py
+  tags: delete_tenant
+  stat: path=/usr/bin/argo-{{item.name | lower}}-wrapper-consumer.py
+  with_items: "{{consumer_tenants_delete}}"
+  register: wrappers_tenant
+
+- name: Delete copies of python wrappers for non egi consumers
+  tags: delete_tenant
+  file: path=/usr/bin/argo-{{item.item.name | lower}}-wrapper-consumer.py}  state=absent
+  with_items: "{{wrappers_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: Configure connectors /etc/argo-egi-connectors/TENANT-customer.conf
+  tags: delete_tenant
+  stat: path=/etc/argo-egi-connectors/{{item.name | lower}}-customer.conf
+  with_items: "{{consumer_tenants_delete}}"
+  register: connectors_tenant
+
+- name: Delete  Configure connectors /etc/argo-egi-connectors/TENANT-customer.conf
+  tags: delete_tenant
+  file: path=/etc/argo-egi-connectors/{{item.item.name | lower}}-customer.conf state=absent
+  with_items: "{{connectors_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: symlink for /usr/bin/argo-TENANT-wrapper-consumer.py to argo-egi-consumer.py
+  tags: [delete_tenant, delete_symlink_tenant]
+  stat: path=/usr/bin/argo-{{item.name | lower}}-wrapper-consumer.py
+  with_items: "{{consumer_tenants_delete}}"
+  register: symlink_tenant
+
+- name: Delete  symlink for /usr/bin/argo-TENANT-wrapper-consumer.py
+  tags: [delete_tenant, delete_symlink_tenant]
+  file: path=/usr/bin/argo-{{item.item.name | lower}}-wrapper-consumer.py state=absent
+  with_items: "{{symlink_tenant.results}}"
+  when:
+   - not item | skipped
+   - item.stat.exists
+
+- name: Stop consumer services
+  tags: [delete_tenant,stop_consumer_service]
+  service: name=argo-{{item.name | lower}}-consumer enabled=on state=started
+  with_items: "{{consumer_tenants_delete}}"
+  ignore_errors: yes
