@@ -41,7 +41,7 @@
         owner=root group=root mode=0644
   when: repo_cloudera
 
-- name: Install cloudera-kafka repo
+- name: Install cloudera kafka repo
   tags: repo_cloudera_kafka
   copy: src=etc/yum.repos.d/cloudera-kafka.repo
         dest=/etc/yum.repos.d/cloudera-kafka.repo backup=no
