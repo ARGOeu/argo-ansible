@@ -6,11 +6,9 @@ AuthenticationUsePlainHttpAuth = {{item.value.AuthenticationUsePlainHttpAuth}}
 AuthenticationHttpUser = {{item.value.AuthenticationHttpUser}}
 AuthenticationHttpPass = {{item.value.AuthenticationHttpPass}}
 {% endif %}
-
-
-{% if AMS_enabled %}
+{% if consumer_AMS_enabled %}
 AmsProject = {{item.value.AmsProject}}
-AmsToken = {{item.value.AmsToken}} 
+AmsToken = {{item.value.AmsToken}}
 {% endif %}
 {% if item.value.jobs_all is defined %}
 Jobs = {{ item.value.jobs_all }}
