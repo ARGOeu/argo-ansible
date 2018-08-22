@@ -14,7 +14,7 @@ Role Variables
 --------------
 General configuation variables
 
-onsumer_AMS_enabled: True
+consumer_AMS_enabled: True
 consumer_ams_configuration:
   PublishAms: True
   WriteAvro: True
