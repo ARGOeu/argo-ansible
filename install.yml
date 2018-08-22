@@ -52,8 +52,16 @@
     - { role: metrics, task: ams-metrics-ui }
     - { role: metrics, task: ce_comp }
 
+
 - hosts: alerta
   become: yes
   roles:
     - { role: mongodb }
     - { role: alerta, task: deploy }
+
+- hosts: webapi
+  become: yes
+  roles:
+    - { role: mongodb }
+    - { role: webapi, task: deploy }
+    - { role: webapi, task: init_api }
