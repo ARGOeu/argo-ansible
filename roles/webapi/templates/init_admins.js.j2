@@ -1,0 +1,19 @@
+// Open Database
+use {{argo_core}}
+
+// Begin inserting new users
+
+{%- if webapi_admins is defined -%}
+
+{%- for user in webapi_admins -%}
+
+
+;
+
+db.authentication.update({"name" : "{{user.name}}"},{"name":"{{user.name}}","email" : "{{user.email}}", "api_key" : "{{user.api_key}}" },{"upsert":"true"})
+
+
+{%- endfor -%}
+
+
+{%- endif -%}
