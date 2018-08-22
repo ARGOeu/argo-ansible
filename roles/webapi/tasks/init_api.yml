@@ -1,0 +1,37 @@
+---
+
+- name: Move init_roles.js script
+  template: dest="/tmp/init_roles.js" owner=root group=root mode=640 src=init_roles.js.j2
+  tags:
+    - webapi_init
+    - webapi_init_roles
+
+- name: Run init_roles.js script
+  shell: mongo < /tmp/init_roles.js
+  tags:
+    - webapi_init
+    - webapi_init_roles
+
+- name: Move init_admins.js script
+  template: dest="/tmp/init_admins.js" owner=root group=root mode=640 src=init_admins.js.j2
+  tags:
+    - webapi_init
+    - webapi_init_admins
+
+- name: Run init_admins.js script
+  shell: mongo < /tmp/init_admins.js
+  tags:
+    - webapi_init
+    - webapi_init_admins
+
+- name: Move init_tenants.js script
+  template: dest="/tmp/init_tenants.js" owner=root group=root mode=640 src=init_tenants.js.j2
+  tags:
+    - webapi_init
+    - webapi_init_tenants
+
+- name: Run init_tenants.js script
+  shell: mongo < /tmp/init_tenants.js
+  tags:
+    - webapi_init
+    - webapi_init_tenants
