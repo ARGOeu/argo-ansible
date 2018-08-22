@@ -1,0 +1,41 @@
+[General]
+LogName = argo-{{ item.key | lower }}-consumer
+WritePlaintext = False
+LogMsgOutAllowedTime = True
+LogWrongFormat = True
+ReportWritMsgEveryHours = 24
+AvroSchema = /etc/argo-{{ item.key | lower }}-consumer/metric_data.avsc
+
+
+[Subscription]
+Destinations = {% if item.value.topics is defined %}{% for topic in item.value.topics %}{% if loop.last %}/queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.{{ topic }}{% else %}/queue/Consumer.{{ ansible_fqdn|replace(".","_") }}.{{ topic }}, {% endif %}{% endfor %}{% endif %}
+
+IdleMsgTimeout = 0
+
+
+[Brokers]
+{% if item.value.brokers is defined %}
+{% for broker in item.value.brokers %}
+Server{{ loop.index }} = {{ broker }}:6163
+{% endfor %}
+{% endif %}
+
+[MsgRetention]
+PastDaysOk = 3
+FutureDaysOk = 1
+
+[Authentication]
+HostKey = /etc/grid-security/hostkey.pem
+HostCert = /etc/grid-security/hostcert.pem
+
+[STOMP]
+TCPKeepAliveIdle = 20
+TCPKeepAliveInterval = 5
+TCPKeepAliveProbes = 10
+ReconnectAttempts = 10
+UseSSL = False
+
+[Output]
+Directory = {{consumer_data_path}}argo-{{ item.key | lower }}-consumer
+Filename = argo-consumer_log_DATE.avro
+ErrorFilename = argo-consumer_error_log_DATE.avro
