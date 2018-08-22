@@ -28,6 +28,7 @@ repo_umd: false
 repo_promoo: false
 repo_rocci: false
 repo_cloudera: false
+repo_cloudera_kafka: false
 repo_nagios: false
 
 # defaults file for fail2ban
