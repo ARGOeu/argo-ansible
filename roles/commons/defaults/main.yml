@@ -18,7 +18,6 @@ ca_path_bundle: /etc/pki/tls/certs/ca-bundle.crt
 
 
 # defaults for role repos
-repo_cloudera_kafka: false
 repo_enabled_argo: argo-devel  # from which repo to get the packages (argo-devel or argo-prod)
 repo_mongo: false  # if you want to install mongo repository
 ca_bundle: false  # if you want to install EGI-trustanchors repository
