@@ -56,4 +56,4 @@
 
 - name: update aai metadata
   tags: poem_aai_metadata
-  get_url: url={{poem_AAI_metadata}} dest="/etc/poem/metadata-checkin.xml"
+  get_url: url={{poem_AAI_metadata}} dest="/etc/poem/metadata-checkin.xml" force="yes"
