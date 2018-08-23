@@ -2,7 +2,7 @@
 Namespace = {{ poem_namespace }}                                                                                  
 Debug = {{ poem_debug }} 
 TimeZone = {{ poem_timezone }}
-{% if SamlLoginString is defined %}
+{% if poem_SamlLoginString is defined %}
 SamlLoginString = {{ poem_SamlLoginString }}
 {% else %}
 SamlLoginString = Log in using EGI CHECK-IN
