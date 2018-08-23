@@ -9,7 +9,7 @@
 # what they do.  They're here only as hints or reminders.  If you are unsure
 # consult the online docs. You have been warned.  
 #
-{% if ansible_fqdn in groups['monbox'] %}
+{% if inventory_hostname in groups['monbox'] %}
 LoadModule ssl_module modules/mod_ssl.so
 {% endif %}
 #
@@ -30,9 +30,9 @@ Listen 443 https
 #   Configure the pass phrase gathering process.
 #   The filtering dialog program (`builtin' is a internal
 #   terminal dialog) has to provide the pass phrase on stdout.
-{% if ansible_fqdn in groups['monbox'] %}
+{% if inventory_hostname in groups['monbox'] %}
 SSLPassPhraseDialog  builtin
-{% elif ansible_fqdn in groups['poem'] %}
+{% elif inventory_hostname in groups['poem'] %}
 SSLPassPhraseDialog exec:/usr/libexec/httpd-ssl-pass-dialog
 {% endif %}
 
@@ -40,7 +40,7 @@ SSLPassPhraseDialog exec:/usr/libexec/httpd-ssl-pass-dialog
 #   Semaphore:
 #   Configure the path to the mutual exclusion semaphore the
 #   SSL engine uses internally for inter-process synchronization. 
-{% if ansible_fqdn in groups['monbox'] %}
+{% if inventory_hostname in groups['monbox'] %}
 Mutex default
 {% endif %}
 
@@ -101,9 +101,9 @@ SSLProtocol all -SSLv2 -SSLv3
 #   List the ciphers that the client is permitted to negotiate.
 #   See the mod_ssl documentation for a complete list.
 
-{% if ansible_fqdn in groups['monbox'] %}
+{% if inventory_hostname in groups['monbox'] %}
 SSLCipherSuite ALL:!ADH:!EXP:RC4+RSA:+HIGH:!MEDIUM:!LOW:!SSLv2:!NULL:!aNULL:!eNULL
-{% elif ansible_fqdn in groups['poem'] %}
+{% elif inventory_hostname in groups['poem'] %}
 SSLHonorCipherOrder on
 SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4"
 Header always set X-Frame-Options DENY
@@ -143,7 +143,7 @@ SSLCertificateKeyFile {{ cert_key_path }}
 #   the referenced file can be the same as SSLCertificateFile
 #   when the CA certificates are directly appended to the server
 #   certificate for convinience.
-{% if ansible_fqdn in groups['poem'] %}
+{% if inventory_hostname in groups['poem'] %}
 SSLCertificateChainFile {{ cert_dir }}/DigiCertCA.crt
 {% endif %}
 
@@ -151,7 +151,7 @@ SSLCertificateChainFile {{ cert_dir }}/DigiCertCA.crt
 #   Set the CA certificate verification path where to find CA
 #   certificates for client authentication or alternatively one
 #   huge file containing all of them (file must be PEM encoded)
-{% if ansible_fqdn in groups['monbox'] %}
+{% if inventory_hostname in groups['monbox'] %}
 SSLCACertificatePath {{cert_dir}}/certificates/
 SSLCARevocationPath {{cert_dir}}/certificates/
 {% endif %}
@@ -166,7 +166,7 @@ SSLCARevocationPath {{cert_dir}}/certificates/
 #SSLVerifyClient require
 #SSLVerifyDepth  10
 
-{% if ansible_fqdn in groups['monbox'] %}
+{% if inventory_hostname in groups['monbox'] %}
 SSLVerifyClient require
 SSLVerifyDepth  5
 {% endif %}
@@ -246,11 +246,12 @@ SSLVerifyDepth  5
 #   their broken HTTP/1.1 implementation. Use variables "downgrade-1.0" and
 #   "force-response-1.0" for this.
 
-{% if ansible_fqdn in groups['monbox'] %}
+{% if inventory_hostname in groups['monbox'] %}
 SetEnvIf User-Agent ".*MSIE.*" \
          nokeepalive ssl-unclean-shutdown \
          downgrade-1.0 force-response-1.0
-{% elif ansible_fqdn in groups['poem'] %}
+{% elif inventory_hostname in groups['poem'] %}
+{% elif inventory_hostname in groups['poem'] %}
 BrowserMatch "MSIE [2-5]" \
          nokeepalive ssl-unclean-shutdown \
          downgrade-1.0 force-response-1.0
@@ -262,9 +263,9 @@ CustomLog logs/ssl_request_log \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
 
 RewriteEngine On
-{% if ansible_fqdn in groups['poem'] %}
+{% if inventory_hostname in groups['poem'] %}
 RewriteRule ^/$ /poem [R]
-{% elif ansible_fqdn in groups['monbox'] %}
+{% elif inventory_hostname in groups['monbox'] %}
 RewriteRule ^/$ /nagios [R]
 {% endif %}
 </VirtualHost>                                  
