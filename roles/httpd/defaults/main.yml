@@ -1,4 +1,4 @@
 ---
 # defaults file for httpd
 
-configure_nagios_apache: false
+monbox_configure_nagios_apache: false
