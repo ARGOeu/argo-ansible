@@ -33,6 +33,9 @@
     - config
     - config-apache
 
+- name: update permissions to hostkey.pem
+  file: path="{{cert_key_path}}" owner=apache group=apache
+
 - name: httpd enable
   service:
     name: httpd
