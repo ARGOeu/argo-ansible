@@ -15,3 +15,8 @@
   service:
     name: firewalld
     state: restarted
+
+- name: restart sshd
+  service:
+    name: sshd
+    state: restarted

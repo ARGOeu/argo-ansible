@@ -1,6 +1,9 @@
 ---
 # defaults file for commons
 
+# sshd config path
+sshd_config_path: /etc/ssh/sshd_config 
+
 # firewall default vars
 firewall_private_interfaces: []
 firewall_sources: []
