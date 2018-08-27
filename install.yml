@@ -65,3 +65,9 @@
     - { role: mongodb }
     - { role: webapi, task: deploy }
     - { role: webapi, task: init_api }
+
+- hosts: swagger
+  become: yes
+  roles:
+    - { role: httpd, tags: httpd }
+    - { role: swagger }

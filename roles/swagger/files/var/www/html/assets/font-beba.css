@@ -1,0 +1,11 @@
+@font-face {
+	font-family: 'BebasNeuewebfont';
+	src: url('fonts/BebasNeuewebfont.eot');
+	src: local('BebasNeuewebfont'), url('fonts/BebasNeuewebfont.woff') format('woff'), url('fonts/BebasNeuewebfont.ttf') format('truetype');
+}
+/* use this class to attach this font to any element i.e. <p class="fontsforweb_fontid_1962">Text with this font applied</p> */
+.fontsforweb_fontid_1962 {
+	font-family: 'BebasNeuewebfont' !important;
+}
+
+/* Font downloaded from FontsForWeb.com */
