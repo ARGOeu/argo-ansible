@@ -3,6 +3,7 @@
 - hosts: all
   become: yes
   roles:
+    - { role: commons, task: sshd, tags: sshd }
     - { role: commons, task: timezone, tags: timezone}
     - { role: commons, task: repos, tags: repos }
     - { role: commons, task: basic_utils, tags: basic_utils }
