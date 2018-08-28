@@ -12,7 +12,7 @@ cluster should be already available)
 Role Variables
 --------------
 
-None. See dependencies for other vars that must be set up
+kafka_log_dirs: comma separated list with folder for kafka to store data
 
 Dependencies
 ------------
@@ -25,7 +25,7 @@ You need for each host to set up the following variable for the private interfac
 private:
  - hostname: foo.host.priv  # private hostname alias  
    ip: 192.168.0.1 # private hostname
-   id: 1  # private 
+   id: 1  # private
 
 
 commons-role-vars:
