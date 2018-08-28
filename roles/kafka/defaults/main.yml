@@ -1,1 +1,4 @@
 ---
+
+# Separated list of kafka folders
+kafka_log_dirs: /var/lib/kafka
