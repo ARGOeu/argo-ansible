@@ -1,6 +1,7 @@
 use {{argo_core}}
 db.roles.drop()
 db.roles.insert([
+{ "resource" : "latest.get", "roles" : [ "admin", "editor", "viewer" ] },
 { "resource" : "reports.get", "roles" : [ "admin", "editor", "viewer" ] },
 { "resource" : "reports.list", "roles" : [ "admin", "editor", "viewer" ] },
 { "resource" : "reports.create", "roles" : [ "admin", "editor" ] },
