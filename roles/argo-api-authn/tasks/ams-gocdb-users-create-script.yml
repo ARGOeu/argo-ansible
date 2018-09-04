@@ -46,5 +46,5 @@
     cron_file: ams-create-users-gocdb
     name: "set up cron for ams-create-users-gocdb"
     user: argo-api-authn
-    hour: 1
+    special_time: hourly
     job: "{{virtual_env_installation}}/authn-env/bin/python {{virtual_env_installation}}/authn-env/bin/ams-create-users-gocdb.py -v"
