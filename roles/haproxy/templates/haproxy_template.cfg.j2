@@ -110,26 +110,11 @@ frontend  {{haproxy_frontend}}
    reqadd X-Forwarded-Proto:\ https
    reqadd X-Forwarded-Port:\ 443
 
-   # choose other backend if request path begins with authn
-   acl    is_authn     path_beg /authn
-   use_backend authn_backend if is_authn
-
-   default_backend {{haproxy_default_backend}}
-
-{% if haproxy_authn_host is defined %}
-#---------------------------------------------------------------------
-# authn backend - authn service runs usually in 8080
-#---------------------------------------------------------------------
-backend authn_backend
-	#add regexp to remove /authn from path
-	reqrep ^([^\ ]*\ /)authn[/]?(.*)     \1\2
-	server authn1  {{haproxy_authn_host}}:{{haproxy_authn_port}} ssl check port {{haproxy_authn_port}}
-
-{% endif %}
-
 #---------------------------------------------------------------------
 # round robin balancing between the various msg backends
 #---------------------------------------------------------------------
+
+default_backend {{haproxy_default_backend}}
 
 {% for backend in haproxy_backends %}
 backend {{backend.name}}
