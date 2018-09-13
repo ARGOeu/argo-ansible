@@ -10,13 +10,14 @@
     - { role: commons, task: firewall, tags: firewall }
     - { role: commons, task: cert, tags: cert }
     - { role: commons, task: fail2ban, tags: fail2ban }
-    - { role: nickhammond.logrotate, tags: logrotate}
 
 - hosts: poem
   become: yes
   roles:
     - { role: poem, tags: poem}
     - { role: httpd, tags: httpd }
+    - { role: nickhammond.logrotate, tags: logrotate}
+
 
 - hosts: haproxy
   become: yes
