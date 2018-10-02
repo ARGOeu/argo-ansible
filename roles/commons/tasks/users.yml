@@ -24,6 +24,7 @@
   tags: ['users','users-configuration']
 
 - name: User creation
+  user:
     name: "{{item.username}}"
     group: "{{item.group | default(item.username if users_create_per_user_group else users_group)}}"
     # empty string removes user from all secondary groups
