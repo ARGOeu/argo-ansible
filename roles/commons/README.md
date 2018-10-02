@@ -28,6 +28,9 @@ Configures host to be monitored by nagios
 - repos
 Deploys additional repos on host
 
+- users 
+Create users and their homedirs ([Guidelines for users](README_users.md)
+
 Requirements
 ------------
 
