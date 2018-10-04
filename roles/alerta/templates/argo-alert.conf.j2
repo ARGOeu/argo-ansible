@@ -16,7 +16,7 @@ endpoint={{argo_alert_kafka}}
 topic=alerta.{{item.key}}
 
 [alerta]
-endpoint=https://{{www_alias}}/api
+endpoint=https://{{alerta_www_alias}}/api
 environment={{item.value.alerta_environment}}
 token={{alerta_token}}
 mail-rules=/etc/argo-alert/mail/mailer-{{item.key}}.conf.rules.d/rules-{{item.key}}.json
