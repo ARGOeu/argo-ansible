@@ -21,12 +21,19 @@
 - name: Install Alerta.
   tags: alerta
   pip:
-    name: '{{ item }}'
+    name: alerta
+    version: {{alerta_version}}
     virtualenv: '{{ alerta_server_dir }}'
     state: forcereinstall
-  loop:
-    - alerta
-    - alerta-server
+
+- name: Install Alerta-server.
+  tags: alerta
+  pip:
+    name: alerta-server
+    version: {{alerta_server_version}}
+    virtualenv: '{{ alerta_server_dir }}'
+    state: forcereinstall
+
 
 - name: Install Alerta-amqp
   pip:
@@ -170,7 +177,7 @@
     version: '{{alerta_ui_release}}'
 
 - name: Configure Alerta Dashboard
-  tags: alerta
+  tags: alerta , dashboard
   template:
     src: config.js.j2
     dest: '{{ alerta_dashboard_dir }}/app/config.js'
@@ -205,7 +212,7 @@
 - name: Copy mail templates
   tags: certificate, alerta
   copy:
-    src: private_files/'{{ inventory_hostname }}'/mail-templates/
+    src: 'private_files/{{ inventory_hostname }}/mail-templates/'
     dest: /etc/argo-alert/mail/templates/
     directory_mode: yes
     owner: root
@@ -215,8 +222,8 @@
 - name: Copy mail templates
   tags: certificate, alerta
   copy:
-    src: private_files/'{{ inventory_hostname }}'/DigiCertCA.crt
-    dest: '{{ cert_dir }}'DigiCertCA.crt
+    src: 'private_files/{{ inventory_hostname }}/DigiCertCA.crt'
+    dest: '{{ cert_dir }}DigiCertCA.crt'
     owner: root
     group: root
 
