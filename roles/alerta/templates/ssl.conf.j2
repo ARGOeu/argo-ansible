@@ -60,8 +60,8 @@ Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains
 # General setup for the virtual host, inherited from global configuration
 DocumentRoot "/var/www/html"
 
-ServerName {{www_url}}
-ServerAlias {{www_alias}}
+ServerName {{inventory_hostname}}
+ServerAlias {{inventory_hostname}}
 
 # Use separate log files for the SSL virtual host; note that LogLevel
 # is not inherited from httpd.conf.
