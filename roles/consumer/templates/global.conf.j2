@@ -38,11 +38,6 @@ TopologyGroupOfEndpoints = %(SchemaDir)s/group_endpoints.avsc
 TopologyGroupOfGroups = %(SchemaDir)s/group_groups.avsc
 Weights = %(SchemaDir)s/weight_sites.avsc
 
-[Prefilter]
-ConsumerFilePath = {{consumer_path}}/argo-consumer_log_DATE.avro
-PoemNameMapping = poem_name_mapping.cfg
-PoemExpandedProfiles = %(EGIDir)s/poem_sync_DATE.out
-LookbackPoemExpandedProfiles = 5
 
 [Output]
 Downtimes = downtimes_DATE.avro
