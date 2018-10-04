@@ -110,7 +110,7 @@ SSLCertificateFile {{ cert_path }}
 #   directive to point at the key file.  Keep in mind that if
 #   you've both a RSA and a DSA private key you can configure
 #   both in parallel (to also allow the use of DSA ciphers, etc.)
-SSLCertificateKeyFile {{ cert_key }}
+SSLCertificateKeyFile {{ cert_key_path }}
 
 #   Server Certificate Chain:
 #   Point SSLCertificateChainFile at a file containing the
