@@ -147,7 +147,7 @@ serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
 ;[include]
 ;files = relative/directory/*.ini
 
-{% for key, value in tenants.iteritems() %}
+{% for key, value in alerta_tenants.iteritems() %}
 [program:alert-pub-{{key}}]
 command={{ alerta_server_dir }}/bin/python {{ alerta_server_dir }}/bin/argo-alert-publisher -c /etc/argo-alert/argo-alert-{{key}}.conf
 autostart=false
