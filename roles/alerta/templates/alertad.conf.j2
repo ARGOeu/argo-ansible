@@ -4,7 +4,7 @@ LOGGER_NAME = 'alerta'
 LOG_FILE = '/tmp/alerta.log'
 
 
-ADMIN_USERS = ['admin@{{www_url}}']
+ADMIN_USERS = [argo-ops@lists.grnet.gr]
 
 MONGO_URI = 'mongodb://localhost:27017/monitoring'
 MONGO_DATABASE = 'monitoring'
@@ -19,5 +19,5 @@ AUTH_REQUIRED = True
 CORS_ORIGINS = [
     'http://localhost:8000',
     'http://localhost',
-    'http://{{www_alias}}'
+    'http://{{inventory_hostname}}'
 ]
