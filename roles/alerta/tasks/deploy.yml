@@ -2,7 +2,7 @@
 
 - name: Install mod_ssl, mod_wsgi, httpd-tools, git, supervisord
   yum:
-   name: "{{ item }}"
+   name: '{{ item }}'
    state: present
   loop:
    - mod_ssl
@@ -21,7 +21,7 @@
 - name: Install Alerta.
   tags: alerta
   pip:
-    name: "{{ item }}"
+    name: '{{ item }}'
     virtualenv: '{{ alerta_server_dir }}'
     state: forcereinstall
   loop:
@@ -120,7 +120,7 @@
 - name: create alerta wsgi root
   tags: alerta
   file:
-    path: "{{ alerta_wsgi_root_dir }}"
+    path: '{{ alerta_wsgi_root_dir }}'
     state: directory
 
 - name: deploy new httpd configuration file
@@ -193,19 +193,19 @@
   file:
     path: /etc/argo-alert/mail/mailer-{{item.key}}.conf.rules.d
     state: directory
-  with_dict: ' {{ alerta_tenants }} '
+  with_dict: '{{ alerta_tenants }}'
 
 - name: deploy argo-alert mail configurations
   tags: alerta, mailer
   template:
     src: alerta-mailer.conf.j2
-    dest: /etc/argo-alert/mail/mailer-{{item.key}}.conf
-  with_dict: ' {{ alerta_tenants }} '
+    dest: /etc/argo-alert/mail/mailer-'{{item.key}}'.conf
+  with_dict: '{{ alerta_tenants }}'
 
 - name: Copy mail templates
   tags: certificate, alerta
   copy:
-    src: private_files/{{ inventory_hostname }}/mail-templates/
+    src: private_files/'{{ inventory_hostname }}'/mail-templates/
     dest: /etc/argo-alert/mail/templates/
     directory_mode: yes
     owner: root
@@ -215,8 +215,8 @@
 - name: Copy mail templates
   tags: certificate, alerta
   copy:
-    src: private_files/{{ inventory_hostname }}/DigiCertCA.crt
-    dest: {{ cert_dir }}DigiCertCA.crt
+    src: private_files/'{{ inventory_hostname }}'/DigiCertCA.crt
+    dest: '{{ cert_dir }}'DigiCertCA.crt
     owner: root
     group: root
 
