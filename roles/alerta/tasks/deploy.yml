@@ -22,7 +22,7 @@
   tags: alerta
   pip:
     name: alerta
-    version: {{alerta_version}}
+    version: '{{alerta_version}}'
     virtualenv: '{{ alerta_server_dir }}'
     state: forcereinstall
 
@@ -30,7 +30,7 @@
   tags: alerta
   pip:
     name: alerta-server
-    version: {{alerta_server_version}}
+    version: '{{alerta_server_version}}'
     virtualenv: '{{ alerta_server_dir }}'
     state: forcereinstall
 
