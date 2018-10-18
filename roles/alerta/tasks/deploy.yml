@@ -206,7 +206,7 @@
   tags: alerta, mailer
   template:
     src: alerta-mailer.conf.j2
-    dest: /etc/argo-alert/mail/mailer-'{{item.key}}'.conf
+    dest: /etc/argo-alert/mail/mailer-{{item.key}}.conf
   with_dict: '{{ alerta_tenants }}'
 
 - name: Copy mail templates
