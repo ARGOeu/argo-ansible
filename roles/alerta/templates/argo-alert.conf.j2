@@ -23,6 +23,7 @@ mail-rules=/etc/argo-alert/mail/mailer-{{item.key}}.conf.rules.d/rules-{{item.ke
 extra-emails={{item.value.alert_extra_emails}}
 alert-timeout = {{item.value.alert_timeout}}
 group-type = {{item.value.alert_group}}
+ui_endpoint = {{item.value.ui_endpoint}}
 
 [logging]
 level = INFO

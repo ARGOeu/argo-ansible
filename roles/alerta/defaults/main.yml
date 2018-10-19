@@ -33,6 +33,7 @@ ca_path_bundle: /etc/pki/tls/certs/ca-bundle.crt
 
 alerta_tenants:
   foo:
+    ui_endpoint: argo_ui_hostname
     contact_api_type: 'contact.api.type'
     contact_api_endpoint: 'https://contact.api.foo'
     mail_template: ~/alerta-foo.tmpl
