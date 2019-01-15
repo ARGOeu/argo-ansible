@@ -1,0 +1,78 @@
+---
+##### It runs only from msg-devel-2. Aris has firewall so we may
+## use only this node to backup the files.
+##
+- name: create folder ams-devel-mongo-data
+  file:
+    path: /root/ams-devel-mongo-data
+    state: directory
+  tags: backup_mongo_ams, backup_mongo_ams_folder
+
+
+- name: Set authorized key taken from file
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/auth_key/aris_rsa'
+    dest: /root/.ssh/aris_rsa
+    owner: root
+    group: root
+    mode: 0600
+  tags: backup_mongo_ams, backup_mongo_ams_keys
+
+- name: Set authorized key taken from file
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/auth_key/aris_rsa.pub'
+    dest: /root/.ssh/aris_rsa.pub
+    owner: root
+    group: root
+    mode: 0600
+  tags: backup_mongo_ams, backup_mongo_ams_files
+
+- name: cp mongodump script to /root
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/backup/mongo-backup.sh'
+    dest: /root/mongo-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: backup_mongo_ams, backup_mongo_ams_files
+
+- name: cp rsync to aris script to /root
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/backup/rsync-mongod-backup.sh'
+    dest: /root/rsync-mongod-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: backup_mongo_ams, backup_mongo_ams_files
+
+- name: add cronjob for rsync script
+  cron: cron_file=
+        name=rsync-mongod-backup.sh
+        minute=0
+        hour=3
+        user=root
+        job="/root/rsync-mongod-backup.sh"
+        state=present
+  tags: backup_mongo_ams, backup_mongo_ams_cron
+
+- name: add cronjob for mongodump script
+  cron: cron_file=
+        name=mongo-backup.sh
+        minute=0
+        hour=1
+        user=root
+        job="/root/mongo-backup.sh"
+        state=present
+  tags: backup_mongo_ams, backup_mongo_ams_cron
+
+- name: add cronjob for rsync script
+  cron: cron_file=
+        name=rsync-mongod-backup.sh
+        minute=0
+        hour=3
+        user=root
+        job="/root/rsync-mongod-backup.sh"
+        state=present
+  tags: backup_mongo_ams, backup_mongo_ams_cron
+
+
