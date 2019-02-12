@@ -28,6 +28,7 @@ db.roles.insert([
 {"resource" : "subscriptions:create", "roles" : [ "service_admin", "project_admin" ] },
 {"resource" : "subscriptions:delete", "roles" : ["service_admin", "project_admin" ] },
 {"resource" : "subscriptions:list", "roles" : [ "service_admin", "project_admin" ] },
+{"resource" : "subscriptions:listByTopic", "roles" : [ "service_admin", "project_admin"] },
 {"resource" : "subscriptions:acknowledge", "roles" : [ "service_admin", "project_admin", "consumer", "push_worker" ] },
 {"resource" : "subscriptions:show", "roles" : [ "service_admin", "project_admin", "consumer", "push_worker" ] },
 {"resource" : "subscriptions:pull", "roles" : [ "service_admin", "project_admin", "consumer", "push_worker" ] },
