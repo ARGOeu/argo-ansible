@@ -1,0 +1,13 @@
+use {{ams_store_db}}
+
+db.users.update(
+{"token": "{{ams_push_worker_token}}"},
+{"$set":
+  {
+    "uuid":"{{ams_push_worker_uuid}}",
+    "name": "push_worker_0",
+    "email": "argo-ops@lists.grnet.gr",
+    "projects": [],
+    "service_roles": ["push_worker"]}
+},
+{"upsert":"true"})
