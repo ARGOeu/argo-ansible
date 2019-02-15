@@ -12,6 +12,13 @@
     - { role: commons, task: fail2ban, tags: fail2ban }
     - { role: nickhammond.logrotate, tags: logrotate}
 
+- hosts: connectors
+  become: yes
+  roles:
+    - { role: consumer, task: connectors, tags: connectors }
+    - { role: consumer, task: cron_jobs, tags: cron_jobs }
+    - { role: consumer, task: delete_files, tags: delete_files }
+
 - hosts: poem
   become: yes
   roles:
