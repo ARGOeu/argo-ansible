@@ -45,7 +45,9 @@
   roles:
     - { role: mongodb }
     - { role: argo-api-authn, task: authn-setup }
-    - { role: argo-api-authn, task: ams-gocdb-users-create-script }
+    - { role: argo-api-authn, task: python-env-setup }
+    - { role: argo-api-authn, task: ams-create-users-gocdb-script }
+    - { role: argo-api-authn, task: ams-create-users-cloud-info-script }
 
 - hosts: metrics
   become: yes

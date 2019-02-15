@@ -6,6 +6,7 @@
     state: latest
     enablerepo: "{{ repo_enabled_argo }}"
     update_cache: yes
+  tags: authn_install
   notify: restart argo-api-authn
 
 - name: permissions for authn cert
@@ -14,6 +15,7 @@
      owner: argo-api-authn
      group: argo-api-authn
      mode: 0644
+  tags: authn_install
   notify: restart argo-api-authn
 
 - name: permissions for authn cert key
@@ -22,6 +24,7 @@
      owner: argo-api-authn
      group: argo-api-authn
      mode: 0644
+  tags: authn_install
   notify: restart argo-api-authn
 
 - name: template configuration for authn
@@ -31,9 +34,11 @@
     owner: argo-api-authn
     group: argo-api-authn
     mode: 0644
+  tags: authn_install
 
 - name: Start argo-api-authn service
   service:
      name: argo-api-authn
      enabled: true
      state: started
+  tags: authn_install
