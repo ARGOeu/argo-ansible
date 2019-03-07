@@ -1,6 +1,7 @@
 [CUSTOMER_{{item.key|upper}}]
 Name = {{item.key|upper}}
 OutputDir = {{item.value.outputdir}}
+AuthenticationPoemToken = {{item.value.AuthenticationPoemToken}}
 {% if item.value.HTTPAuth is defined %}
 AuthenticationUsePlainHttpAuth = {{item.value.AuthenticationUsePlainHttpAuth}}
 AuthenticationHttpUser = {{item.value.AuthenticationHttpUser}}
