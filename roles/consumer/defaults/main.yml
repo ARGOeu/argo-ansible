@@ -17,6 +17,7 @@ consumer_tenants:
     brokers:
       - "tenant.argo.grnet.gr"
     outputdir: "/mnt/data/argo-connectors/TENANTA/"
+    AuthenticationPoemToken: "token from poem ui"
     AmsProject: TENANTA
     AmsToken: TESTTOKEN 
     jobs_all: "Critical"
