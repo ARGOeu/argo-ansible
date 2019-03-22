@@ -53,6 +53,9 @@ MYPROXY_SERVER = {{ monbox_myproxy_server }}
 <NCG::LocalMetrics>
   <POEM>
     POEM_ROOT_URL = {{monbox_poem_url}}
+    {% if POEM_ROOT_PASSWD is defined %}
+    TOKEN={{POEM_ROOT_PASSWD}}
+    {% endif %}
   </POEM>
   <File>
     DB_FILE=/etc/argo-ncg/ncg.localdb
@@ -132,6 +135,9 @@ MYPROXY_SERVER = {{ monbox_myproxy_server }}
   <POEM>
     POEM_ROOT_URL = {{monbox_poem_url}}
     POEM_TAG = production
+    {% if POEM_ROOT_PASSWD is defined %}
+    TOKEN={{POEM_ROOT_PASSWD}}
+    {% endif %}
   </POEM>
   <JSON/>
 </NCG::MetricConfig>
