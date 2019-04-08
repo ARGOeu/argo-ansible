@@ -1,0 +1,5 @@
+---
+# handlers file for push-server
+
+- name: restart ams-push-server
+  service: name=ams-push-server state=restarted
