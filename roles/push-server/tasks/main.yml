@@ -1,0 +1,4 @@
+---
+# tasks file for push-server
+
+- include: '{{task}}.yml'

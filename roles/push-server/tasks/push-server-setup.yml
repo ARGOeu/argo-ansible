@@ -1,0 +1,53 @@
+---
+
+- name: Install push server package
+  yum:
+    name: ams-push-server
+    state: latest
+    enablerepo: "{{ repo_enabled_argo }}"
+    update_cache: true
+  tags: push_install
+  notify: restart ams-push-server
+
+- name: copy cert to push-server folder
+  copy: remote_src=yes src=/etc/grid-security/hostcert.pem dest=/var/www/ams-push-server/hostcert.pem backup=yes
+      owner=ams-push-server group=ams-push-server mode=0644
+  tags: push_install
+  notify: restart ams-push-server
+
+- name: copy key to push-server folder
+  copy: remote_src=yes src=/etc/grid-security/hostkey.pem dest=/var/www/ams-push-server/hostkey.pem backup=yes
+      owner=ams-push-server group=ams-push-server mode=0644
+  tags: push_install
+  notify: restart ams-push-server
+
+- name: Create CA dir if not exists
+  file: dest=/var/www/ams-push-server/cas state=directory
+        owner=ams-push-server group=ams-push-server mode=0755
+  tags: push_install
+  notify: restart ams-push-server
+
+- name: Copy CA file
+  copy: src=private_files/{{ inventory_hostname }}/DigiCertCA.crt
+        dest=/var/www/ams-push-server/cas/DigiCertCA.pem
+        backup=yes
+        owner=ams-push-server group=ams-push-server mode=0644
+  tags: push_install
+  notify: restart ams-push-server
+
+- name: template configuration for the push server
+  template:
+    src: ams-push-server-config.json.j2
+    dest: /etc/ams-push-server/conf.d/ams-push-server-config.json
+    owner: ams-push-server
+    group: ams-push-server
+    mode: 0644
+  tags: push_install
+  notify: restart ams-push-server
+
+- name: Start the ams push server
+  service:
+    name: ams-push-server
+    enabled: true
+    state: started
+  tags: push_install
