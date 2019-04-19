@@ -74,3 +74,23 @@
   tags:
     - mongo_replication
   when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Transfer mongo rotate bash script
+  copy:
+    src: root/mongo_rotate.sh
+    dest: /root/mongo_rotate.sh
+    backup: false
+    owner: root
+    group: root
+    mode: 0744
+  when: mongo_log_rotate == true
+
+- name: Create mongo rotate cron in /etc/cron.d
+  cron:
+    name: mongo rotate
+    minute: 50
+    hour: 23
+    user: root
+    job: "/root/mongo_rotate.sh"
+    cron_file: mongo_rotate
+  when: mongo_log_rotate == true
