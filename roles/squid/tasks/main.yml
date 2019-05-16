@@ -1,0 +1,15 @@
+---
+# tasks file for squid
+
+- name: Install squid
+  yum: 
+    name: 
+      - squid
+    state: present 
+  tags: squid
+
+- name: Enable squid 
+  service: 
+    name: squid 
+    state: started
+    enabled: yes
