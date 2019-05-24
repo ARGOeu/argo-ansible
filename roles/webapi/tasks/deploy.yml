@@ -66,7 +66,7 @@
     path: /var/www/argo-web-api/argo-web-api
     owner: argo-web-api
     group: argo-web-api
-  mode: 0755
+    mode: 0755
 
 - name: allow bind port 443
   shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-web-api/argo-web-api
