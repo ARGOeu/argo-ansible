@@ -7,8 +7,20 @@
   "store_db":"{{ams_store_db}}",
   "certificate":"/var/www/argo-messaging/hostcert.pem",
   "certificate_key":"/var/www/argo-messaging/hostkey.pem",
-  "per_resource_auth":"{{ams_per_resource_auth}}",
-{% if ams_service_token %}  "service_token":"{{ams_service_token}}",
-{% endif %}
-  "log_level":"{{ams_log_level}}"
+  "per_resource_auth":{{ams_per_resource_auth}},
+  {% if ams_service_token %}
+  "service_token":"{{ams_service_token}}",
+  {% endif %}
+  "log_level": "{{ams_log_level}}",
+  {% if ams_push_enabled %}
+  "push_enabled": {{ams_push_enabled}},
+  "push_server_host": "{{ams_push_server_host}}",
+  "push_server_port": {{ams_push_server_port}},
+  "push_worker_token": "{{ams_push_worker_token}}",
+  {% if ams_push_tls_enabled %}
+  "push_tls_enabled": {{ams_push_tls_enabled}},
+  "verify_push_server": {{ams_verify_push_server}},
+  "certificate_authorities_dir": "/var/www/argo-messaging/cas"
+  {% endif %}
+  {% endif %}
 }
