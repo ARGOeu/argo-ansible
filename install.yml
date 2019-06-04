@@ -47,6 +47,11 @@
     - { role: ams, task: deploy, tags: ams_install }
     - { role: ams, task: deploy_metrics, tags: ams_install }
 
+- hosts: ams_push_server
+  become: yes
+  roles:
+    - { role: push-server, task: push-server-setup, tags: push_install }
+
 - hosts: authn
   become: yes
   roles:
