@@ -1,0 +1,58 @@
+---
+# tasks file for cloudera_internal_node
+
+- name: ntp clear servers 0
+  lineinfile:
+    path: /etc/ntp.conf
+    regexp: '^server 0.centos.pool.ntp.org iburst'
+    line: '#server 0.centos.pool.ntp.org iburst'
+
+- name: ntp clear servers 1
+  lineinfile:
+    path: /etc/ntp.conf
+    regexp: '^server 1.centos.pool.ntp.org iburst'
+    line: '#server 1.centos.pool.ntp.org iburst'
+
+- name: ntp clear servers 2
+  lineinfile:
+    path: /etc/ntp.conf
+    regexp: '^server 2.centos.pool.ntp.org iburst'
+    line: '#server 2.centos.pool.ntp.org iburst'
+
+- name: ntp clear servers 3
+  lineinfile:
+    path: /etc/ntp.conf
+    regexp: '^server 3.centos.pool.ntp.org iburst'
+    line: '#server 3.centos.pool.ntp.org iburst'
+
+- name: ntp add server
+  lineinfile:
+    path: /etc/ntp.conf
+    regexp: '^server '
+    line: 'server {{ntp_server}} iburst'
+
+- name: restart ntp 
+  service:
+    name: ntpd
+    state: restarted
+
+- name: install openjdk 
+  yum: 
+    name: 
+      - java-1.8.0-openjdk-devel
+    state: present
+
+- name: set gateway authorized key
+  authorized_key:
+    user: root
+    state: present
+    key: "{{cloudera_gateway_pub_key}}"
+
+- name: set manager authorized key
+  authorized_key:
+    user: root
+    state: present
+    key: "{{cloudera_manager_pub_key}}"
+
+- name: set private hostname 
+  command: hostnamectl set-hostname "{{private.hostname}}"
