@@ -95,7 +95,7 @@
 - hosts: c_cluster
   become: yes 
   roles: 
-    - { role: private_hosts }
+    - { role: private_hosts, tags: private_hosts }
 
 - hosts: c_gateway
   become: yes
@@ -119,3 +119,8 @@
   become: yes
   roles: 
     - { role: disable_ipv6 ,tags: disable_ipv6 } 
+
+- hosts: c_flink
+  become: yes 
+  roles:
+     - { role: flink, tags: deploy_flink }
