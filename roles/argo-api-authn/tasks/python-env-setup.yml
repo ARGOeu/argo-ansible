@@ -37,5 +37,5 @@
     owner: argo-api-authn
     group: argo-api-authn
     mode: 0755
-    recurse: yes
+    recurse: true
   tags: authn_env_install
