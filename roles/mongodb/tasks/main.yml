@@ -6,7 +6,7 @@
   yum:
     name: "{{ item }}"
     state: present
-    enablerepo: mongodb-org-3.2
+    enablerepo: "{{ mongo_repo }}"
   loop:
     - mongodb-org
     - mongodb-org-server

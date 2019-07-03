@@ -65,7 +65,8 @@ repo related
 (boolean flags to enable on demand deployment of following repos):
 - repo_cloudera_kafka: false
 - repo_enabled_argo: argo-devel  # from which repo to get the packages (argo-devel or argo-prod)
-- repo_mongo: false  # if you want to install mongo repository
+- repo_mongo: false  # if you want to install mongo repository (3.2 version)
+- repo_mongo_4x: false # if you want to install mongo repository (4.0 version)
 - ca_bundle: false  # if you want to install EGI-trustanchors repository
 - repo_qcg: false
 - repo_unicore: false
