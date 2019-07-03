@@ -14,6 +14,12 @@
         owner=root group=root mode=0644
   when: repo_mongo
 
+- name: Install mongodb 4.2 repo 
+  tags: repo_mongodb 
+  copy: src=etc/yum.repos.d/mongodb-org-4.0.repo
+        dest=/etc/yum.repos.d/mongodb-org-4.0.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_mongo_4x
 
 - name: Install EGI-trustanchors repository definitions
   tags: repo_ca_bundle
