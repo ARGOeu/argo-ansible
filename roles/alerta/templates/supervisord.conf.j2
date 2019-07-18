@@ -159,7 +159,7 @@ stdout_logfile=/var/log/argo-alert/alert-pub-{{key}}.out.log
 command={{alerta_server_dir}}/bin/python {{alerta_server_dir}}/bin/alerta-mailer
 autostart=false
 autorestart=true
-environment=ALERTA_CONF_FILE=/etc/argo-alert/mail/mailer-{{key}}.conf
+environment=ALERTA_CONF_FILE=/etc/argo-alert/mail/mailer-{{key}}/mailer-{{key}}.conf
 stderr_logfile=/var/log/argo-alert/alert-mail-{{key}}.err.log
 stdout_logfile=/var/log/argo-alert/alert-mail-{{key}}.out.log
 {% endfor %}

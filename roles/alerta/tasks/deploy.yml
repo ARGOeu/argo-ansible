@@ -149,7 +149,7 @@
   template:
     src: alertad.conf.j2
     dest: /etc/alertad.conf
-  tags: alerta
+  tags: alerta, alerta_token
   notify: restart uwsgi
 
 
@@ -181,12 +181,18 @@
     state: absent
 
 - name: copy dist to html 
-  copy: 
+  synchronize: 
     src: /tmp/alerta_ui/dist/
     dest: /var/www/html
+  delegate_to: "{{inventory_hostname}}"
+
+- name: configure permissiosn on web-ui folder
+  file: 
+    path: /var/www/html
+    state: directory
     owner: www-data
     group: www-data
-    remote_src: yes
+    recurse: true
 
 - name: clear tmp folder
   file:
@@ -228,7 +234,7 @@
   template:
     src: alerta.conf.j2
     dest: /root/.alerta.conf
-  tags: alerta
+  tags: alerta, alerta_token
 
 - name: establish argo-alert config directory
   tags: alerta
@@ -253,8 +259,10 @@
   tags: alerta, mailer, alerta_token
   template:
     src: alerta-mailer.conf.j2
-    dest: /etc/argo-alert/mail/mailer-{{item.key}}.conf
+    dest: /etc/argo-alert/mail/mailer-{{item.key}}/mailer-{{item.key}}.conf
   with_dict: '{{ alerta_tenants }}'
+
+
 
 - name: Copy mail templates
   tags: certificate, alerta
@@ -297,6 +305,14 @@
   tags: alerta
   template:
     src: supervisord.conf.j2
+    dest: /etc/supervisord/supervisord.conf
+    mode: 0444
+  notify: restart supervisord
+
+- name: Configure supervisord
+  tags: alerta
+  template:
+    src: supervisord.conf.j2
     dest: /etc/supervisord.conf
     mode: 0444
   notify: restart supervisord
@@ -313,3 +329,13 @@
   template:
     src: ssmtp.conf.j2
     dest: /etc/ssmtp/ssmtp.conf
+
+- name: ensure uwsgi is started 
+  service:
+    name: uwsgi
+    state: started
+
+- name: ensure nginx is started 
+  service:
+    name: nginx
+    state: started
