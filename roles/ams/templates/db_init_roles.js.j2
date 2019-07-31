@@ -2,6 +2,7 @@ use {{ams_store_db}}
 db.roles.drop()
 db.roles.insert([
 {"resource" : "ams:metrics", "roles": ["service_admin", "metrics_viewer"]},
+{"resource" : "ams:dailyMessageAverage", "roles": ["service_admin", "metrics_viewer"]},
 {"resource" : "users:byUUID", "roles" : [ "service_admin", "argo_api_authn"] },
 {"resource" : "users:byToken", "roles" : [ "service_admin", "push_worker" ] },
 {"resource" : "users:list", "roles" : [ "service_admin", "project_admin" ] },
