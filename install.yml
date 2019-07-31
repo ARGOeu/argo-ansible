@@ -29,7 +29,7 @@
   become: yes
   roles:
     - { role: haproxy, task: rsyslog }
-    - { role: haproxy, task: haproxy }
+    - { role: haproxy, task: haproxy , tags: haproxy_install }
 
 - hosts: ams_store
   become: yes
