@@ -28,8 +28,11 @@ Configures host to be monitored by nagios
 - repos
 Deploys additional repos on host
 
-- users 
+- users
 Create users and their homedirs ([Guidelines for users](README_users.md)
+
+- rsyslog
+Configures rsyslog to forward logs to a remote rsyslog server aswell
 
 Requirements
 ------------
