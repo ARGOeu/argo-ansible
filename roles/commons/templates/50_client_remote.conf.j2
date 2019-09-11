@@ -1,0 +1,14 @@
+$DefaultNetstreamDriver gtls
+# certificate files
+$DefaultNetstreamDriverCAFile /etc/grid-security/DigiCertCA.crt
+$DefaultNetstreamDriverCertFile /etc/grid-security/hostcert.pem
+$DefaultNetstreamDriverKeyFile /etc/grid-security/hostkey.pem
+
+
+#$ModLoad imtcp  # TCP listener
+$ActionSendStreamDriverAuthMode x509/name
+$ActionSendStreamDriverPermittedPeer *.argo.grnet.gr
+$ActionSendStreamDriverMode 1 # run driver in TLS-only mode
+
+
+*.* @@rsyslog.argo.grnet.gr:6514;RSYSLOG_ForwardFormat
