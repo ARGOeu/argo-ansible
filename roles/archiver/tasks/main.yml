@@ -1,0 +1,4 @@
+---
+# tasks file for archiver
+
+- include: '{{ task }}.yml'

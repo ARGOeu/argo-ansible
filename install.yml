@@ -21,6 +21,11 @@
     - { role: consumer, task: cron_jobs, tags: cron_jobs }
     - { role: consumer, task: delete_files, tags: delete_files }
 
+- hosts: archiver
+  become: yes
+  roles:
+    - { role: archiver, task: archiver_setup, tags: archiver_setup }
+
 - hosts: poem
   become: yes
   roles:

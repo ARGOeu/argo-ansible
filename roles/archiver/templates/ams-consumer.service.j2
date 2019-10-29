@@ -1,0 +1,11 @@
+[Unit]
+Description=Argo Messaging Service metric results consumer
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ams-consumerd -d start -c /etc/argo-ams-consumer/ams-consumer-{{ item.name }}.conf
+ExecStop=/usr/bin/ams-consumerd -d stop -c /etc/argo-ams-consumer/ams-consumer-{{ item.name }}.conf
+
+[Install]
+WantedBy=multi-user.target
