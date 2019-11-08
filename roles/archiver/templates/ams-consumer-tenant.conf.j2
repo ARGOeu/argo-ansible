@@ -1,0 +1,24 @@
+[General]
+LogName = argo-ams-consumer
+ReportWritMsgEveryHours = 24
+AvroSchema = {{ archiver_avro_schema }}
+
+[AMS]
+Host = {{ archiver_ams_host }}
+Project = {{ item.name }}
+Token = {{ item.token }}
+Subscriptions = {{ item.sub }}
+PullMsgs = 100
+PullIntervalSec = 3
+ConnectionTimeout = 180
+PullRetry = 5
+PullRetrySleep = 60
+
+[MsgRetention]
+PastDaysOk = 3
+FutureDaysOk = 1
+
+[Output]
+Directory = /var/lib/argo-ams-consumer-{{ item.name }}
+Filename = argo-consumer_log_DATE.avro
+ErrorFilename = argo-consumer_error_log_DATE.avro
