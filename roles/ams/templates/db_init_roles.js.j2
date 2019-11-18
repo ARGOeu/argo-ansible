@@ -43,5 +43,8 @@ db.roles.insert([
 {"resource" : "subscriptions:modifyPushConfig", "roles" : [ "service_admin", "project_admin" ] },
 {"resource" : "subscriptions:modifyAckDeadline", "roles" : [ "service_admin", "project_admin", "consumer" ] },
 {"resource" : "ams:metrics", "roles" : [ "service_admin", "project_admin"] },
-{"resource" : "schemas:create", "roles" : [ "service_admin", "project_admin" ] }
+{"resource" : "schemas:create", "roles" : [ "service_admin", "project_admin" ] },
+{"resource" : "schemas:show", "roles" : [ "service_admin", "project_admin" ] },
+{"resource" : "schemas:update", "roles" : [ "service_admin", "project_admin" ] },
+{"resource" : "schemas:delete", "roles" : [ "service_admin", "project_admin" ] }
 ])
