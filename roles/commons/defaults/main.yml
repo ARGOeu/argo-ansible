@@ -104,3 +104,7 @@ users_create_homedirs: true
 users: []
 users_deleted: []
 users_groups_to_create: []
+
+# Nagios, for nrpe package :
+nrpe_conf_path: /etc/nagios
+nrpe_allowed_hosts: 127.0.0.1
