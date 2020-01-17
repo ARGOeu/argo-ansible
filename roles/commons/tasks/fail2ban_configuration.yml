@@ -1,14 +1,5 @@
 # tasks file for fail2ban
 ---
-- name: install
-  package:
-    name: "{{ item }}"
-    state: "{{ apt_install_state | default('latest') }}"
-  with_items: "{{ fail2ban_dependencies }}"
-  tags:
-    - configuration
-    - fail2ban
-    - fail2ban-install
 
 - name: update configuration file - /etc/fail2ban/fail2ban.local
   template:

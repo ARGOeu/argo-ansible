@@ -7,9 +7,9 @@
     - { role: commons, task: timezone, tags: timezone}
     - { role: commons, task: repos, tags: repos }
     - { role: commons, task: basic_utils, tags: basic_utils }
+    - { role: commons, task: fail2ban_configuration, tags: fail2ban_configuration }
     - { role: commons, task: firewall, tags: firewall }
     - { role: commons, task: cert, tags: cert }
-    - { role: commons, task: fail2ban, tags: fail2ban }
     - { role: commons, task: rsyslog, tags: rsyslog_conf }
     - { role: nickhammond.logrotate, tags: logrotate}
 
