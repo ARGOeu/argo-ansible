@@ -2,11 +2,10 @@
 # handlers file for commons
 
 # handlers file for fail2ban
-- name: restart fail2ban (with service)
+- name: restart fail2ban
   service:
     name: fail2ban
     state: restarted
-  listen: "restart fail2ban"
 
 - name: reload firewall
   command: "firewall-cmd --reload"
