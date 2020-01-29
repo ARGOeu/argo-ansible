@@ -4,7 +4,7 @@
 - name: disable ipv6
   sysctl: 
     name: '{{ item }}' 
-    value: 1
+    value: '1'
     state: present
     reload: no
   loop:
