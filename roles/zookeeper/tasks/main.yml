@@ -11,10 +11,10 @@
   tags: zookeeper_install
 
 - name: install zookeeper
-  yum: name={{item}} state=present enablerepo=cloudera-cdh5
-  with_items:
-    - zookeeper
-    - zookeeper-server
+  yum:
+    name: ['zookeeper', 'zookeeper-server']
+    state: present
+    enablerepo: cloudera-cdh5
   tags: zookeeper_install
 
 - name: configure zookeeper
