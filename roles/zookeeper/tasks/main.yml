@@ -11,10 +11,10 @@
   tags: zookeeper_install
 
 - name: install zookeeper
-  yum: name={{item}} state=present enablerepo=cloudera-cdh5
-  with_items:
-    - zookeeper
-    - zookeeper-server
+  yum:
+    name: ['zookeeper', 'zookeeper-server']
+    state: present
+    enablerepo: cloudera-cdh5
   tags: zookeeper_install
 
 - name: configure zookeeper
@@ -26,6 +26,17 @@
 - name: set myid
   shell: sudo su -s /bin/bash zookeeper -c " zookeeper-server-initialize  --force --myid={{ private.id }}"
   tags: zookeeper_install
+
+- name: Zookeeper init.d script
+  template: src=zookeeper-server.j2 dest=/etc/rc.d/init.d/zookeeper-server
+            owner=root group=root backup=yes
+  notify: restart zookeeper
+  tags: zookeeper_install_initd_script
+
+- name: Run daemon-reload
+  systemd:
+    daemon-reload: true
+  tags: zookeeper_install_initd_script
 
 - name: start zookeeper service
   service: name=zookeeper-server state=started enabled=yes
