@@ -21,6 +21,7 @@
 - name: install virtualenv with pip
   pip:
    name: "virtualenv"
+   executable: pip3.6
   tags: authn_env_install
 
 - name: install git
