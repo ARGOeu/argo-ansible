@@ -31,7 +31,7 @@
 
 - name: reload systemd
   command: /usr/bin/systemctl --system daemon-reload
-  when: argowebapi_service | changed
+  when: argowebapi_service.changed
   tags: webapi_deploy
 ################################################################################
 
