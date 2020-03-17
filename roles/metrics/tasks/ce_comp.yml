@@ -10,9 +10,17 @@
     path: ~/Envs/ce_comp_env
     state: directory
 
+- name: upgrade pip2.7
+  pip:
+    name: pip
+    executable: pip2.7
+    state: latest
+    extra_args: --upgrade
+
 - name: install virtualenv with pip
   pip:
     name: "virtualenv"
+    executable: pip2.7
 
 - name: create directory for the generated html reports
   file:
@@ -41,7 +49,7 @@
     cron_file: ce_comp_{{ item.name | lower }}
     name: "set up cron for {{ item.name }}"
     user: root
-    hour: 4
+    hour: "4"
     job: "~/Envs/ce_comp_env/bin/python ~/Envs/ce_comp_env/ce_comp/ce_comp.py -t {{ item.name }} -s html -c ~/Envs/ce_comp_env/ce_comp/config.cfg -sd $(date --date yesterday '+\\%Y-\\%m-\\%d') -ed $(date --date yesterday '+\\%Y-\\%m-\\%d') -sp /var/www/html/ce_comp/"
   loop: "{{ tenants }}"
   loop_control:
