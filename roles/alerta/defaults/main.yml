@@ -45,6 +45,5 @@ alerta_tenants:
     mail_type: html
     mail_debug: true
     mail_rule: ~/alerta-foo/mail-rules/mail-foo-rules.json
-    ui_endpoint: localhost
 
 smtp_debug: true
