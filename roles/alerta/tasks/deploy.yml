@@ -24,6 +24,7 @@
   pip:
     name: virtualenv
     state: present
+    executable: pip3.6
   tags: alerta
 
 - name: Install Alerta
@@ -49,6 +50,17 @@
     name: uwsgi
     virtualenv: '{{ alerta_server_dir }}'
     state: forcereinstall
+
+- name: (pip) Uninstall Werkzeug 1.0.0 [Fix 'werkzeug.contrib' problem (1/2)]
+  pip:
+    name: werkzeug
+    state: absent
+    virtualenv: '{{ alerta_server_dir }}'
+
+- name: (pip) Install Werkzeug 0.16.1 [Fix 'werkzeug.contrib' problem (2/2)]
+  pip:
+    name: werkzeug==0.16.1
+    virtualenv: '{{ alerta_server_dir }}'
 
 - name: Add www-data group 
   tags: alerta
@@ -301,7 +313,13 @@
     src: hosts.j2
     dest: /etc/hosts
 
-- name: Configure supervisord
+- name: establish supervisord config directory
+  tags: alerta
+  file:
+    path: /etc/supervisord
+    state: directory
+
+- name: Configure supervisord (1/2)
   tags: alerta
   template:
     src: supervisord.conf.j2
@@ -309,7 +327,7 @@
     mode: 0444
   notify: restart supervisord
 
-- name: Configure supervisord
+- name: Configure supervisord (2/2)
   tags: alerta
   template:
     src: supervisord.conf.j2
@@ -339,3 +357,5 @@
   service:
     name: nginx
     state: started
+
+# vim: syntax=yaml ts=4 sw=4 sts=4 sr noet
