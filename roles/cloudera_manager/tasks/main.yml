@@ -59,22 +59,10 @@
     state: restarted
     enabled: yes
 
-- name: create cloudera users
-  command: "sudo -u postgres psql -c \" CREATE ROLE {{item}} LOGIN PASSWORD '{{postgres_pass}}' \" "
-  loop:
-    - scm
-    - amon
-    - rman
-    - hue
-    - metastore
-    - sentry
-    - nav
-    - navms 
-    - oozie
-  ignore_errors: true 
-
 - name: create cloudera databases
-  command: "sudo -u postgres psql -c \" CREATE DATABASE {{item}} OWNER {{item}} ENCODING 'UTF-8' \" "
+  postgresql_db:
+    name: '{{item}}'
+    encoding: UTF-8
   loop:
     - scm
     - amon
@@ -83,12 +71,29 @@
     - metastore
     - sentry
     - nav
-    - navms 
+    - navms
     - oozie
-  ignore_errors: yes
+  become_user: postgres
+
+- name: create cloudera users for databases
+  postgresql_user:
+    db: '{{item}}'
+    name: '{{item}}'
+    password: '{{postgres_pass}}'
+  loop:
+    - scm
+    - amon
+    - rman
+    - hue
+    - metastore
+    - sentry
+    - nav
+    - navms
+    - oozie
+  become_user: postgres
 
 - name: initialize cloudera scm database 
-  command: "/opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm -p {{postgres_pass}}"
+  command: "/opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm {{postgres_pass}}"
 
 - name: start cloudera server 
   service: 
