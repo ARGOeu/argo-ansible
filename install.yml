@@ -118,17 +118,12 @@
   roles:
     - { role: through_http_proxy }
     - { role: cloudera_internal_node }
-
+    - { role: disable_ipv6, tags: disable_ipv6 }
 
 - hosts: c_manager
   become: yes
   roles:
     - { role: cloudera_manager }
-
-- hosts: c_private
-  become: yes
-  roles:
-    - { role: disable_ipv6 ,tags: disable_ipv6 }
 
 - hosts: c_flink
   become: yes
