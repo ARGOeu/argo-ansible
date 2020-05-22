@@ -1,6 +1,0 @@
----
-
-- hosts: testVm13121
-  become: yes
-  roles:
-    - { role: webapi, task: update }
