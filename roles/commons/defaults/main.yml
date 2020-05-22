@@ -1,0 +1,110 @@
+---
+# defaults file for commons
+
+# sshd config path
+sshd_config_path: /etc/ssh/sshd_config 
+
+# firewall default vars
+firewall_private_interfaces: []
+firewall_sources: []
+firewall_interfaces: []
+firewall_zones: []
+firewall_services: []
+firewall_services_zones: []
+
+# firewall
+cert_dir: /etc/grid-security/
+cert_path: /etc/grid-security/hostcert.pem
+cert_key_path: /etc/grid-security/hostkey.pem
+ca_path: /etc/pki/tls/certs/
+ca_path_bundle: /etc/pki/tls/certs/ca-bundle.crt
+
+
+# defaults for role repos
+repo_enabled_argo: argo-devel  # from which repo to get the packages (argo-devel or argo-prod)
+repo_mongo: false  # if you want to install mongo repository (mongo 3.x)
+repo_mongo_4x: false # if you want to install mongodb 4.0 repository
+ca_bundle: false  # if you want to install EGI-trustanchors repository
+repo_qcg: false
+repo_unicore: false
+repo_umd: false
+repo_promoo: false
+repo_rocci: false
+repo_cloudera: false
+repo_cloudera_kafka: false
+repo_nagios: false
+
+# defaults file for fail2ban
+
+# Log verbosity
+# valid values : CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG. Default: ERROR
+fail2ban_loglevel: INFO
+
+# Where to save logs: a file, ``STDOUT``, ``STDERR``, ``SYSLOG``
+fail2ban_logtarget: /var/log/fail2ban.log
+fail2ban_syslog_target: /var/log/fail2ban.log
+fail2ban_syslog_facility: 1
+
+fail2ban_socket: /var/run/fail2ban/fail2ban.sock
+fail2ban_pidfile: /var/run/fail2ban/fail2ban.pid
+
+# List of IP addresses or CIDR networks which should be ignored by fail2ban
+fail2ban_ignoreips:
+ - 127.0.0.1/8
+
+# Length of time in seconds for the ban to persist (by default, 2 hours)
+fail2ban_bantime: 600
+
+# Maximum number of bad login attempts in the given ``findtime`` to trigger
+# a ban
+fail2ban_maxretry: 3
+
+# Length of time in seconds between bad login attempts to consider for banning
+# (by default, 10 minutes)
+fail2ban_findtime: 600
+
+# Method which fail2ban uses to get notified about new entries in log files
+fail2ban_backend: auto
+
+# Default mail notification method
+fail2ban_mta: sendmail
+
+# Recipient address of e-mail notifications
+fail2ban_destemail: root@localhost
+
+fail2ban_sendername: 'Fail2ban'
+
+# Default "response mode" to use for banning. By default, fail2ban will add IP
+# addresses to custom ``iptables`` recent list and ``REJECT`` connections.
+fail2ban_banaction: iptables-multiport
+
+# Protocol type to filter in ``iptables``: ``tcp``, ``udp``, ``icmp``, ``all``
+fail2ban_protocol: tcp
+
+# ``iptables`` chain to add the rules in
+fail2ban_chain: INPUT
+
+fail2ban_action: '%(action_)s'
+fail2ban_services:
+ - name: sshd
+# fail2ban_jaild_path: files/jail.d/
+
+# Create a group for every user and make that their primary group
+users_create_per_user_group: true
+# If we're not creating a per-user group, then this is the group all users
+# belong to
+users_group: users
+# The default shell for a user if none is specified
+users_default_shell: /bin/bash
+# Create home dirs for new users? Set this to false if you manage home
+# directories in some other way.
+users_create_homedirs: true
+
+# Lists of users to create and delete
+users: []
+users_deleted: []
+users_groups_to_create: []
+
+# Nagios, for nrpe package :
+nrpe_conf_path: /etc/nagios
+nrpe_allowed_hosts: 127.0.0.1

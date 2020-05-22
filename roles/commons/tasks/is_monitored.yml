@@ -1,0 +1,35 @@
+---
+
+- name: Install nagios needed nrpe packages
+  tags: monitoring
+  yum: name={{ item }} state=latest
+  loop:
+    - nrpe
+    - nagios-plugins
+    - nagios-plugins-disk
+    - nagios-plugins-procs
+    - nagios-plugins-load
+
+- name: Copy nrpe configuration file on host
+  tags:
+    - monitoring
+    - nrpe_checks
+  template: src=nrpe.cfg.j2
+            dest={{ nrpe_conf_path }}/nrpe.cfg backup=yes
+            owner=root group=root mode=0644
+  notify: restart nrpe
+
+- name: Modify nrpe configuration itself
+  tags:
+    - monitoring
+    - nrpe_hosts
+  lineinfile: dest=/etc/nagios/nrpe.cfg
+              regexp="^allowed_hosts="
+              line="allowed_hosts={{ nrpe_allowed_hosts }}"
+              state=present
+              backup=yes
+  notify: restart nrpe
+
+- name: Start and enable nrpe service
+  tags: monitoring
+  service: name=nrpe state=started enabled=yes

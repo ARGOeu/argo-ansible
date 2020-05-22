@@ -1,25 +1,13 @@
 ---
+# tasks file for poem
 
-- name: clean yum 
-  shell: yum clean all
-  
-- name: Install requirements
-  yum: name={{ item }} state=present
-  with_items:
-    - vim
-    - wget
-    - unzip
-    - python-pip
-    - tmux
-    - zsh
-  tags: install_requirements
+- name: yum-clean-metadata
+  command: yum clean metadata
+  args:
+    warn: false
 
-- name: Install EGI-trustanchors packages
-  tags: trustanchors-packages
-  yum: name=ca-policy-egi-core state=present
-  
 - name: Install poem package from argo repository
-  yum: name=poem state=latest enablerepo={{ enabled_argo_repo }}  update_cache=yes
+  yum: name=poem state=latest enablerepo={{ repo_enabled_argo }}  update_cache=yes
   tags: install_poem
 
 - name: Create poem.ini file
@@ -27,47 +15,45 @@
   template: src=poem.ini.j2
             dest=/etc/poem/poem.conf backup=yes
             owner=root group=root mode=0644
-            
-- name: check secret_key 
+
+- name: check secret_key
   stat: path=/etc/poem/secret_key
   tags: poem_secret_key
   register: poem_secret_key
 
-- name: create secret_key 
-  shell: poem-genseckey -f /etc/poem/secret_key
+- name: create secret_key
+  command: poem-genseckey -f /etc/poem/secret_key
   tags: poem_secret_key
-  when: poem_secret_key.stat.islnk is not defined 
+  when: poem_secret_key.stat.islnk is not defined
 
-- name: copy secret_key 
+- name: fetch the secret_key
+  fetch:
+    src: /etc/poem/secret_key
+    dest: ./private_files/{{inventory_hostname}}/secret_key
+    flat: true
+  tags: poem_secret_key
+
+- name: copy secret_key
   tags: poem_secret_key
   copy: src=private_files/{{inventory_hostname}}/secret_key
         dest=/etc/poem/secret_key
-  when: poem_secret_key.stat.islnk is  defined 
+  when: poem_secret_key.stat.islnk is  defined
 
-- name: upload certificate 
-  tags: poem_certificate
+- name: check path of db
+  stat:
+    path: /var/lib/poem/poemserv.db
+  register: sym_db
+
+- name: create poem db
+  command: poem-db -c
+  tags: poem_create_db
+  when: sym_db.stat.islnk is not defined
+
+- name: copy DigiCertCA
+  tags: poem_digicert
   copy: src=private_files/{{inventory_hostname}}/DigiCertCA.crt
-        dest=/etc/pki/tls/certs/DigiCertCA.crt backup=yes
-        owner=root group=root mode=0404
-        
-- name: Create ssl.conf file
-  template: src=ssl.conf.j2
-            dest=/etc/httpd/conf.d/ssl.conf backup=yes
-            owner=root group=root mode=0644
-            
+        dest={{cert_dir}}/DigiCertCA.crt
+
 - name: update aai metadata
   tags: poem_aai_metadata
-  shell: wget {{AAI_metadata}} -O /etc/poem/metadata-checkin.xml 
-
-
-- name: Start and enable httpd service
-  service: name=httpd state=started enabled=yes
-
-- stat: path=/etc/grid-security/hostkey.pem
-  tags: poem_certificate, poem_cert
-  register: hostkey_file
-  
-- name: change hostkey permissions
-  tags: poem_certificate, poem_cert
-  file: path=/etc/grid-security/hostkey.pem  mode=0404 
-  when: hostkey_file.stat.exists
+  get_url: url={{poem_AAI_metadata}} dest="/etc/poem/metadata-checkin.xml" force="yes"

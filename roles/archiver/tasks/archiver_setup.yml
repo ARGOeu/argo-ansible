@@ -1,0 +1,41 @@
+---
+
+- name: Install the rpm package for the argo-ams-consumer(archiver)
+  yum:
+   name: argo-ams-consumer
+   state: present
+  tags: archiver_setup
+
+- name: Create configuration file for each archiver installation
+  template:
+   src: ams-consumer-tenant.conf.j2
+   dest: "{{ archiver_config }}ams-consumer-{{ item.name }}.conf"
+  with_items: "{{ archiver_projects_list }}"
+  tags: archiver_setup
+
+- name: Create output directories for each archiver installation
+  file:
+   path: "{{ archiver_daily_log_files }}argo-ams-consumer-{{ item.name }}"
+   state: directory
+  with_items: "{{ archiver_projects_list }}"
+  tags: archiver_setup
+
+- name: Create systemd file for each archiver installation
+  template:
+   src: ams-consumer.service.j2
+   dest: "{{ archiver_service_unit_files }}ams-consumer-{{ item.name }}.service"
+  with_items: "{{ archiver_projects_list }}"
+  tags: archiver_setup
+
+- name: Reload the systemd daemon
+  systemd:
+   daemon_reload: yes
+  tags: archiver_setup
+
+- name: Service start for each archiver installation
+  service:
+   name: ams-consumer-{{ item.name }}
+   state: started
+   enabled: true
+  with_items: "{{ archiver_projects_list }}"
+  tags: archiver_setup

@@ -1,12 +1,22 @@
 ---
+# defaults file for poem
 
-db_path: /var/lib/poem/poemserv.db
-db_user: test
-db_pass: test123
-db_mail: foo@example.com
+poem_db_path: /var/lib/poem/poemserv.db
+poem_db_user: test
+poem_db_pass: test123
+poem_db_mail: foo@example.com
 
 poem_namespace: example.com.TEST
-poem_gocdb_url: goc.egi.eu
+poem_gocdb_url: goc-test.egi.eu
 poem_secret: bbc2ac55-e3aa-4b89-9038-e1acc4baf232
 poem_debug: "True"
 poem_timezone: Europe/Athens
+ca_bundle_install: true
+poem_SamlLoginString: "Log in using EGI"  # the text button
+
+poem_AAI_metadata: https://unity.eudat-aai.fz-juelich.de:8443/saml-idp/metadata  # the metadata list of AAI
+poem_ServiceType: https://goc-sdc.argo.grnet.gr/gocdbpi/private/?method=get_service_types  # list of service types
+
+poem_ALLOWED_HOSTS: poem-test.argo.grnet.gr  # the domain name of the poem needed
+
+ca_bundle: true

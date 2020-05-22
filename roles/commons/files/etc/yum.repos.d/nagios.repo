@@ -1,0 +1,5 @@
+[nagios]
+name=Nagios Repository
+baseurl=http://ftp.srce.hr/srce-redhat/base/el7/$basearch
+enabled=1
+gpgcheck=0

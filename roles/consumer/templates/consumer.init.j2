@@ -11,25 +11,25 @@ DAEMON_PATH="/usr/bin/argo-{{ item.key | lower }}{% if item.key|lower != "egi" %
 
 case "$1" in
 start)
-	echo -n $"Starting $PROG_NAME: "
-	daemon $DAEMON_PATH --start --config $CONFIG
-	echo
+        echo -n $"Starting $PROG_NAME: "
+        daemon $DAEMON_PATH --start --config $CONFIG
+        echo
 ;;
 status)
-	$DAEMON_PATH --status --config $CONFIG
+        $DAEMON_PATH --status --config $CONFIG
 ;;
 stop)
-	echo -n $"Stopping $PROG_NAME: "
-	daemon $DAEMON_PATH --stop --config $CONFIG
-	echo
+        echo -n $"Stopping $PROG_NAME: "
+        daemon $DAEMON_PATH --stop --config $CONFIG
+        echo
 ;;
 restart)
-	echo -n $"Restarting $PROG_NAME: "
-	daemon $DAEMON_PATH --restart --config $CONFIG
-	echo
+        echo -n $"Restarting $PROG_NAME: "
+        daemon $DAEMON_PATH --restart --config $CONFIG
+        echo
 ;;
 *)
-	echo "Usage: $0 {status|start|stop|restart}"
-	exit 1
+        echo "Usage: $0 {status|start|stop|restart}"
+        exit 1
 esac
 

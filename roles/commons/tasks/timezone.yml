@@ -1,0 +1,6 @@
+---
+
+- name: set timezone to Europe/Athens
+  timezone:
+    name: Europe/Athens
+  tags: set_timezone_to_EEST

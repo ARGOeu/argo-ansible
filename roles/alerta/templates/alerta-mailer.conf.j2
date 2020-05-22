@@ -1,11 +1,11 @@
 [DEFAULT]
 timezone = Europe/Athens
 output = json
-endpoint = https://{{www_alias}}/api
+endpoint = https://{{alerta_www_alias}}/api
 key = {{alerta_token}}
 sslverify = off
 timeout = 10.0
-debug = yes
+debug = false
 color = yes
 
 [alerta-mailer]
@@ -15,7 +15,7 @@ mail_from = {{alerta_mail_from}}
 smtp_host = {{alerta_smtp_host}}
 smtp_port = {{alerta_smtp_port}}
 amqp_url = mongodb://localhost:27017/amqp
-dashboard_url = https://{{www_alias}}
+dashboard_url = https://{{alerta_www_alias}}
 smtp_use_ssl = False
 debug = {{ alerta_mail_debug }}
 skip_mta = True

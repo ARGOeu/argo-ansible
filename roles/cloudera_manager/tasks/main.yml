@@ -1,0 +1,103 @@
+---
+# tasks file for cloudera_manager
+
+- name: Copy mgr already generated key
+  copy: src=private_files/{{ inventory_hostname }}/hostkey
+        dest=/root/.ssh/id_rsa backup=yes
+        owner=root group=root mode=0600
+  tags: hostkey
+
+- name: Copy cloudera repo
+  copy: src=private_files/{{ inventory_hostname }}/cloudera.repo
+        dest=/etc/yum.repos.d/cloudera.repo backup=yes
+        owner=root group=root mode=0644
+  tags: cloudera_repo
+
+- name: import cloudera repo key
+  command: rpm --httpproxy {{http_proxy_url}} --import https://archive.cloudera.com/cm6/6.2.0/redhat7/yum/RPM-GPG-KEY-cloudera
+  tags: cloudera_repo_key
+
+- name: install all appropriate packages
+  yum:
+    name:
+      - cloudera-manager-daemons
+      - cloudera-manager-agent
+      - cloudera-manager-server
+      - postgresql-server
+      - python-pip
+
+- name: install pip package 
+  pip: 
+    name: psycopg2==2.7.5
+    state: present
+    extra_args: --ignore-installed --proxy {{http_proxy_url}}
+
+- name: ensure LC_ALL is UTF-8
+  command: echo 'LC_ALL="en_US.UTF-8"' >> /etc/locale.conf
+
+- name: initialize postgres 
+  command: sudo su -l postgres -c "postgresql-setup initdb"
+  ignore_errors: true
+
+- name: postgres listen to internal network
+  lineinfile:
+    path: /var/lib/pgsql/data/postgresql.conf 
+    regexp: '^listen_addresses'
+    line: "listen_addresses = 'localhost,{{private.hostname}}'"
+
+- name: postgres add hba configuration
+  template:
+    src: pg_hba.conf.j2
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: 0600
+
+- name: start postgres
+  service:
+    name: postgresql
+    state: restarted
+    enabled: yes
+
+- name: create cloudera databases
+  postgresql_db:
+    name: '{{item}}'
+    encoding: UTF-8
+  loop:
+    - scm
+    - amon
+    - rman
+    - hue
+    - metastore
+    - sentry
+    - nav
+    - navms
+    - oozie
+  become_user: postgres
+
+- name: create cloudera users for databases
+  postgresql_user:
+    db: '{{item}}'
+    name: '{{item}}'
+    password: '{{postgres_pass}}'
+  loop:
+    - scm
+    - amon
+    - rman
+    - hue
+    - metastore
+    - sentry
+    - nav
+    - navms
+    - oozie
+  become_user: postgres
+
+- name: initialize cloudera scm database 
+  command: "/opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm {{postgres_pass}}"
+
+- name: start cloudera server 
+  service: 
+    name: cloudera-scm-server
+    state: restarted
+    enabled: true
+

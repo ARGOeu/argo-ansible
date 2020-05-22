@@ -1,4 +1,5 @@
 ---
+# defaults file for argo-api-authn
 
-virtual_env_installation: /var/www/argo-api-authn/Envs
+virtual_env_installation: /opt/virtualenv
 service_configuration_folder: /etc/argo-api-authn/conf.d

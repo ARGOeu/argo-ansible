@@ -1,16 +1,15 @@
 [CUSTOMER_{{item.key|upper}}]
 Name = {{item.key|upper}}
 OutputDir = {{item.value.outputdir}}
+AuthenticationPoemToken = {{item.value.AuthenticationPoemToken}}
 {% if item.value.HTTPAuth is defined %}
 AuthenticationUsePlainHttpAuth = {{item.value.AuthenticationUsePlainHttpAuth}}
 AuthenticationHttpUser = {{item.value.AuthenticationHttpUser}}
 AuthenticationHttpPass = {{item.value.AuthenticationHttpPass}}
 {% endif %}
-
-
-{% if AMS_enabled %}
+{% if consumer_AMS_enabled %}
 AmsProject = {{item.value.AmsProject}}
-AmsToken = {{item.value.AmsToken}} 
+AmsToken = {{item.value.AmsToken}}
 {% endif %}
 {% if item.value.jobs_all is defined %}
 Jobs = {{ item.value.jobs_all }}
@@ -28,6 +27,9 @@ TopoFetchType = {{job.TopoFetchType}}
 TopoSelectGroupOfEndpoints = {{job.TopoSelectGroupOfEndpoints}}
 TopoSelectGroupOfGroups = {{job.TopoSelectGroupOfGroups}}
 DowntimesFeed = {{job.DowntimesFeed}}
+PoemNamespace = {{job.PoemNamespace}}
+PoemServerHost = {{job.PoemServerHost}}
+PoemServerVO = {{job.PoemServerVO}}
 
 {% endfor %}
 {% endif %}

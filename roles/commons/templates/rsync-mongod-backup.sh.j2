@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Kyriakos Gkinis, kyrginis@admin.grnet.gr
+
+# remote host and credentials
+RHOST=login.aris.grnet.gr
+RUSER=themis
+SSHKEY=/root/.ssh/aris_rsa
+# remote parent dir
+RPARENTDIR=/staging/users/guest/themis
+
+# local hostname, used for remote dir construction
+# could use `hostname -f` but better be safe than sorry
+HOSTNAME={{inventory_hostname}}
+
+# remote destination path
+RPATH="$RPARENTDIR"/"$HOSTNAME"/
+
+#
+# local directories to be rsynced
+#
+DIRECTORY="/root/{{inventory_hostname}}-mongo-data/{{MONGOBACKUP_APP_NAME}}"
+LPATH="/root/{{inventory_hostname}}-mongo-data/{{MONGOBACKUP_APP_NAME}}"
+
+# use rsync for copy
+COPYCMD=(/usr/bin/rsync -e "/usr/bin/ssh -i $SSHKEY" -va)
+
+#
+# you shouldn't have to change anything below this line (famous last words)
+#
+
+printf -- "--------------------------------------------------------------------------------------\n"
+printf "Backup of files to host %s begins at %s\n" "$RHOST" "`date`"
+printf -- "--------------------------------------------------------------------------------------\n"
+
+#for LPATH in "${DIRECTORIES[@]}"
+#do
+    printf "%q " "${COPYCMD[@]}" "$LPATH" "$RUSER"@"$RHOST":"$RPATH"
+    printf "\n"
+    "${COPYCMD[@]}" "$LPATH" "$RUSER"@"$RHOST":"$RPATH"
+#done
+
+printf -- "--------------------------------------------------------------------------------------\n"
+printf "Backup of files to host %s completed at %s\n" "$RHOST" "`date`"
+printf -- "--------------------------------------------------------------------------------------\n\n"

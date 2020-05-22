@@ -1,0 +1,78 @@
+---
+
+# Install Web Api
+
+- name: Install argo-web-api package
+  yum: name=argo-web-api state=latest enablerepo={{ repo_enabled_argo }} update_cache=yes
+  notify: restart argo-web-api service
+  tags: webapi_deploy
+
+######################[ To be handled in argo-web-api rpm ]#####################
+- name: setup argo-web-api group
+  group: name=argo-web-api system=yes
+  tags: webapi_deploy
+
+- name: Setup argo-web-api user
+  user: name=argo-web-api system=yes group=argo-web-api
+  tags: webapi_deploy
+
+- name: Create data_dir
+  file: path=/var/www/argo-web-api state=directory owner=argo-web-api group=argo-web-api mode=755
+  tags: webapi_deploy
+
+- name: Create cert dir
+  file: path=/var/www/argo-web-api/certs state=directory owner=argo-web-api group=argo-web-api mode=755
+  tags: webapi_deploy
+
+- name: Setup argo-web-api service
+  template: dest="/etc/systemd/system/argo-web-api.service" src=argo-web-api.service.j2
+  register: argowebapi_service
+  tags: webapi_deploy
+
+- name: reload systemd
+  command: /usr/bin/systemctl --system daemon-reload
+  when: argowebapi_service.changed
+  tags: webapi_deploy
+################################################################################
+
+- name: Copy localhost key
+  copy:
+    src: /etc/grid-security/hostkey.pem
+    dest: /var/www/argo-web-api/certs/localhost.key
+    owner: argo-web-api
+    group: argo-web-api
+    remote_src: true
+  tags: webapi_deploy
+
+- name: Copy localhost cert
+  copy:
+    src: /etc/grid-security/hostcert.pem
+    dest: /var/www/argo-web-api/certs/localhost.crt
+    owner: argo-web-api
+    group: argo-web-api
+    remote_src: true
+  tags: webapi_deploy
+
+- name: Configure argo-web-api
+  template: src=argo-web-api.conf.j2
+            dest=/etc/argo-web-api.conf backup=yes
+            owner=argo-web-api group=argo-web-api mode=0644
+  notify: restart argo-web-api service
+  tags: webapi_deploy
+
+######################[ To be handled in argo-web-api rpm ]#####################
+
+- file:
+    path: /var/www/argo-web-api/argo-web-api
+    owner: argo-web-api
+    group: argo-web-api
+    mode: 0755
+
+- name: allow bind port 443
+  shell: setcap 'cap_net_bind_service=+ep' /var/www/argo-web-api/argo-web-api
+  tags: webapi_deploy
+################################################################################
+
+- name: Start web api service
+  service: name=argo-web-api state=started enabled=True
+  tags: webapi_deploy

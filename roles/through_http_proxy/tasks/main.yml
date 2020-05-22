@@ -1,0 +1,27 @@
+---
+# tasks file for through_http_proxy
+
+- name: Yum through http proxy
+  lineinfile:
+    path: /etc/yum.conf
+    regexp: 'proxy='
+    line: 'proxy={{http_proxy_url}}'
+
+- name: wget through http proxy
+  lineinfile:
+    path: /etc/wgetrc
+    regexp: '^http_proxy='
+    line: 'http_proxy={{http_proxy_url}}'
+
+- name: wget through http proxy 2
+  lineinfile:
+    path: /etc/wgetrc
+    regexp: '^https_proxy='
+    line: 'https_proxy={{http_proxy_url}}'
+
+- name: curl through http proxy 
+  lineinfile:
+    path: /root/.curlrc
+    regexp: '^--proxy'
+    line: '--proxy {{http_proxy_url}}'
+    create: yes

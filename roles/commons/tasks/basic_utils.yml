@@ -1,0 +1,43 @@
+---
+
+- name: Install basic utils
+  yum:
+   name: "{{ item }}"
+   state: present
+  loop:
+   - vim
+   - wget
+   - net-tools
+   - lsof
+   - telnet
+   - tmux
+   - unzip
+   - zsh
+   - logrotate
+   - yum-utils
+  tags: basic_utils_install
+
+- name: Install epel-release
+  yum:
+   name: epel-release
+   state: latest
+  tags: basic_utils_install
+
+- name: Install pip
+  yum:
+   name: python-pip
+   state: latest
+   enablerepo: epel
+  tags: basic_utils_install
+
+- name: Install fail2ban
+  yum:
+   name: fail2ban
+   state: latest
+   enablerepo: epel
+  tags: basic_utils_install
+
+- name: Install EGI-trustanchors packages
+  tags: trustanchors-packages
+  yum: name=ca-policy-egi-core state=present
+  when: ca_bundle

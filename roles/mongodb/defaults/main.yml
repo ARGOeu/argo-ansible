@@ -1,4 +1,9 @@
 ---
+# defaults file for mongodb
 
 # Comma separated list of IPs mongo service should bind to
-mongo_bind_interfaces: 127.0.0.1,192.168.0.33
+mongo_bind_interfaces: 127.0.0.1
+mongo_replicated: false
+mongo_log_rotate: false
+
+mongo_repo: mongodb-org-3.2

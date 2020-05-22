@@ -1,0 +1,14 @@
+{% if repo_enabled_argo == "argo-prod" %}
+[argo-prod]
+name=ARGO Product Repository - Centos7
+baseurl=http://rpm-repo.argo.grnet.gr/ARGO/prod/centos7/
+enabled=1
+gpgcheck=0
+{% endif %}
+{% if repo_enabled_argo == "argo-devel" %}
+[argo-devel]
+name=ARGO Development Repository - Centos7
+baseurl=http://rpm-repo.argo.grnet.gr/ARGO/devel/centos7/
+gpgcheck=0
+enabled=1
+{% endif %}

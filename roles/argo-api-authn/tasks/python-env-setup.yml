@@ -1,0 +1,53 @@
+---
+# create the virtual environment that will host any authn scripts
+
+- name: Install python3
+  yum:
+   name: '{{ item }}'
+   state: present
+  loop:
+   - python36
+   - python36-devel
+   - python36-setuptools
+   - python36-pip
+  tags: authn_env_install
+
+- name: create directory to host all virtualenvs
+  file:
+   path: "{{ virtual_env_installation }}"
+   state: directory
+  tags: authn_env_install
+
+- name: install virtualenv with pip
+  pip:
+   name: "virtualenv"
+   executable: pip3.6
+  tags: authn_env_install
+
+- name: install git
+  yum:
+   name: git
+  tags: authn_env_install
+
+- name: Clear any previous authn-env directory
+  file:
+   path: "{{ virtual_env_installation }}/authn-env"
+   state: absent
+  tags: authn_env_install
+
+- name: Create a virtualenv and install the requirements
+  pip:
+   name: git+https://github.com/ARGOeu/argo-api-authn.git@devel#egg=argo-api-authn-scripts
+   virtualenv: "{{ virtual_env_installation }}/authn-env"
+   virtualenv_python: python3.6
+  tags: authn_env_install
+
+- name: change permissions for authn-env
+  file:
+   path: "{{ virtual_env_installation }}/authn-env"
+   state: directory
+   owner: argo-api-authn
+   group: argo-api-authn
+   mode: 0755
+   recurse: true
+  tags: authn_env_install

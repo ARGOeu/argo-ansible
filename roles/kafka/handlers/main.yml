@@ -1,3 +1,7 @@
 ---
+# handlers file for kafka
+
 - name: restart kafka
-  service: name=kafka state=restarted enabled=yes
+  service:
+    name: kafka-server
+    state: restarted

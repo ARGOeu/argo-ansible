@@ -1,0 +1,84 @@
+---
+
+- name: Install argo repository definitions
+  tags: repo_argo
+  template: src=argo.repo.j2
+            dest=/etc/yum.repos.d/argo.repo backup=no
+            owner=root group=root mode=0644
+  when: repo_enabled_argo is defined
+
+- name: Install mongodb 3.2 repo
+  tags: repo_mongodb
+  copy: src=etc/yum.repos.d/mongodb-org-3.2.repo
+        dest=/etc/yum.repos.d/mongodb-org-3.2.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_mongo
+
+- name: Install mongodb 4.2 repo 
+  tags: repo_mongodb 
+  copy: src=etc/yum.repos.d/mongodb-org-4.0.repo
+        dest=/etc/yum.repos.d/mongodb-org-4.0.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_mongo_4x
+
+- name: Install EGI-trustanchors repository definitions
+  tags: repo_ca_bundle
+  copy: src=etc/yum.repos.d/EGI-trustanchors.repo
+        dest=/etc/yum.repos.d/EGI-trustanchors.repo backup=no
+        owner=root group=root mode=0644
+  when: ca_bundle
+
+- name: Install nagios repo
+  tags: repo_nagios
+  copy: src=etc/yum.repos.d/nagios.repo
+        dest=/etc/yum.repos.d/nagios.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_nagios
+
+- name: Install UMD repo
+  tags: repo_umd
+  yum: name=http://repository.egi.eu/sw/production/umd/4/sl6/x86_64/updates/umd-release-4.1.3-1.el6.noarch.rpm
+       state=present
+  when: repo_umd
+
+- name: Install cloudera repo
+  tags: repo_cloudera
+  copy: src=etc/yum.repos.d/cloudera.repo
+        dest=/etc/yum.repos.d/cloudera.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_cloudera
+
+- name: Install cloudera kafka repo
+  tags: repo_cloudera_kafka
+  copy: src=etc/yum.repos.d/cloudera-kafka.repo
+        dest=/etc/yum.repos.d/cloudera-kafka.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_cloudera_kafka
+
+- name: Install promoo repo
+  tags: repo_monbox
+  copy: src=etc/yum.repos.d/promoo.repo
+        dest=/etc/yum.repos.d/promoo.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_promoo
+
+- name: Install rocci repo
+  tags: repo_monbox
+  copy: src=etc/yum.repos.d/rocci.repo
+        dest=/etc/yum.repos.d/rocci.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_rocci
+
+- name: Install qcg repo
+  tags: repo_monbox
+  copy: src=etc/yum.repos.d/qcg.repo
+        dest=/etc/yum.repos.d/qcg.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_qcg
+
+- name: Install unicore repo
+  tags: repo_monbox
+  copy: src=etc/yum.repos.d/unicore.repo
+        dest=/etc/yum.repos.d/unicore-7.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_unicore

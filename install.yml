@@ -1,0 +1,131 @@
+---
+
+- hosts: all
+  become: yes
+  roles:
+    - { role: commons, task: timezone,        tags: timezone              }
+    - { role: commons, task: repos,           tags: repos                 }
+    - { role: commons, task: basic_utils,     tags: basic_utils           }
+    - { role: commons, task: users,           tags: groups_users_sshKeys  }
+    - { role: commons, task: sshd,            tags: sshd                  }
+    - { role: commons, task: firewall,        tags: firewall              }
+    - { role: commons, task: fail2ban,        tags: fail2ban_conf         }
+    - { role: commons, task: cert,            tags: cert                  }
+    - { role: commons, task: rsyslog,         tags: rsyslog_conf          }
+    - { role: nickhammond.logrotate,          tags: logrotate             }
+    # - { role: commons, task: is_monitored,    tags: monitored             }
+    # - { role: commons, task: backupamsmongo,  tags: rsyslog_conf          }
+
+
+- hosts: connectors
+  become: yes
+  roles:
+    - { role: consumer, task: connectors, tags: connectors }
+    - { role: consumer, task: cron_jobs, tags: cron_jobs }
+    - { role: consumer, task: delete_files, tags: delete_files }
+
+- hosts: archiver
+  become: yes
+  roles:
+    - { role: archiver, task: archiver_setup, tags: archiver_setup }
+
+- hosts: poem
+  become: yes
+  roles:
+    - { role: poem, tags: poem}
+    - { role: httpd, tags: httpd }
+
+- hosts: haproxy
+  become: yes
+  roles:
+    - { role: haproxy, task: rsyslog }
+    - { role: haproxy, task: haproxy , tags: haproxy_install }
+
+- hosts: ams_store
+  become: yes
+  roles:
+    - { role: private_hosts }
+    - { role: mongodb }
+    - { role: ams, task: init_db, tags: ams_install }
+
+- hosts: ams
+  become: yes
+  roles:
+    - { role: private_hosts }
+    - { role: zookeeper, tags: zookeeper_install }
+    - { role: kafka, tags: kafka_install }
+    - { role: ams, task: deploy, tags: ams_install }
+    - { role: ams, task: deploy_metrics, tags: ams_install }
+
+- hosts: ams_push_server
+  become: yes
+  roles:
+    - { role: push-server, task: push-server-setup, tags: push_install }
+
+- hosts: authn
+  become: yes
+  roles:
+    - { role: mongodb }
+    - { role: argo-api-authn, task: authn-setup }
+    - { role: argo-api-authn, task: python-env-setup }
+    - { role: argo-api-authn, task: ams-create-users-gocdb-script }
+    - { role: argo-api-authn, task: ams-create-users-cloud-info-script }
+
+- hosts: metrics
+  become: yes
+  roles:
+    - { role: metrics, task: ams-metrics-ui }
+    - { role: metrics, task: ce_comp }
+
+- hosts: monbox
+  become: yes
+  roles:
+    - { role: monbox, task: deploy }
+    - { role: monbox, task: config }
+
+- hosts: alerta
+  become: yes
+  roles:
+    - { role: mongodb }
+    - { role: alerta, task: deploy, tags: alerta }
+
+- hosts: webapi
+  become: yes
+  roles:
+    - { role: mongodb }
+    - { role: webapi, task: deploy }
+    - { role: webapi, task: init_api }
+
+- hosts: swagger
+  become: yes
+  roles:
+    - { role: httpd, tags: httpd }
+    - { role: swagger }
+
+- hosts: c_cluster
+  become: yes
+  roles:
+    - { role: private_hosts, tags: private_hosts }
+
+- hosts: c_gateway
+  become: yes
+  roles:
+    - { role: squid }
+    - { role: cloudera_gateway}
+
+- hosts: c_private
+  become: yes
+  roles:
+    - { role: through_http_proxy }
+    - { role: cloudera_internal_node }
+    - { role: disable_ipv6, tags: disable_ipv6 }
+
+- hosts: c_manager
+  become: yes
+  roles:
+    - { role: cloudera_manager }
+
+- hosts: c_flink
+  become: yes
+  roles:
+     - { role: flink, tags: deploy_flink }

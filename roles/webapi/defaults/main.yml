@@ -1,4 +1,7 @@
 ---
-
 argo_web_api_port: 443
-cors_support: "false"
+argo_core: "argo_core"
+cors_support: "true"
+
+webapi_admins: []
+webapi_tenants: []

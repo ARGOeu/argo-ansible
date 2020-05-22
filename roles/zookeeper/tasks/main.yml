@@ -1,95 +1,43 @@
 ---
+# tasks file for zookeeper
 
-# Based on
-# https://github.com/hpcloud-mon/ansible-zookeeper
-
-- name: Install OpenJDK
-  yum: name=java-1.7.0-openjdk state=latest
+- name: install JDK 1.8
+  yum: name=java-1.8.0-openjdk state=present
   tags: zookeeper_install
 
-- name: setup group
-  group: name=zookeeper system=yes
+- name: install zktop
+  pip:
+    name: zktop
   tags: zookeeper_install
 
-- name: Setup user
-  user: name=zookeeper system=yes group=zookeeper
+- name: install zookeeper
+  yum:
+    name: ['zookeeper', 'zookeeper-server']
+    state: present
+    enablerepo: cloudera-cdh5
   tags: zookeeper_install
 
-- name: Change ownership on zokeeper directory.
-  file: path="{{zookeeper_dir}}" state=directory owner=zookeeper group=zookeeper recurse=yes
+- name: configure zookeeper
+  template: src=zoo.cfg.j2 dest=/etc/zookeeper/conf/zoo.cfg
+            owner=zookeeper group=zookeeper backup=yes
+  notify: restart zookeeper
   tags: zookeeper_install
 
-- name: Create directory 
-  file: path=/var/lib/zookeeper state=directory mode=0755
-    
-- name: Remove older downloaded Zookeeper tgz file
-  command: rm -f {{zookeeper_dir}}/zookeeper-{{zookeeper_version}}.tar.gz
-  tags: zookeeper_install
-  ignore_errors: True
-
-- name: Download Zookeeper version
-  get_url: url={{zookeeper_url}} dest={{zookeeper_dir}}/zookeeper-{{zookeeper_version}}.tar.gz timeout=100
-  remote_user: root
+- name: set myid
+  shell: sudo su -s /bin/bash zookeeper -c " zookeeper-server-initialize  --force --myid={{ private.id }}"
   tags: zookeeper_install
 
-- name: Unpack tarball
-  command: tar xzf {{zookeeper_dir}}/zookeeper-{{zookeeper_version}}.tar.gz --strip-components=1 chdir={{zookeeper_dir}} creates={{zookeeper_dir}}/bin
+- name: Zookeeper init.d script
+  template: src=zookeeper-server.j2 dest=/etc/rc.d/init.d/zookeeper-server
+            owner=root group=root backup=yes
+  notify: restart zookeeper
+  tags: zookeeper_install_initd_script
+
+- name: Run daemon-reload
+  systemd:
+    daemon-reload: true
+  tags: zookeeper_install_initd_script
+
+- name: start zookeeper service
+  service: name=zookeeper-server state=started enabled=yes
   tags: zookeeper_install
-  
-- name: Setup Apache ZooKeeper service
-  template: dest="/etc/systemd/system/zookeeper.service" src=zookeeper.service.j2
-  register: zookeeper_service
-  tags: zookeeper_install
-
-- name: reload systemd
-  command: /usr/bin/systemctl --system daemon-reload
-  when: zookeeper_service | changed
-  tags: zookeeper_install
-
-- name: Enable and start zookeeper
-  command: /opt/zookeeper-3.4.6/bin/zkServer.sh start
-  
-- name: Setup zoo.cfg
-  template: dest="{{zookeeper_conf_dir}}/zoo.cfg" src=zoo.cfg.j2
-  notify:
-    - restart zookeeper
-  tags: zookeeper_config
-
-- name: Setup myid
-  template: dest="{{zookeeper_conf_dir}}/myid" src=myid.j2
-  notify:
-    - restart zookeeper
-  tags: zookeeper_config
-
-- name: Setup myid
-  template: dest="{{zookeeper_data_dir}}/myid" src=myid.j2
-  notify:
-    - restart zookeeper
-  tags: zookeeper_config
-  
-
-- name: Setup environment
-  template: dest="{{zookeeper_conf_dir}}/environment" src=environment.j2
-  notify:
-    - restart zookeeper
-  tags: zookeeper_config
-
-- name: Setup java.env
-  template: dest="{{zookeeper_conf_dir}}/java.env" src=java.env.j2
-  notify:
-    - restart zookeeper
-  tags: zookeeper_config
-
-- name: Create log_dir
-  file: path={{zookeeper_log_dir}} state=directory owner=zookeeper group=zookeeper mode=755
-  tags: zookeeper_config
-
-
-- name: Setup log4j
-  template: dest="{{zookeeper_conf_dir}}/log4j.properties" owner=root group=root mode=644 src=log4j.properties.j2
-  notify:
-    - restart zookeeper
-  tags: zookeeper_config
-
-
-- meta: flush_handlers

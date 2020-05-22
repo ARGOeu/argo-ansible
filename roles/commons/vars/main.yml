@@ -1,0 +1,6 @@
+---
+# vars file for commons
+
+# vars file for fail2ban
+fail2ban_dependencies:
+ - fail2ban

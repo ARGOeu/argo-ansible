@@ -1,19 +1,24 @@
 ---
-
+  
 - name: update connectors
   shell: yum -y makecache
-  tags: 
+  tags:
     - connectors_config_main
-    - connectors 
+    - connectors
 
 - name: update connectors
-  shell: yum update -y argo-egi-connectors
-  tags: 
+  yum:
+    name: argo-egi-connectors
+    state: latest
+  tags:
     - connectors_config_main
-    - connectors 
+    - connectors
+
+- name: Creates directory
+  file: path=/etc/argo-egi-connectors state=directory
 
 - name: Configure connectors
-  tags: 
+  tags:
     - connectors_config_main
     - connectors_customer
     - connectors
@@ -21,10 +26,10 @@
             dest=/etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf
             owner=root group=root mode=0644
             backup=yes
-  with_dict: tenants
-  
+  with_dict: "{{ consumer_tenants }}"
+
 - name: Configure global connectors
-  tags: 
+  tags:
     - connectors_config
     - connectors
     - connectors_global
@@ -32,7 +37,7 @@
             dest=/etc/argo-egi-connectors/global.conf
             owner=root group=root mode=0644
             backup=yes
-  with_dict: tenants
+  with_dict: "{{ consumer_tenants }}"
 
 - name: POEM configuration
   tags:

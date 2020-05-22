@@ -1,0 +1,93 @@
+---
+##### It runs only from msg-devel-2. Aris has firewall so we may
+## use only this node to backup the files.
+##
+- name: create folder inventory_hostname-mongo-data
+  file:
+    path: /root/{{ inventory_hostname }}-mongo-data
+    state: directory
+  tags: backup_mongo_ams, backup_mongo_ams_folder
+
+- name: create folder /opt/mongobackup/
+  file:
+    path: /opt/mongobackup
+    state: directory
+  tags: backup_mongo_ams, backup_mongo_ams_folder
+
+- name: cp mongodump script to /root
+  template:
+    src: 'mongo-backup.sh.j2'
+    dest: /opt/mongobackup/mongo-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: backup_mongo_ams, backup_mongo_ams_files
+
+- name: add cronjob for mongodump script
+  cron: cron_file=
+        name=mongo-backup.sh
+        minute=0
+        hour=1
+        user=root
+        job="/opt/mongobackup/mongo-backup.sh"
+        state=present
+  tags: backup_mongo_ams, backup_mongo_ams_cron
+
+- name: rsync to aris 
+  template:
+    src: 'rsync-mongod-backup.sh.j2'
+    dest: /opt/mongobackup/rsync-mongod-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: backup_mongo_ams, backup_mongo_ams_files
+
+- name: add cronjob for rsync script
+  cron: cron_file=
+        name=rsync-mongod-backup.sh
+        minute=0
+        hour=3
+        user=root
+        job="/opt/mongobackup/rsync-mongod-backup.sh"
+        state=present
+  tags: backup_mongo_ams, backup_mongo_ams_cron
+
+- name: Set authorized key taken from file
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/auth_key/aris_rsa'
+    dest: /root/.ssh/aris_rsa
+    owner: root
+    group: root
+    mode: 0600
+  tags: backup_mongo_ams, backup_mongo_ams_files
+
+#- name: cp rsync to aris script to /root
+#  copy:
+#    src: 'private_files/{{ inventory_hostname }}/backup/rsync-mongod-backup.sh'
+#    dest: /root/rsync-mongod-backup.sh
+#    owner: root
+#    group: root
+#    mode: 0755
+#  tags: backup_mongo_ams, backup_mongo_ams_files
+#
+#- name: add cronjob for rsync script
+#  cron: cron_file=
+#        name=rsync-mongod-backup.sh
+#        minute=0
+#        hour=3
+#        user=root
+#        job="/root/rsync-mongod-backup.sh"
+#        state=present
+#  tags: backup_mongo_ams, backup_mongo_ams_cron
+#
+#
+#- name: add cronjob for rsync script
+#  cron: cron_file=
+#        name=rsync-mongod-backup.sh
+#        minute=0
+#        hour=3
+#        user=root
+#        job="/root/rsync-mongod-backup.sh"
+#        state=present
+#  tags: backup_mongo_ams, backup_mongo_ams_cron
+#

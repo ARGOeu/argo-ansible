@@ -1,0 +1,75 @@
+---
+- name: install haproxy
+  yum:
+   name: '{{ item }}'
+   state: present
+  loop:
+   - centos-release-scl
+   - rh-haproxy18-haproxy
+   - rh-haproxy18-haproxy-syspaths
+  tags: haproxy_install
+
+- name: create haproxy group
+  group:
+   name: haproxy
+   state: present
+  tags: haproxy_install
+
+- name: create haproxy user
+  user:
+   name: haproxy
+   group: haproxy
+  tags: haproxy_install
+
+- name: Change owner and group for x509 certificate
+  file:
+   path: "{{ cert_dir }}hostcert.pem"
+   owner: haproxy
+   group: haproxy
+  tags: haproxy_install
+
+- name: Change owner and group for certificate key
+  file:
+   path: "{{ cert_dir }}hostkey.pem"
+   owner: haproxy
+   group: haproxy
+  tags: haproxy_install
+
+- name: Bundle x509 crt and key in a single pem file
+  shell: cat {{ cert_dir }}hostcert.pem {{cert_dir}}hostkey.pem > {{cert_dir}}{{inventory_hostname}}.crt
+  tags: haproxy_install, msg_certificate
+
+- name: Change owner and group for bundled cert
+  file:
+   path: "{{cert_dir}}{{inventory_hostname}}.crt"
+   owner: haproxy
+   group: haproxy
+  tags: haproxy_install
+
+- name: configure haproxy
+  template:
+   src: haproxy_template.cfg.j2
+   dest: /etc/opt/rh/rh-haproxy18/haproxy/haproxy.cfg
+   backup: true
+  tags: haproxy_install
+
+- name: configure haproxy log(rsyslog)
+  template:
+   src: rsyslog_haproxy.conf.j2
+   dest: /etc/rsyslog.d/haproxy.conf
+   backup: true
+  notify: restart rsyslog
+  tags: haproxy_install
+
+- name: start haproxy
+  service:
+   name: haproxy
+   enabled: true
+   state: started
+  tags: haproxy_install
+
+- name: start rh-haproxy18-haproxy
+  service:
+   name: rh-haproxy18-haproxy
+   enabled: true
+  tags: haproxy_install

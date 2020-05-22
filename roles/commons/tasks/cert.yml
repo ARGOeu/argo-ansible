@@ -1,0 +1,19 @@
+---
+
+- name: Create cert_dir if not exists
+  file: dest={{ cert_dir }} state=directory
+        owner=root group=root mode=0755
+  when: cert_dir is defined
+  tags: cert
+
+- name: Copy host x509 certificate onto host
+  copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.pem
+        dest={{ cert_path }} backup=yes
+        owner=root group=root mode=0644
+  tags: cert
+
+- name: Copy host x509 key onto host
+  copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.key
+        dest={{ cert_key_path }} backup=yes
+        owner=root group=root mode=0400
+  tags: cert

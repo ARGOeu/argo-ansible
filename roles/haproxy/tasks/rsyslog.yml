@@ -1,0 +1,9 @@
+---
+
+- name: Copy rsyslog.conf configuration files
+  template:
+    dest: "/etc/rsyslog.conf"
+    src: rsyslog.j2
+    backup: true
+  notify:
+    - restart rsyslog

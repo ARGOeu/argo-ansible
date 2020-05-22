@@ -1,4 +1,7 @@
 ---
- - become: true
-   name: restart cron after timezone change
-   service: name=crond state=restarted
+# handlers file for argo-api-authn
+
+- name: restart argo-api-authn
+  service:
+    name: argo-api-authn
+    state: restarted

@@ -2,8 +2,8 @@
 auth_method={{item.value.gocdb_auth_method}}
 api={{item.value.gocdb_api_endpoint}}
 cabundle={{ca_bundle}}
-hostcert={{hostcert}}
-hostkey={{hostkey}}
+hostcert={{cert_path}}
+hostkey={{cert_key_path}}
 verify={{item.value.gocdb_verify}}
 username={{gocdb_bauth_username | default("")}}
 password={{gocdb_bauth_password | default("")}}
@@ -16,13 +16,14 @@ endpoint={{argo_alert_kafka}}
 topic=alerta.{{item.key}}
 
 [alerta]
-endpoint=https://{{www_alias}}/api
+endpoint=https://{{alerta_www_alias}}/api
 environment={{item.value.alerta_environment}}
 token={{alerta_token}}
 mail-rules=/etc/argo-alert/mail/mailer-{{item.key}}.conf.rules.d/rules-{{item.key}}.json
 extra-emails={{item.value.alert_extra_emails}}
 alert-timeout = {{item.value.alert_timeout}}
 group-type = {{item.value.alert_group}}
+ui_endpoint = {{item.value.ui_endpoint}}
 
 [logging]
 level = INFO

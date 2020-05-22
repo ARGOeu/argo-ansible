@@ -1,0 +1,44 @@
+---
+# tasks file for ams
+
+- name: Install argo-messaging package
+  yum: name=argo-messaging state=latest enablerepo={{ repo_argo_enabled }} update_cache=yes
+  notify: restart argo-messaging
+  tags: ams_install
+
+- name: copy cert to ams folder
+  copy: remote_src=yes src=/etc/grid-security/hostcert.pem dest=/var/www/argo-messaging/hostcert.pem backup=yes
+      owner=argo-messaging group=argo-messaging mode=0644
+  tags: ams_install
+  notify: restart argo-messaging
+
+- name: copy key to ams folder
+  copy: remote_src=yes src=/etc/grid-security/hostkey.pem dest=/var/www/argo-messaging/hostkey.pem backup=yes
+      owner=argo-messaging group=argo-messaging mode=0644
+  tags: ams_install
+  notify: restart argo-messaging
+
+- name: Create CA dir if not exists
+  file: dest=/var/www/argo-messaging/cas state=directory
+        owner=argo-messaging group=argo-messaging mode=0755
+  tags: ams_install
+  notify: restart argo-messaging
+
+- name: Copy CA file
+  copy: src=private_files/{{ inventory_hostname }}/DigiCertCA.crt
+        dest=/var/www/argo-messaging/cas/DigiCertCA.pem
+        backup=yes
+        owner=argo-messaging group=argo-messaging mode=0644
+  tags: ams_install
+  notify: restart argo-messaging
+
+- name: Configure argo-messaging api
+  template: src=config.json.j2
+            dest=/etc/argo-messaging/config.json backup=yes
+            owner=root group=root mode=0644
+  tags: ams_install
+  notify: restart argo-messaging
+
+- name: Start argo-messaging service
+  service: name=argo-messaging state=started enabled=true
+  tags: ams_install

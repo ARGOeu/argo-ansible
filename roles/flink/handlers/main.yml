@@ -1,3 +1,2 @@
 ---
-- name: restart flink
-  service: name=flink state=restarted enabled=yes
+# handlers file for flink

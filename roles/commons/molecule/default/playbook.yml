@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - { role: commons, task: timezone }
+    - { role: commons, task: repos }
+    - { role: commons, task: cert }
+    - { role: commons, task: basic_utils }
+    - { role: commons, task: firewall }
+    - { role: commons, task: fail2ban }

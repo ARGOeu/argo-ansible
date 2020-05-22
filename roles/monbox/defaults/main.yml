@@ -1,0 +1,60 @@
+---
+
+monbox_httpd_plugins: []
+
+#  NCG vars
+monbox_nagios_admin_email: "contact@nagiosadmin.localhost"
+monbox_vo: ops
+monbox_enable_unicore_probes: "0"
+MONBOX_PROBES_TYPE: local
+monbox_gocdb_root_url: https://localhost/gocdbpi
+monbox_cert_status: Certified
+monbox_contact_type: roc
+monbox_nagios_role: project
+MONBOX_SEND_TO_DASHBOARD: "0"
+MONBOX_ENABLE_NOTIFICATIONS: "0"
+MONBOX_INCLUDE_EMPTY_HOSTS: "0"
+MONBOX_CHECK_HOSTS: "0"
+monbox_tenant_name: tenant_a
+monbox_poem_root_url: http://localhost/poem
+monbox_include_proxy_checks: "0"
+monbox_include_msg_checks_recv: "0"
+monbox_backup_instance: "false"
+
+# broker-list
+# monbox_broker_host
+
+# AMS - Publisher
+monbox_messaging_service: msg-devel.argo.grnet.gr
+monbox_messaging_token: token
+monbox_messaging_project: project_name
+
+# CGI vars
+monbox_authorized_for_all_service_commands:
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1"
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2"
+
+monbox_authorized_for_all_host_commands:
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_1"
+  - "/C=--/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=SomeCN_2"
+
+# Nagios.cfg vars
+monbox_host_perfdata_file_processing_command: ncg-process-host-perfdata-file
+monbox_service_perfdata_file_processing_command: ncg-process-service-perfdata-file
+monbox_obsess_over_services: "1"
+monbox_ocsp_command: handle_service_check
+monbox_use_large_installation_tweaks: "1"
+monbox_enable_environment_macros: "1"
+monbox_allow_empty_hostgroup_assignment: "1"
+monbox_cfg_dir: /etc/nagios/argo-ncg.d
+monbox_use_syslog: "0"
+monbox_log_initial_states: "1"
+monbox_log_external_commands: "0"
+monbox_log_passive_checks: "0"
+monbox_service_check_timeout: 910
+monbox_process_performance_data: "1"
+
+
+## Other vars
+ca_bundle: false
+monbox_configure_nagios_apache: true
