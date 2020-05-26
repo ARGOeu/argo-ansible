@@ -1,6 +1,0 @@
----
-
-- hosts: all
-  become: true
-  roles:
-    - { role: gen_cert, tags: gen_cert}

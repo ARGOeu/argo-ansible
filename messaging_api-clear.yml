@@ -1,7 +1,0 @@
----
-
-- hosts: messaging
-  sudo: true
-  roles:
-    - { role: messaging_api, task: clear }
-    - { role: messaging_api, task: stop_push_subs }

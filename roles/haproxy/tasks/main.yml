@@ -1,28 +1,4 @@
 ---
-- name: install haproxy
-  yum: name=haproxy state=present
-  tags: haproxy
+# tasks file for haproxy
 
-- name: create haproxy group
-  group:
-    name: haproxy
-    state: present
-
-- name: create haproxy user
-  user:
-    name: haproxy
-    group: haproxy
-
-- name: configure haproxy
-  template: src=haproxy_template.cfg.j2 dest=/etc/haproxy/haproxy.cfg backup=yes
-  notify: reload haproxy
-  tags: haproxy
-
-- name: configure haproxy log
-  template: src=rsyslog_haproxy.conf.j2 dest=/etc/rsyslog.d/haproxy.conf backup=yes
-  notify: restart rsyslog
-  tags: haproxy
-
-- name: start haproxy
-  service: name=haproxy state=running
-  tags: haproxy
+- include: "{{task}}.yml"

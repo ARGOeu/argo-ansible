@@ -1,6 +1,0 @@
----
-
-- hosts: webapi_v2
-  sudo: true
-  roles:
-    - { role: webapi_v2, task: init_api }

@@ -1,7 +1,0 @@
----
-
-- hosts: standalone
-  sudo: true
-  roles:
-    - { role: consumer , task: start_stop }
- 
