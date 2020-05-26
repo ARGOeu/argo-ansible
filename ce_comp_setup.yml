@@ -1,5 +1,0 @@
----
-- hosts: ce_comp
-  roles:
-     - ce_comp
-...

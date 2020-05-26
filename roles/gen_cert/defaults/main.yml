@@ -1,2 +1,0 @@
----
-cert_subject: "/C={{cert_country}}/ST={{cert_state}}/L={{cert_location}}/O={{cert_organization}}CN={{ansible_fqdn}}"

@@ -1,5 +1,0 @@
----
-
-- name: Update /etc/hosts file with private aliases
-  template: dest="/etc/hosts" src=hosts.j2
-  tags: gen_priv_hosts

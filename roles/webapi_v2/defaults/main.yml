@@ -1,5 +1,0 @@
----
-
-argo_web_api_port: 443
-argo_core: "argo_core"
-cors_support: "false"

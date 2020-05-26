@@ -1,6 +1,0 @@
----
-
-- hosts: flink-master
-  sudo: true
-  roles:
-    - { role: flink, task: cluster_restart}

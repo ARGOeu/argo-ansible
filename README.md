@@ -14,19 +14,11 @@ Per ARGO product more details on prerequisites and variables are given in the fo
 - Upload Public keys inclunding GRNET_CI
 - Reboot
 
-## Messaging API
+## Run or Develop Ansible Playbooks
 
-Contains Ansible playbook for the deployment of the ARGO Messaging API. The play is split into the following roles:
-- selinux (disables selinux, it requires a restart of your machine)
-- firewall (configures iptables firewall rules)
-- repos (includes tasks for the installation of the required repository definitions)
-- has_certificate (task for uploading the certificate file onto the host under the appropriate path)
-- zookeeper (installs and bootstraps zookeeper)
-- kafka (installs and bootstraps kafka)
-- mongodb (installs and bootstraps mongodb)
-- messaging_api (installs and bootstraps messaging_api)
+- In order to run an ansible playbook, you need to make sure that you are using `ansible 2.6`.
 
-### Things to do before deployment
+- In order to develop new playbooks you will also need to have `docker` and `molecule`.
 
 To make the set up process easier, you will have to create a virtual environment executing the following steps:
 

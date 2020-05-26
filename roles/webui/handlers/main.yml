@@ -1,6 +1,0 @@
----
-
-- name: restart webui
-  command: ./bin/lavoisier.sh restart
-           chdir={{ lavoisier_home }}/{{ argo_web }}
-  ignore_errors: True
