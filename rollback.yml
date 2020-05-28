@@ -1,0 +1,6 @@
+---
+
+- hosts: api.devel.argo.grnet.gr
+  become: yes
+  roles:
+    - { role: webapi, task: rollback }
