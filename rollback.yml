@@ -4,3 +4,8 @@
   become: yes
   roles:
     - { role: webapi, task: rollback }
+
+- hosts: authn
+  become: yes
+  roles:
+    - { role: argo-api-authn, task: rollback }
