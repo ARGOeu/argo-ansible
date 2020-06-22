@@ -2,7 +2,7 @@
 
 - name: Update argo-api-authn package
   yum: name=argo-api-authn state=latest enablerepo={{ repo_enabled_argo }} update_cache=yes
-  notify: restart argo-api-authn service
+  notify: restart argo-api-authn
   tags: authn_update
 
 - name: Reload the systemd daemon

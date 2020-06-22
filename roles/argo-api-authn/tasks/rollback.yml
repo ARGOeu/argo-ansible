@@ -2,7 +2,7 @@
 
 - name: Rollback argo-api-authn package to specific version
   yum: name=argo-api-authn-{{ artifact_version }} state=present  enablerepo={{ repo_enabled_argo }} update_cache=yes allow_downgrade=yes
-  notify: restart argo-api-authn service
+  notify: restart argo-api-authn
   tags: authn_rollback
 
 - name: Reload the systemd daemon
