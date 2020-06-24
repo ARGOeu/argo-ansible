@@ -9,3 +9,6 @@
   become: yes
   roles:
     - { role: argo-api-authn, task: update }
+    - { role: argo-api-authn, task: python-env-setup }
+    - { role: argo-api-authn, task: ams-create-users-gocdb-script }
+    - { role: argo-api-authn, task: ams-create-users-cloud-info-script }
