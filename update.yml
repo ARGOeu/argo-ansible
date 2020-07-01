@@ -12,3 +12,8 @@
     - { role: argo-api-authn, task: python-env-setup }
     - { role: argo-api-authn, task: ams-create-users-gocdb-script }
     - { role: argo-api-authn, task: ams-create-users-cloud-info-script }
+
+- hosts: ams
+  become: yes
+  roles:
+    - { role: ams, task: update }
