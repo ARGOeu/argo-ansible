@@ -1,0 +1,11 @@
+---
+
+- name: Rollback argo-messaging package to specific version
+  yum: name=argo-messaging-{{ artifact_version }} state=present enablerepo={{ repo_argo_enabled }} update_cache=yes
+  notify: restart argo-messaging
+  tags: ams_rollback
+
+- name: Reload the systemd daemon
+  systemd:
+    daemon_reload: yes
+  tags: ams_rollback

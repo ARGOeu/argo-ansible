@@ -1,0 +1,11 @@
+---
+
+- name: Update argo-messaging package
+  yum: name=argo-messaging state=latest enablerepo={{ repo_argo_enabled }} update_cache=yes
+  notify: restart argo-messaging
+  tags: ams_update
+
+- name: Reload the systemd daemon
+  systemd:
+    daemon_reload: yes
+  tags: ams_update
