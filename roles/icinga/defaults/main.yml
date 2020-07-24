@@ -1,0 +1,4 @@
+---
+# defaults file for icinga
+
+icinga_master_domain: "icinga.argo.grnet.gr"

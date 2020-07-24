@@ -1,0 +1,13 @@
+---
+
+- hosts: all
+  become: yes
+  roles:
+    - { role: commons, task: firewall, tags: firewall }
+
+
+- hosts: icinga_agent
+  become: yes
+  roles:
+     - { role: icinga, tags: deploy_icinga_agent }
+

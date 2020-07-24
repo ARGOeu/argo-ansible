@@ -129,3 +129,9 @@
   become: yes
   roles:
      - { role: flink, tags: deploy_flink }
+
+- hosts: icinga_agent
+  become: yes
+  roles:
+     - { role: icinga, tags: deploy_icinga_agent }
+

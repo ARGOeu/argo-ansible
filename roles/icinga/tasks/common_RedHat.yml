@@ -1,0 +1,50 @@
+---
+# tasks for icinga on CentOS Linux
+
+
+## Package Repositories
+# https://icinga.com/docs/icinga2/latest/doc/02-installation/#package-repositories
+- name: Add Icinga repository to package management configuration.
+  yum:
+    name: https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+    state: present
+
+- name: Some prerequisite tools.
+  yum:
+    name:
+      - epel-release
+    state: latest
+
+- name: Install Icinga 2.
+  yum:
+    name:
+      - icinga2
+    state: latest
+
+
+- name: Ensure icinga2 service is started and enabled on boot.
+  service:
+    name: icinga2
+    state: started
+    enabled: yes
+
+
+- name: Install Icinga 2 Check Plugins.
+  yum:
+    name: nagios-plugins-all
+    state: latest
+
+
+
+
+- name: Install Icinga 2 SELinux policy and some utils.
+  yum:
+    name:
+      - icinga2-selinux
+      - vim-icinga2
+    state: latest
+  notify: Restart Icinga 2 service.
+
+
+
+
