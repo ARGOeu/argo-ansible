@@ -1,0 +1,75 @@
+---
+# tasks for icinga on Debian GNU/Linux
+
+
+### Package Repositories
+## https://icinga.com/docs/icinga2/latest/doc/02-installation/#package-repositories
+## 
+## https://packages.icinga.com/debian/
+## https://packages.icinga.com/ubuntu/
+## https://packages.icinga.com/epel/
+- name: Installing some Debian GNU/Linux utils for Icigna
+  apt:
+    name: 
+      - apt-transport-https
+
+
+
+
+- name: Add Icinga repository key.
+  apt_key:
+    url: https://packages.icinga.com/icinga.key
+    state: present
+
+- name: Add Icinga repository.
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    filename: icinga
+  with_items:
+    - "deb http://packages.icinga.com/{{ ansible_distribution | lower }} icinga-{{ ansible_distribution_release }} main"
+    - "deb-src http://packages.icinga.com/{{ ansible_distribution | lower }} icinga-{{ ansible_distribution_release }} main"
+
+- name: Enable {{ ansible_distribution_release }} Backports.
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    filename: icinga
+  with_items:
+    - "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free"
+    - "deb-src http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free"
+  when: ansible_distribution_release == 'stretch'
+
+
+
+
+### Installing Icinga 2
+## https://icinga.com/docs/icinga2/latest/doc/02-installation/#installing-icinga-2
+#
+### Setting up Check Plugins
+##  https://icinga.com/docs/icinga2/latest/doc/02-installation/#debianubuntu
+#
+### Configuration Syntax Highlighting
+## https://icinga.com/docs/icinga2/latest/doc/02-installation/#configuration-syntax-highlighting
+- name: Installing Icinga 2 & Check/Monitoring Plugins
+  apt:
+    name:
+      - icinga2
+      - monitoring-plugins
+      - vim-icinga2
+      - vim-addon-manager
+    state: latest
+    update_cache: yes
+
+
+
+
+- name: Configuration Syntax Highlighting using Vim.
+  shell: vim-addon-manager -w install icinga2
+  notify: Restart Icinga 2 service.
+
+
+
+
+
+

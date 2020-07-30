@@ -1,0 +1,12 @@
+---
+# tasks file for icinga
+
+## Package Repositories
+# https://icinga.com/docs/icinga2/latest/doc/02-installation/#package-repositories
+
+- name: Include common Icinga tasks for Master & Agent nodes.
+  include: "common.yml"
+
+- name: Install Icinga Agent.
+  include: "agent.yml"
+

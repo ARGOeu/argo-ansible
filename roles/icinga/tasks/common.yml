@@ -1,0 +1,22 @@
+---
+# tasks for icinga on Debian GNU/Linux & CentOS Linux
+
+
+- name: Include common Icinga tasks for Master & Agent nodes.
+  include: "common_{{ ansible_os_family }}.yml"
+
+
+### Package Repositories
+## https://icinga.com/docs/icinga2/latest/doc/02-installation/#package-repositories
+#
+## https://packages.icinga.com/debian/
+- name: Installing some utils for Icigna
+  package:
+    name: 
+      - wget
+      - curl
+      - gnupg
+      - jq
+      - sysstat
+      - htop
+
