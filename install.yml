@@ -133,5 +133,5 @@
 - hosts: icinga_agent
   become: yes
   roles:
-     - { role: icinga, tags: deploy_icinga_agent }
+     - { role: icinga_agent, tags: deploy_icinga_agent }
 

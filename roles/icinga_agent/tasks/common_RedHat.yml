@@ -4,12 +4,13 @@
 
 ## Package Repositories
 # https://icinga.com/docs/icinga2/latest/doc/02-installation/#package-repositories
+# https://packages.icinga.com/epel/
 - name: Add Icinga repository to package management configuration.
   yum:
-    name: https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+    name: "https://packages.icinga.com/epel/icinga-rpm-release-{{ ansible_distribution_major_version }}-latest.noarch.rpm"
     state: present
 
-- name: Some prerequisite tools.
+- name: Enable EPEL repository.
   yum:
     name:
       - epel-release
