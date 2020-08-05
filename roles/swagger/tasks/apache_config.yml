@@ -41,6 +41,6 @@
   lineinfile:
     dest: /etc/httpd/conf.d/ssl.conf
     regexp: "^SSLCertificateChainFile"
-    line: "SSLCertificateChainFile /etc/pki/tls/certs/DigiCertCA.crt"
+    line: "SSLCertificateChainFile /etc/grid-security/chain-aai.pem"
     insertafter: "^#SSLCertificateChainFile"
   notify: restart apache
