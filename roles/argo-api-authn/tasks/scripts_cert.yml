@@ -1,0 +1,28 @@
+---
+
+- name: Create cert dir for scirpts cert & key
+  file:
+    dest: "{{ scripts_cert_dir }}"
+    state: directory
+    owner: argo-api-authn
+    group: argo-api-authn
+    mode: 0755
+  tags: authn-scripts-cert
+
+- name: Copy x509 script cert
+  copy:
+    src: private_files/{{ inventory_hostname }}/scripts_cert.pem
+    dest: "{{ scripts_cert_dir }}"
+    owner: argo-api-authn
+    group: argo-api-authn
+    mode: 0644
+  tags: authn-scripts-cert
+
+- name: Copy x509 script cert key
+  copy:
+    src: private_files/{{ inventory_hostname }}/scripts_key.pem
+    dest: "{{ scripts_cert_dir }}"
+    owner: argo-api-authn
+    group: argo-api-authn
+    mode: 0644
+  tags: authn-scripts-cert

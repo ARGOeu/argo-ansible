@@ -70,6 +70,7 @@
     - { role: argo-api-authn, task: python-env-setup }
     - { role: argo-api-authn, task: ams-create-users-gocdb-script }
     - { role: argo-api-authn, task: ams-create-users-cloud-info-script }
+    - { role: argo-api-authn, task: scripts_cert }
 
 - hosts: metrics
   become: yes
@@ -134,4 +135,3 @@
   become: yes
   roles:
      - { role: icinga_agent, tags: deploy_icinga_agent }
-
