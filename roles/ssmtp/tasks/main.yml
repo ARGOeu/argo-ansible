@@ -1,0 +1,53 @@
+---
+# tasks file for ssmtp
+
+# Installation.
+- debug:
+    msg: ssmtp package is only available on CentOS 7.
+
+- name: Remove all ther Mail Transport Agent software.
+  yum:
+    name: postfix
+    state: absent
+
+- name: Install the latest version of sSMTP MTA.
+  yum:
+    name: ssmtp
+    state: present
+
+
+# Configuration.
+- name: Revaliases configuration.
+  copy:
+    src: revaliases
+    dest: /etc/ssmtp/revaliases
+    backup: no
+    owner: root
+    group: root
+    mode: 0644
+
+- name: sSMTP configuration file.
+  template:
+    src: ssmtp.conf.j2
+    dest: /etc/ssmtp/ssmtp.conf
+
+- name: sSMTP email sending test.
+  shell: echo "With sSMTP 2.x MTA form {{ domain }}" | mail -vvvv -s "[Ansible Mail Test] {{ domain }}" {{ ansible_user_email }}
+  when: ansible_user_email is defined
+
+
+# Test.
+- name: About sSMTP MTA.
+  debug:
+    msg:
+    - "To make sure that the sSMTP MTA is working properly, run the following command:"
+    - "To test how it works, run the following command:"
+    - "echo test | ssmtp -v user@test.example.com"
+
+# Logs.
+- debug:
+    msg:
+    - "To make sure it was sent correctly, look at the log files \"var/log/maillog\""
+    - "tail -f /var/log/maillog"
+    - "lnav /var/log/maillog"
+
