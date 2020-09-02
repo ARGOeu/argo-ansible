@@ -1,0 +1,73 @@
+---
+# tasks file for flink
+
+- name: Install OpenJDK
+  yum: name=java-1.8.0-openjdk state=present
+  tags: flink_install
+
+- name: Copy flink master already generated key
+  copy: src=private_files/{{ inventory_hostname }}/hostkey
+        dest=/root/.ssh/id_rsa backup=yes
+        owner=root group=root mode=0600
+  tags: hostkey
+  when: flink_is_master|bool == true
+
+
+- name: setup group
+  group: name=flink system=yes
+  tags: flink_install
+
+- name: Setup user
+  user: name=flink system=yes group=flink
+  tags: flink_install
+
+- name: Change ownership on flink
+  file: path="{{flink_dir}}" state=directory owner=flink group=flink recurse=yes
+  tags: flink_install
+
+- name: Remove older downloaded flink
+  file:
+    path: "{{flink_dir}}/flink-{{flink_version}}.tgz"
+    state: absent
+  tags: flink_install
+
+- name: Download Flink
+  get_url: url={{flink_url}} dest={{flink_dir}}/flink-{{flink_version}}.tgz timeout=100
+  tags: flink_install
+  environment:
+    http_proxy: "{{http_proxy_url}}"
+    https_proxy: "{{http_proxy_url}}"
+
+- name: Unpack tarball
+  unarchive:
+    src: "{{flink_dir}}/flink-{{flink_version}}.tgz"
+    dest: "{{flink_dir}}"
+    extra_opts:
+    - --strip-components=1
+    remote_src: yes
+  tags: flink_install
+
+- name: Setup flink-conf
+  template: dest="{{flink_dir}}/conf/flink-conf.yaml" src=flink-conf.yaml.j2
+  tags: flink_install
+
+- name: Setup conf masters file
+  template: dest="{{flink_dir}}/conf/masters" src=masters.j2
+  tags: flink_install
+
+- name: Setup conf slaves file
+  template: dest="{{flink_dir}}/conf/slaves" src=slaves.j2
+  tags: flink_install
+
+
+- name: Add Flink bin to path
+  lineinfile: dest="~/.bashrc" line="export PATH=$PATH:/opt/flink{{flink_version}}/bin"
+  tags: flink_install
+
+- name: set manager authorized key
+  authorized_key:
+    user: root
+    state: present
+    key: "{{flink_master_pub_key}}"
+
+- meta: flush_handlers

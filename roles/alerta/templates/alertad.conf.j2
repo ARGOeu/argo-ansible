@@ -1,0 +1,31 @@
+
+
+DEBUG=True
+ADMIN_USERS = {{alerta_admin_list}}
+
+SECRET_KEY='{{alerta_secret_key}}'
+SEVERITY_MAP = {
+    'fatal': 0,
+    'critical': 1,
+    'warning': 4,
+    'indeterminate': 5,
+    'ok': 5,
+    'unknown': 9
+}
+COLOR_MAP = {
+    'severity': {
+        'fatal': 'blue',
+        'critical': 'red',
+        'warning': '#1E90FF',
+        'indeterminate': 'lightblue',
+        'ok': '#00CC00',
+        'unknown': 'silver'
+    }
+}
+PLUGINS={{alerta_plugin_list}}
+ALLOWED_ENVIRONMENTS={{alerta_allowed_env_list}}
+AMQP_URL = 'mongodb://localhost:27017/amqp'
+AMQP_TOPIC = 'notify'
+
+
+AUTH_REQUIRED = True

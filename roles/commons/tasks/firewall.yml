@@ -1,0 +1,91 @@
+---
+
+- name: Register private connection uuid
+  command: "nmcli -g GENERAL.CON-UUID  d show {{item}}"
+  loop: "{{firewall_private_interfaces}}"
+  register: firewall_private_uuids
+  tags: firewall
+
+- name: Set zone internal to connections on network managed private interfaces
+  command: "nmcli connection modify {{item.stdout}} connection.zone internal"
+  loop: "{{firewall_private_uuids.results}}"
+  tags: firewall
+
+- name: Clear firewall state
+  file:
+      path: "{{ item }}"
+      state: absent
+  with_items:
+    - /etc/firewalld/services
+    - /etc/firewalld/zones
+    - /etc/firewalld/helpers
+    - /etc/firewalld/icmptypes
+    - /etc/firewalld/ipsets
+    - /etc/firewalld/direct.xml
+  tags: firewall
+  notify: restart firewall
+
+- name: Add default services to public zone
+  firewalld:
+    zone: public
+    service: "{{item}}"
+    permanent: true
+    state: enabled
+  with_items:
+    - ssh
+    - dhcpv6-client
+  tags: firewall
+  notify: restart firewall
+
+- meta: flush_handlers
+
+- name: Create firewall new zones
+  command: firewall-cmd --permanent --new-zone="{{item}}"
+  with_items: "{{firewall_zones}}"
+  notify: restart firewall
+  tags: firewall
+  ignore_errors: true
+
+- name: Create firewall new services
+  command: firewall-cmd --permanent --new-service="{{item.name}}"
+  with_items: "{{firewall_services}}"
+  notify: restart firewall
+  tags: firewall
+  ignore_errors: true
+
+- name: Add port to services
+  command: firewall-cmd --permanent --service="{{item.name}}" --add-port={{item.port}}
+  with_items: "{{firewall_services}}"
+  notify: restart firewall
+  tags: firewall
+  ignore_errors: true
+
+- name: Firewall add services to zones
+  firewalld:
+    zone: "{{item.zone}}"
+    service: "{{item.service}}"
+    permanent: true
+    state: enabled
+  with_items: "{{firewall_services_zones}}"
+  tags: firewall
+  notify: restart firewall
+
+- name: Add sources to zones
+  firewalld:
+    zone: "{{item.zone}}"
+    source: "{{item.source}}"
+    permanent: true
+    state: enabled
+  with_items: "{{firewall_sources}}"
+  tags: firewall
+  notify: restart firewall
+
+- name: Add interfaces to zones
+  firewalld:
+    zone: "{{item.zone}}"
+    interface: "{{item.interface}}"
+    permanent: true
+    state: enabled
+  with_items: "{{firewall_interfaces}}"
+  tags: firewall
+  notify: restart firewall

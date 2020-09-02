@@ -1,4 +1,4 @@
-{% for poem in poem_servers %}
+{% for poem in consumer_poem_servers %}
 [PoemServer{{ loop.index }}]
 Host = {{ poem.host }}
 VO = {{ poem.vos|join(', ') }}
@@ -7,14 +7,13 @@ VO = {{ poem.vos|join(', ') }}
 
 
 [FetchProfiles]
-List = {{ poem_fetch_profiles|join(', ')|upper }}
+List = {{ consumer_poem_fetch_profiles|join(', ')|upper }}
 
 [PrefilterData]
-AllowedNGI = http://mon.egi.eu/nagios-roles.conf
-AllowedNGIProfiles = ch.cern.sam.ROC, ch.cern.sam.ROC_OPERATORS, ch.cern.sam.ROC_CRITICAL, ch.cern.sam.GLEXEC
 AllNGI1 = opsmon.egi.eu
 AllNGIProfiles1 = ch.cern.sam.OPS_MONITOR, ch.cern.sam.OPS_MONITOR_CRITICAL
-AllNGI2 = cloudmon.egi.eu
-AllNGIProfiles2 = ch.cern.sam.CLOUD-MON, ch.cern.sam.CLOUD-MON_CRITICAL
-
+AllNGI2 = argo-mon.egi.eu
+AllNGIProfiles2 = ch.cern.sam.ARGO_MON, ch.cern.sam.ARGO_MON_OPERATORS, ch.cern.sam.ARGO_MON_CRITICAL, ch.cern.sam.CLOUD-MON, ch.cern.sam.CLOUD-MON_CRITICAL
+AllNGI3 = argo-mon2.egi.eu
+AllNGIProfiles3 = ch.cern.sam.ARGO_MON, ch.cern.sam.ARGO_MON_OPERATORS, ch.cern.sam.ARGO_MON_CRITICAL, ch.cern.sam.CLOUD-MON, ch.cern.sam.CLOUD-MON_CRITICAL
 

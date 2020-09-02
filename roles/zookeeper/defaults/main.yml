@@ -1,0 +1,12 @@
+---
+# defaults file for zookeeper
+zookeeper_maxClientCnxns: 60
+zookeeper_myid: 1
+zookeeper_tickTime: 2000
+zookeeper_initLimit: 10
+zookeeper_syncLimit: 5
+zookeeper_dataDir: /var/lib/zookeeper
+zookeeper_data_logDir: /var/lib/zookeeper
+zookeeper_clientPort: 2181
+zookeeper_leaderPort: 2888
+zookeeper_electionPort: 3888

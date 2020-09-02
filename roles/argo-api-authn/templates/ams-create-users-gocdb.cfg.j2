@@ -1,0 +1,43 @@
+[AMS]
+
+# under which ams project, the users will be created
+ams_project: {{ams_gocdb_script.project}}
+
+# goc db url to pull user data
+goc_db_host: {{ams_gocdb_script.goc_db_host}}
+
+# service types refers to the different service types that will we should keep from the xml and assign them to the respective ams topic
+service-types: {{ams_gocdb_script.service_types}}
+
+# cert to access gocdb
+cert: {{ams_gocdb_script.cert}}
+cert_key: {{ams_gocdb_script.cert_key}}
+
+# ams use role
+users_role: {{ams_gocdb_script.users_role}}
+
+# token to access ams
+ams_token: {{ams_gocdb_script.token}}
+
+# ams url
+ams_host: {{ams_gocdb_script.host}}
+
+# ams user email
+ams_email: {{ams_gocdb_script.email}}
+
+[AUTHN]
+
+# token to access authn
+authn_token: {{authn_gocdb_script.token}}
+
+# authn url to create bindings
+authn_host: {{authn_gocdb_script.host}}
+
+# service's uuid where bindings will belong
+service_uuid: {{authn_gocdb_script.service_uuid}}
+
+# service's host where bindings will belong
+service_host: {{authn_gocdb_script.service_host}}
+
+[LOGS]
+syslog_socket: {{logs.syslog_socket}}

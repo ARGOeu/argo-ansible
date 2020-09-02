@@ -1,0 +1,47 @@
+---
+
+- name: Create folder to store the dumps
+  file: path=/backup state=directory
+        owner=root group=root mode=0600
+
+- name: Copy out dumps to be restored
+  copy: src=backup/argo_core/ dest=/backup/argo_core
+
+- name: Copy out dumps to be restored 2
+  copy: src=backup/argo_infraA/ dest=/backup/argo_infraA
+
+- name: Copy out dumps to be restored
+  copy: src=backup/argo_msg/ dest=/backup/argo_msg
+
+- name: Enable daily cron to restore swagger core data
+  cron:
+    name: Enable daily cron to restore swagger core data
+    cron_file: mongo_restores
+    job: /usr/bin/mongorestore --db argo_core --drop /backup/argo_core
+    minute: 0
+    hour: 0
+    state: present
+    user: root
+  tags: cron
+
+- name: Enable daily cron to restore swagger tenant data
+  cron:
+    name: Enable daily cron to restore swagger tenant data
+    cron_file: mongo_restores
+    job: /usr/bin/mongorestore --db argo_infraA --drop /backup/argo_infraA
+    minute: 1
+    hour: 0
+    state: present
+    user: root
+  tags: cron
+
+- name: Enable daily cron to restore messaging data
+  cron:
+    name: Enable daily cron to restore messaging data
+    cron_file: mongo_restores
+    job: /usr/bin/mongorestore --db argo_msg --drop /backup/argo_msg
+    minute: 10
+    hour: 0
+    state: present
+    user: root
+  tags: cron

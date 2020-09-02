@@ -1,0 +1,7 @@
+{% if inventory_hostname in groups.consumer %}
+command[check_consumer_proc]=/usr/lib64/nagios/plugins/check_procs -a '/usr/bin/argo-egi-consumer.py' -c 1:10
+command[check_consumer_log]=/usr/libexec/argo-monitoring/probes/argo/check_argo_consumer_log.sh
+{% endif %}
+command[check_disk]=/usr/lib64/nagios/plugins/check_disk -w 10% -c 5%
+command[check_load]=/usr/lib64/nagios/plugins/check_load -w 2 -c 4 -r
+

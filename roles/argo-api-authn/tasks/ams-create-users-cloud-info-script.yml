@@ -1,0 +1,26 @@
+---
+# set up the script that creates users to both ams and authn, imported from gocdb
+# for each user created, a topic should created aswell
+
+- name: "template configuration for ams-create-users-cloud-info script"
+  template:
+    src: ams-create-users-cloud-info.cfg.j2
+    dest: "{{ service_configuration_folder }}/ams-create-users-cloud-info.cfg"
+  tags: authn_cloud_info_script_install
+
+- name: change permissions for ams-create-users-cloud-info.cfg
+  file:
+    path: "{{ service_configuration_folder }}/ams-create-users-cloud-info.cfg"
+    owner: argo-api-authn
+    group: argo-api-authn
+    mode: 0644
+  tags: authn_cloud_info_script_install
+
+- name: "set up cron for ams-create-users-cloud-info"
+  cron:
+    cron_file: ams-create-users-cloud-info
+    name: "set up cron for ams-create-users-cloud-info"
+    user: argo-api-authn
+    special_time: hourly
+    job: "{{ virtual_env_installation }}/authn-env/bin/python {{ virtual_env_installation }}/authn-env/bin/ams-create-users-cloud-info.py -v"
+  tags: authn_cloud_info_script_install

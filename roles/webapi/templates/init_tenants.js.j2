@@ -1,0 +1,30 @@
+use {{argo_core}};{% if webapi_tenants is defined %}
+{% for tenant in webapi_tenants %}
+
+db.tenants.update(
+{"id":"{{tenant.id}}"},
+{"id":"{{tenant.id}}",
+"info":{
+"name":"{{tenant.name}}",
+"email":"{{tenant.email}}",
+"website":"{{tenant.website}}",
+"created":"{{ansible_date_time.date}} {{ansible_date_time.time}}",
+"updated":"{{ansible_date_time.date}} {{ansible_date_time.time}}"},
+"db_conf":[{% for db in tenant.db_conf %}
+{"store":"{{db.store}}",
+"server":"{{db.server}}",
+"port":{{db.port}},
+"database":"{{db.database}}",
+"username":"{{db.username}}",
+"password":"{{db.password}}"}
+{% endfor %}{%if not loop.last%},{% endif %}],
+"users":[{% for user in tenant.users %}
+{"name":"{{user.name}}",
+"email":"{{user.email}}",
+"api_key":"{{user.token}}",
+"roles":[{% for role in user.roles %}
+"{{role}}"{%if not loop.last%},{% endif %}{% endfor %}
+]}{%if not loop.last%},{% endif %}
+]},
+{% endfor %}{"upsert":"true"});
+{% endfor %}{% endif %}

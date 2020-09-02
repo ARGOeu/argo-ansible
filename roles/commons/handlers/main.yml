@@ -1,0 +1,26 @@
+---
+# handlers file for commons
+
+# handlers file for fail2ban
+- name: restart fail2ban
+  service:
+    name: fail2ban
+    state: restarted
+
+- name: reload firewall
+  command: "firewall-cmd --reload"
+
+- name: restart firewall
+  service:
+    name: firewalld
+    state: restarted
+
+- name: restart sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: restart nrpe
+  service:
+    name: nrpe
+    state: restarted

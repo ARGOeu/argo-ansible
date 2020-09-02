@@ -1,0 +1,10 @@
+---
+
+# Separated list of kafka folders
+kafka_log_dirs: /var/lib/kafka
+
+# Graceful shutdown
+controlled_shutdown_enable: "true"
+
+# Default replication factors for automatically created topics
+default_replication_factor: 3

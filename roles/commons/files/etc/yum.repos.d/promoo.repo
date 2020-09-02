@@ -1,0 +1,10 @@
+# EGI Applications Database (http://appdb.egi.eu/)
+# EGI Community repository (http://repository.egi.eu/community/)
+# POA ID:630
+# Created: 2016-11-29 13:11:04 EEST
+[nagios.promoo-sl-7-x86_64]
+name=Repository for nagios.promoo (o/s: sl6 arch: x86_64)
+baseurl=http://repository.egi.eu/community/software/nagios.promoo/0.0.x/releases/sl/7/x86_64/RPMS/
+enabled=1
+gpgcheck=0
+

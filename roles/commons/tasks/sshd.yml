@@ -1,0 +1,9 @@
+---
+
+- name: Turn off ssh password authentication
+  lineinfile:
+    dest: "{{ sshd_config_path }}"
+    regexp: "^PasswordAuthentication"
+    line: "PasswordAuthentication no"
+  tags: sshd_config
+  notify: restart sshd

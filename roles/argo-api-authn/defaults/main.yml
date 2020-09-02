@@ -1,0 +1,6 @@
+---
+# defaults file for argo-api-authn
+
+virtual_env_installation: /opt/virtualenv
+service_configuration_folder: /etc/argo-api-authn/conf.d
+scripts_cert_dir: /etc/grid-security/scripts-cert

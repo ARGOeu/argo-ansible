@@ -1,17 +1,45 @@
-[general]
-SUPERUSER_NAME: {{ db_user }}
-SUPERUSER_PASSWORD: {{ db_pass }}
-SUPERUSER_EMAIL: {{ db_mail }}
+[GENERAL]
+Namespace = {{ poem_namespace }}                                                                                  
+Debug = {{ poem_debug }} 
+TimeZone = {{ poem_timezone }}
+{% if poem_SamlLoginString is defined %}
+SamlLoginString = {{ poem_SamlLoginString }}
+{% else %}
+SamlLoginString = Log in using EGI CHECK-IN
+{% endif %}
 
-[log]
-LOG_CONFIG: /etc/poem/poem_logging.ini
+[SUPERUSER]
+Name =  {{ poem_db_user }}
+Password = {{ poem_db_pass }}
+Email = {{ poem_db_mail }}
 
-[others]
-POEM_NAMESPACE: {{ poem_namespace }}
-GOCDB_SERVICETYPE_URL: https://{{ poem_gocdb_url }}/gocdbpi/private/?method=get_service_types
-CIC_VO_URL: http://operations-portal.egi.eu/xml/voIDCard/public/all/true
-HOST_CERT = /etc/grid-security/hostcert.pem
-HOST_KEY = /etc/grid-security/hostkey.pem
-DEBUG: {{ poem_debug }} 
-SECRET_KEY: {{ poem_secret }}
-TIME_ZONE: {{ poem_timezone }}
+[SYNC]
+ServiceType = {{poem_ServiceType}}
+##https://goc.egi.eu/gocdbpi/private/?method=get_service_types
+VO = http://operations-portal.egi.eu/xml/voIDCard/public/all/true
+{% if poem_UsePlainHttpAuth is defined %}
+UsePlainHttpAuth = {{ poem_UsePlainHttpAuth }}
+{% else %}
+UsePlainHttpAuth = False
+{% endif %}
+{% if poem_HttpUser is defined %}
+HttpUser = {{ poem_HttpUser }}
+{% else %}
+HttpUser = xxxx
+{% endif %}
+{% if poem_HttpPass is defined %}
+HttpPass = {{ poem_HttpPass }}
+{% else %}
+HttpPass = xxxx
+{% endif %}
+
+
+[SECURITY]
+AllowedHosts = {{poem_ALLOWED_HOSTS}}
+HostCert = {{cert_path}}
+HostKey = {{cert_key_path}}
+CAFile = {{cert_dir}}/DigiCertCA.crt
+{% if ca_bundle %}
+CAPath = /etc/grid-security/certificates/
+{%endif%}
+SecretKeyPath = /etc/poem/secret_key

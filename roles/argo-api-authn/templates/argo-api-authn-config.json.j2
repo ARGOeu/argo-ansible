@@ -1,0 +1,23 @@
+{
+  "service_port": {{authn_service_port}},
+  "mongo_host": "{{authn_mongo_host}}",
+  "mongo_db": "{{authn_mongo_db}}",
+  "certificate_authorities": "{{authn_certificate_authorities}}",
+  "certificate": "{{authn_certificate}}",
+  "certificate_key": "{{authn_certificate_key}}",
+  "service_token": "{{authn_service_token}}",
+  "supported_auth_types": ["x509"],
+  "supported_auth_methods": ["api-key"],
+  "supported_service_types": ["ams"],
+  "verify_ssl": {{authn_verify_ssl}},
+  "trust_unknown_cas": {{authn_trust_unknown_cas}},
+  "verify_certificate": {{authn_verify_certificate}},
+  "service_types_paths": {
+    "ams": "/v1/users:byUUID/{% raw -%}{{identifier}}{% endraw -%}?key={% raw -%}{{access_key}}{% endraw -%}",
+    "web-api": "/api/v2/admin/users:byID/{% raw -%}{{identifier}}{% endraw -%}?export=flat"
+  },
+  "service_types_retrieval_fields": {
+    "ams": "token",
+    "web-api": "api_key"
+   }
+  }

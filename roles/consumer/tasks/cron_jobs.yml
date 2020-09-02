@@ -1,0 +1,66 @@
+---
+####################
+# Cron_jobs: Standalone cron jobs used a) for deployment and b) pause / start cron jobs
+# if you want to use for pausing a job (ex. poem_cron) you should run
+# ansible-playbook standalone-pause.yml -vvv --extra-vars "cron_status=true" --tags poem_cron
+####################
+
+- name: Configure poem connector per tenant cron job
+  tags:
+    - connectors_config
+    - connectors
+    - poem_cron
+    - cron_jobs
+  cron: cron_file=poem_{{ item.key | lower }}
+        name=poem_{{ item.key | lower }}
+        minute=2
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/poem-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present disabled={{consumer_cron_status}}
+  with_dict: "{{ consumer_tenants }}"
+
+- name: Configure topology connector per tenant cron job
+  tags:
+    - connectors_config
+    - connectors
+    - topology_cron
+    - cron_jobs
+  cron: cron_file=topology_{{ item.key | lower }}
+        name=topology_{{ item.key | lower }}
+        minute=7
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/topology-gocdb-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present disabled={{consumer_cron_status}}
+  with_dict: "{{ consumer_tenants }}"
+
+- name: downtimes-connector cron job
+  tags:
+    - connectors_config
+    - connectors
+    - downtimes_cron
+    - cron_jobs
+  cron: cron_file=downtimes_{{ item.key | lower }}
+        name=downtimes_{{ item.key | lower }}
+        minute=15
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/downtimes-gocdb-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf -d $(date "+\%Y-\%m-\%d")"
+        state=present disabled={{consumer_cron_status}}
+  with_dict: "{{ consumer_tenants }}"
+
+- name: Configure weights connector per tenant cron job
+  tags:
+    - connectors_config
+    - connectors
+    - weights_cron
+    - cron_jobs
+  cron: cron_file=weights_{{ item.key | lower }}
+        name=weights_{{ item.key | lower }}
+        minute={{item.value.cron_weight_minute}}
+        hour=0
+        user=root
+        job="/usr/libexec/argo-egi-connectors/weights-vapor-connector.py -c /etc/argo-egi-connectors/{{ item.key | lower }}-customer.conf"
+        state=present disabled={{consumer_cron_status}}
+  with_dict: "{{ consumer_tenants }}"

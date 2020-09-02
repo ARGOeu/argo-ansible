@@ -1,0 +1,361 @@
+---
+
+- name: Install all needed packages including python3
+  yum:
+   name: '{{ item }}'
+   state: present
+  loop:
+   - python36
+   - python36-devel
+   - python36-setuptools
+   - python36-pip
+   - git
+   - supervisor
+   - nginx
+   - ssmtp
+  tags: alerta
+
+- name: install the 'Development tools' package group
+  yum:
+    name: "@Development tools"
+    state: present
+
+- name: Install Virtualenv
+  pip:
+    name: virtualenv
+    state: present
+    executable: pip3.6
+  tags: alerta
+
+- name: Install Alerta
+  tags: alerta
+  pip:
+    name: alerta
+    version: '{{alerta_version}}'
+    virtualenv: '{{ alerta_server_dir }}'
+    virtualenv_python: python3.6
+    state: forcereinstall
+
+- name: Install Alerta-server
+  tags: alerta
+  pip:
+    name: alerta-server
+    version: '{{alerta_server_version}}'
+    virtualenv: '{{ alerta_server_dir }}'
+    state: forcereinstall
+
+- name: Install uswgi through pip
+  tags: alerta
+  pip:
+    name: uwsgi
+    virtualenv: '{{ alerta_server_dir }}'
+    state: forcereinstall
+
+- name: (pip) Uninstall Werkzeug 1.0.0 [Fix 'werkzeug.contrib' problem (1/2)]
+  pip:
+    name: werkzeug
+    state: absent
+    virtualenv: '{{ alerta_server_dir }}'
+
+- name: (pip) Install Werkzeug 0.16.1 [Fix 'werkzeug.contrib' problem (2/2)]
+  pip:
+    name: werkzeug==0.16.1
+    virtualenv: '{{ alerta_server_dir }}'
+
+- name: Add www-data group 
+  tags: alerta
+  group:
+    name: www-data
+    state: present
+
+- name: Add the user www-data and append them to www-data group
+  tags: alerta
+  user:
+    name: www-data
+    groups: www-data
+    append: yes
+
+- name: append user nginx to www-data group
+  tags: alerta
+  user:
+    name: nginx
+    groups: www-data 
+    append: yes
+
+- name: append user uwsgi to www-data group
+  tags: alerta
+  user:
+    name: uwsgi
+    groups: www-data 
+    append: yes
+
+- name: create folder /var/run/uwsgi
+  file: 
+    path: /var/run/uwsgi
+    owner: uwsgi
+    group: www-data
+    mode: '0774'
+    state: directory
+
+- name: create /var/www/
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data 
+
+- name: create /var/www/html
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data 
+
+- name: copy wsgi app file to www-data 
+  copy: 
+    src: wsgi.py
+    dest: /var/www/wsgi.py
+    owner: www-data
+    group: www-data 
+    mode: '0644'
+
+- name: copy uwsgi systemd service file
+  copy:
+    src: uwsgi.service
+    dest: /etc/systemd/system/uwsgi.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload systemctl
+
+
+- name: copy uwsgi ini configuration file 
+  copy:
+    src: uwsgi.ini
+    dest: /etc/uwsgi.ini
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart uwsgi
+
+- name: copy nginx configuration 
+  copy: 
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root 
+    group: root
+    mode: '0644'
+  notify: restart nginx
+
+- name: enable uwsgi service
+  service:
+    name: uwsgi
+    enabled: true
+
+- name: enable nginx service
+  service: 
+    name: nginx 
+    enabled: true
+
+- name: configure alertad
+  template:
+    src: alertad.conf.j2
+    dest: /etc/alertad.conf
+  tags: alerta, alerta_token
+  notify: restart uwsgi
+
+
+- name: clear /tmp/alerta_ui
+  file:
+    path: /tmp/alerta_ui
+    state: absent
+
+- name: clear /tmp/alerta_ui
+  file:
+    path: /tmp/alerta_ui
+    state: directory
+
+- name: download alerta dashboard 
+  tags: alerta, dashboard
+  get_url:
+    url: https://github.com/alerta/alerta-webui/releases/download/v7.2.11/alerta-webui.tar.gz
+    dest: /tmp/alerta_ui.tar.gz
+
+- name: extract alerta web ui 
+  unarchive:
+    src: /tmp/alerta_ui.tar.gz
+    dest: /tmp/alerta_ui/
+    remote_src: yes
+
+- name: clear existing html folder
+  file: 
+    path: /var/www/html
+    state: absent
+
+- name: copy dist to html 
+  synchronize: 
+    src: /tmp/alerta_ui/dist/
+    dest: /var/www/html
+  delegate_to: "{{inventory_hostname}}"
+
+- name: configure permissiosn on web-ui folder
+  file: 
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: true
+
+- name: clear tmp folder
+  file:
+    path: /tmp/alerta_ui
+    state: absent
+
+- name: clear tmp tar.gz file
+  file:
+    path: /tmp/alerta_ui.tar.gz
+    state: absent
+
+- name: Configure Alerta Dashboard
+  tags: alerta , dashboard
+  template:
+    src: config.json.j2
+    dest: '{{ alerta_dashboard_dir }}/config.json'
+    mode: 0444
+
+- name: create /var/www/html
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data 
+
+- name: Install Alerta-amqp
+  pip:
+    name: 'git+https://github.com/alerta/alerta-contrib.git@{{alerta_amqp_release}}#subdirectory=plugins/amqp'
+    virtualenv: '{{ alerta_server_dir }}'
+  tags: alerta
+
+- name: Install Alerta-mailer
+  pip:
+   name: 'git+https://github.com/alerta/alerta-contrib.git@{{alerta_mailer_release}}#subdirectory=integrations/mailer'
+   virtualenv: '{{ alerta_server_dir }}'
+  tags: alerta
+
+- name: configure alerta cli
+  template:
+    src: alerta.conf.j2
+    dest: /root/.alerta.conf
+  tags: alerta, alerta_token
+
+- name: establish argo-alert config directory
+  tags: alerta
+  file:
+    path: /etc/argo-alert
+    state: directory
+
+- name: establish argo-alert mail template directories
+  tags: alerta, mailer
+  file:
+    path: /etc/argo-alert/mail/templates
+    state: directory
+
+- name: establish argo-alert mail rule directories
+  tags: alerta, mailer
+  file:
+    path: /etc/argo-alert/mail/mailer-{{item.key}}/alerta.rules.d
+    state: directory
+  with_dict: '{{ alerta_tenants }}'
+
+- name: deploy argo-alert mail configurations
+  tags: alerta, mailer, alerta_token
+  template:
+    src: alerta-mailer.conf.j2
+    dest: /etc/argo-alert/mail/mailer-{{item.key}}/mailer-{{item.key}}.conf
+  with_dict: '{{ alerta_tenants }}'
+
+
+
+- name: Copy mail templates
+  tags: certificate, alerta
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/mail-templates/'
+    dest: /etc/argo-alert/mail/templates/
+    directory_mode: yes
+    owner: root
+    group: root
+    mode: 0400
+    
+
+- name: establish argo-alert log directory
+  tags: alerta
+  file:
+    path: /var/log/argo-alert
+    state: directory
+
+- name: Install argo-alert tools
+  tags: alerta
+  pip:
+    name: '{{argo_alert_repo}}'
+    virtualenv: '{{ alerta_server_dir }}'
+
+- name: Deploy argo-alert configurations
+  tags: alerta, argo-alert, alerta_token
+  template:
+    src: argo-alert.conf.j2
+    dest: '/etc/argo-alert/argo-alert-{{item.key}}.conf'
+    mode: 0444
+  with_dict: '{{ alerta_tenants }}'
+
+- name: Deploy updated hosts
+  tags: alerta
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+
+- name: establish supervisord config directory
+  tags: alerta
+  file:
+    path: /etc/supervisord
+    state: directory
+
+- name: Configure supervisord (1/2)
+  tags: alerta
+  template:
+    src: supervisord.conf.j2
+    dest: /etc/supervisord/supervisord.conf
+    mode: 0444
+  notify: restart supervisord
+
+- name: Configure supervisord (2/2)
+  tags: alerta
+  template:
+    src: supervisord.conf.j2
+    dest: /etc/supervisord.conf
+    mode: 0444
+  notify: restart supervisord
+
+- name: enable and start supervisord
+  systemd:
+    name: supervisord
+    enabled: yes
+    state: started
+    masked: no
+  tags: alerta
+
+- name: configure email 
+  template:
+    src: ssmtp.conf.j2
+    dest: /etc/ssmtp/ssmtp.conf
+
+- name: ensure uwsgi is started 
+  service:
+    name: uwsgi
+    state: started
+
+- name: ensure nginx is started 
+  service:
+    name: nginx
+    state: started
+
+# vim: syntax=yaml ts=4 sw=4 sts=4 sr noet

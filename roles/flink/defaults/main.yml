@@ -1,0 +1,23 @@
+---
+newln: "\n"
+flink_version: 1.3.2
+flink_scala_version: "2.10"
+flink_hadoop_version: "26"
+flink_dir: /opt/flink_{{flink_version}}
+flink_url: https://archive.apache.org/dist/flink/flink-{{flink_version}}/flink-{{flink_version}}-bin-hadoop{{flink_hadoop_version}}-scala_{{flink_scala_version}}.tgz
+
+flink_master: master.example
+flink_master_ip: 192.168.0.1
+flink_task_slots: 4
+
+java_home: /usr/lib/jvm/jre-1.8.0-openjdk
+
+flink_slaves:
+  -
+    hostname: slave01.example
+    ip: 192.168.0.2
+  -
+    hostname: slave02.example
+    ip: 192.168.0.3
+
+flink_is_master: false

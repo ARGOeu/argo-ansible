@@ -1,0 +1,13 @@
+---
+# handlers file for haproxy
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restared

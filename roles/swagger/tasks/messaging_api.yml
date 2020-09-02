@@ -1,0 +1,29 @@
+---
+
+- name: Install Java openjdk
+  yum:
+    name: java-1.7.0-openjdk
+    state: present
+
+- name: Copy out messaging binary and config
+  copy: src=opt/argo-messaging/ dest=/opt/argo-messaging
+
+- name: Fetch a kafka tarball
+  unarchive:
+    src: https://archive.apache.org/dist/kafka/0.9.0.1/kafka_2.11-0.9.0.1.tgz
+    dest: /opt
+    copy: no
+
+- name: Add services in /etc/rc.local
+  blockinfile:
+    dest: /etc/rc.local
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      cd /opt/kafka_2.11-0.9.0.1 && bin/zookeeper-server-start.sh config/zookeeper.properties 1>/dev/null 2>&1 &
+      sleep 9
+      cd /opt/kafka_2.11-0.9.0.1 && bin/kafka-server-start.sh config/server.properties 1>/dev/null 2>&1 &
+      sleep 9
+      cd /opt/argo-messaging && ./argo-messaging 1>/dev/null 2>&1 &
+  tags: test
+

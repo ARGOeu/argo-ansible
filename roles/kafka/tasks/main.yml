@@ -1,0 +1,32 @@
+---
+# tasks file for kafka
+
+- name: Install kafka package
+  yum:
+    name: "{{item}}"
+    state: present
+    enablerepo: cloudera-kafka
+  loop:
+    - kafka
+    - kafka-server
+  tags: kafka_install
+
+
+- name: Update kafka configuration
+  template:
+    src: server.properties.j2
+    dest: /etc/kafka/conf/server.properties
+    owner: kafka
+    group: kafka
+    mode: 0644
+  notify: restart kafka
+  tags: kafka_install
+
+- meta: flush_handlers
+
+- name: Start kafka service
+  service:
+    name: kafka-server
+    state: started
+    enabled: true
+  tags: kafka_install

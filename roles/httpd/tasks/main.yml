@@ -1,0 +1,44 @@
+---
+# tasks file for httpd
+
+- name: install httpd
+  yum:
+    name:
+      - httpd
+      - mod_ssl
+    state: present
+  tags: httpd
+
+- name: deploy configuration file
+  template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+  notify:
+    - Restart service httpd, in all cases
+  tags: httpd
+
+- name: Create ssl.conf file
+  template: src=ssl.conf.j2
+            dest=/etc/httpd/conf.d/ssl.conf backup=yes
+            owner=root group=root mode=0644
+  notify:
+    - Reload service httpd, in all cases
+
+- name: create apache nagios conf
+  template: src=nagios_apache.conf.j2
+            dest=/etc/httpd/conf.d/nagios.conf
+            owner=root group=root mode=0644
+  notify:
+    - Reload service httpd, in all cases
+  when: monbox_configure_nagios_apache
+  tags:
+    - config
+    - config-apache
+
+- name: update permissions to hostkey.pem
+  file: path="{{cert_key_path}}" owner=apache group=apache
+
+- name: httpd enable
+  service:
+    name: httpd
+    enabled: true
+    state: started
+  tags: http

@@ -1,0 +1,20 @@
+---
+- name: install httpd
+  yum:
+    name:
+      - libselinux-python
+      - httpd-{{ httpd_version }}
+    state: present
+  tags: httpd
+
+- name: deploy configuration file
+  template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+  notify: restart httpd
+  tags: httpd
+
+- name: httpd enable
+  service:
+    name: httpd
+    enabled: yes
+    state: started
+  tags: http

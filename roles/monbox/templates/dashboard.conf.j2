@@ -1,0 +1,7 @@
+<handler Dashboard>
+  class = GridMon::MsgHandler::DashboardInput
+  <subscribe>
+     destination = /topic/nagios.probe.notification.ack.{{ sha.stdout }}
+  </subscribe>
+</handler>
+

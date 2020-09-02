@@ -1,23 +1,10 @@
 ---
 
-- name: Install Pip
-  tags: swagger
-  yum: name=python-pip state=present
 
 - name: Install PyYAML
   tags: swagger
   pip: name=pyYAML state=latest
 
-- name: Install Apache
-  tags: swagger
-  yum: name={{ item }} state=present
-  with_items:
-    - httpd
-    - mod_ssl
-
-- name: Config Apache Up and Running
-  tags: swagger
-  service: name=httpd enabled=yes state=started
 
 - name: Create /tmp/swagger folder
   tags: swagger
@@ -29,48 +16,68 @@
     curl -L https://api.github.com/repos/swagger-api/swagger-ui/tarball
     | tar xz -C /tmp/swagger --strip-components 1
 
+- name: Remove stage directory
+  shell: rm -rf /var/www/html/{{ item.name }}.old
+  with_items: '{{swagger_docs}}'
+  ignore_errors: True
+
+- name: Stage old data
+  command: mv /var/www/html/{{ item.name }} /var/www/html/{{ item.name }}.old
+  with_items: '{{swagger_docs}}'
+  ignore_errors: yes
+
 - name: Create swagger directories
   tags: swagger
   file: path=/var/www/html/{{ item.name }} state=directory owner=root group=root mode=0755
-  with_items: swagger_docs
+  with_items: '{{swagger_docs}}'
 
 - name: Transfer dist files to each dedicated dir at /var/www/html/
   tags: swagger
   shell: cp -R /tmp/swagger/dist/* /var/www/html/{{ item.name }}
-  with_items: swagger_docs
+  with_items: '{{swagger_docs}}'
 
 - name: Get latest swagger.yaml definition files
-  tags: swagger
+  tags: swagger-update
   get_url: url=https://raw.githubusercontent.com/{{ item.github_org }}/{{ item.name }}/{{ item.branch }}/{{ item.path_to_yaml }}
            dest=/tmp/swagger/{{ item.name }}_swagger.yaml force=yes
            owner=root group=root mode=0644
-  with_items: swagger_docs
+  with_items: '{{swagger_docs}}'
   notify: restart apache
 
 - name: Convert swagger.yaml to swagger.json
-  tags: swagger
+  tags: swagger-update
   shell: >
     python -c 'import sys, yaml, json;
     json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'
     < /tmp/swagger/{{ item.name }}_swagger.yaml > /var/www/html/{{ item.name }}/swagger.json
-  with_items: swagger_docs
+  with_items: '{{swagger_docs}}'
 
 - name: Make swagger.json point to corresponding api endpoint
-  tags: swagger
+  tags: swagger-update
   lineinfile: >
               dest=/var/www/html/{{ item.name }}/swagger.json
               regexp='( +)\"host\":\ \"(.+)\"\,'
               line='    \"host\": \"{{ item.api_host }}\",'
               state=present backup=yes
-  with_items: swagger_docs
+  with_items: '{{swagger_docs}}'
   notify: restart apache
 
 - name: Point swagger-ui to corresponding swagger definitions on host
-  tags: swagger
+  tags: swagger-update
   replace: dest=/var/www/html/{{ item.name }}/index.html
-           regexp='url = "http:\/\/petstore\.swagger\.io\/v2\/swagger\.json";'
-           replace='url = "https://{{ inventory_hostname }}/{{ item.name }}/swagger.json";'
+           regexp='"https:\/\/petstore\.swagger\.io\/v2\/swagger\.json"'
+           replace='"https://{{ inventory_hostname }}/{{ item.name }}/swagger.json"'
            backup=yes
-  with_items: swagger_docs
+  with_items: '{{swagger_docs}}'
 
+- name: Place assets on apache directory
+  tags: swagger-index
+  copy: src=var/www/html/ dest=/var/www/html/
+  notify: restart apache
 
+- name: Place index.html on apache directory
+  tags: swagger
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+  notify: restart apache 

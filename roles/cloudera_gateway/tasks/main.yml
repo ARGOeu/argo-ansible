@@ -1,0 +1,9 @@
+---
+# tasks file for cloudera_gateway
+
+
+- name: Copy gateway already generated key
+  copy: src=private_files/{{ inventory_hostname }}/hostkey
+        dest=/root/.ssh/id_rsa backup=yes
+        owner=root group=root mode=0600
+  tags: hostkey

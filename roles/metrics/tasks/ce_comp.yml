@@ -1,0 +1,56 @@
+---
+
+- name: install git
+  yum:
+    name: git
+    state: latest
+
+- name: create directory for script's env
+  file:
+    path: ~/Envs/ce_comp_env
+    state: directory
+
+- name: upgrade pip2.7
+  pip:
+    name: pip
+    executable: pip2.7
+    state: latest
+    extra_args: --upgrade
+
+- name: install virtualenv with pip
+  pip:
+    name: "virtualenv"
+    executable: pip2.7
+
+- name: create directory for the generated html reports
+  file:
+    path: /var/www/html/ce_comp
+    state: directory
+
+- name: clone the script's repo
+  git:
+   repo: https://github.com/ARGOeu/ce_comp.git
+   dest: ~/Envs/ce_comp_env/ce_comp
+   version: devel
+
+- name: Create a virtualenv for the script
+  pip:
+    virtualenv: ~/Envs/ce_comp_env
+    requirements: ~/Envs/ce_comp_env/ce_comp/requirements.txt
+    virtualenv_python: python2.7
+
+- name: template configuration
+  template:
+   src: ce_comp.cfg.j2
+   dest: ~/Envs/ce_comp_env/ce_comp/config.cfg
+
+- name: set up cron
+  cron:
+    cron_file: ce_comp_{{ item.name | lower }}
+    name: "set up cron for {{ item.name }}"
+    user: root
+    hour: "4"
+    job: "~/Envs/ce_comp_env/bin/python ~/Envs/ce_comp_env/ce_comp/ce_comp.py -t {{ item.name }} -s html -c ~/Envs/ce_comp_env/ce_comp/config.cfg -sd $(date --date yesterday '+\\%Y-\\%m-\\%d') -ed $(date --date yesterday '+\\%Y-\\%m-\\%d') -sp /var/www/html/ce_comp/"
+  loop: "{{ tenants }}"
+  loop_control:
+    label: "{{ item.name }}"

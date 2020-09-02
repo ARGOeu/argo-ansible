@@ -1,0 +1,144 @@
+NAGIOS_SERVER = {{ inventory_hostname }}
+PROBES_TYPE={{MONBOX_PROBES_TYPE}} 
+NAGIOS_ADMIN = {{ monbox_nagios_admin_email }}
+VO = {{ monbox_vo }}
+MAIN_DB_FILE=./ncg.localdb
+
+{% if monbox_enable_unicore_probes is defined %}
+ENABLE_UNICORE_PROBES= {{ monbox_enable_unicore_probes }}
+{% endif %}
+{% if monbox_myproxy_server is defined %}
+MYPROXY_SERVER = {{ monbox_myproxy_server }}
+{% endif %}
+
+# set your gocdb username & password here
+# modules will pick up global values
+
+<NCG::SiteSet>
+  <GOCDB>
+    GOCDB_ROOT_URL={{ monbox_gocdb_root_url }}
+{% if MONBOX_GOCDB_USERNAME is defined %}
+    USERNAME={{MONBOX_GOCDB_USERNAME}}
+{% endif %}
+{% if MONBOX_GOCDB_PASSWORD is defined %}
+    PASSWORD={{MONBOX_GOCDB_PASSWORD}}
+{% endif %}
+{% if MONBOX_CERT_STATUS is defined %}
+    CERT_STATUS={{MONBOX_CERT_STATUS}}
+{% endif %}
+{% if monbox_enable_unicore_probes is defined %}
+{% if monbox_enable_unicore_probes == 1  %}
+    ENABLE_UNICORE_PROBES=$ENABLE_UNICORE_PROBES
+{% endif %}
+{% endif %}    
+  </GOCDB>
+</NCG::SiteSet>
+
+<NCG::SiteInfo>
+  <GOCDB>
+    GOCDB_ROOT_URL = {{ monbox_gocdb_root_url }}
+{% if MONBOX_GOCDB_USERNAME is defined %}
+    USERNAME={{MONBOX_GOCDB_USERNAME}}
+{% endif %}
+{% if MONBOX_GOCDB_PASSWORD is defined %}
+    PASSWORD={{MONBOX_GOCDB_PASSWORD}}
+{% endif %}
+{% if MONBOX_GOCDB_PASSWORD is defined %}
+    NODE_MONITORED={{MONBOX_NODE_MONITORED}}
+{% endif %}
+  </GOCDB>
+</NCG::SiteInfo>
+
+
+<NCG::LocalMetrics>
+  <POEM>
+    POEM_ROOT_URL = {{monbox_poem_url}}
+    {% if POEM_ROOT_PASSWD is defined %}
+    TOKEN={{POEM_ROOT_PASSWD}}
+    {% endif %}
+  </POEM>
+  <File>
+    DB_FILE=/etc/argo-ncg/ncg.localdb
+  </File>
+</NCG::LocalMetrics>
+
+<NCG::ConfigGen>
+  <Nagios>
+    NAGIOS_ROLE = {{ MONBOX_NAGIOS_ROLE }}
+{% if INCLUDE_EMPTY_HOSTS is defined %}
+    INCLUDE_EMPTY_HOSTS = {{MONBOX_INCLUDE_EMPTY_HOSTS}}
+{% else %}
+    INCLUDE_EMPTY_HOSTS = 0
+{% endif %}
+{% if ENABLE_NOTIFICATIONS is defined %}
+    ENABLE_NOTIFICATIONS = {{MONBOX_ENABLE_NOTIFICATIONS}}
+{% else %}
+    ENABLE_NOTIFICATIONS = 0
+{% endif %}
+{% if SEND_TO_DASHBOARD is defined %}
+    SEND_TO_DASHBOARD = {{MONBOX_SEND_TO_DASHBOARD}}
+{% else %}
+    SEND_TO_DASHBOARD = 0
+{% endif %}
+{% if MONBOX_CHECK_HOSTS is defined %}
+    CHECK_HOSTS = {{MONBOX_CHECK_HOSTS}}
+{% else %}
+    CHECK_HOSTS = 0
+{% endif %}
+    TENANT = {{MONBOX_TENANT}}
+{% if MONBOX_USE_ROBOT_CERT is defined %}
+{% if MONBOX_USE_ROBOT_CERT == 1 %}
+    ROBOT_CERT={{MONBOX_ROBOT_CERT}}
+    ROBOT_KEY={{MONBOX_ROBOT_KEY}}
+    USE_ROBOT_CERT=1
+{% endif %}
+{% endif %}
+  </Nagios>
+</NCG::ConfigGen>
+
+<NCG::LocalMetricsAttrs>
+  <Active>
+  GLITE_VERSION=
+  GOCDB_ROOT_URL= {{ monbox_gocdb_root_url }}
+{% if monbox_enable_unicore_probes is defined %} 
+{% if monbox_enable_unicore_probes == 1 %}
+    ENABLE_UNICORE_PROBES=$ENABLE_UNICORE_PROBES
+{% endif %}
+{% endif %}
+{% if MONBOX_BDII_HOST is defined %}
+    BDII_HOST={{MONBOX_BDII_HOST}}
+{% endif %}
+{% if MONBOX_INCLUDE_PROXY_CHECKS is defined %}
+    INCLUDE_PROXY_CHECKS = {{MONBOX_INCLUDE_PROXY_CHECKS}}
+{% else %}
+    INCLUDE_PROXY_CHECKS = 0
+{% endif %}
+{% if MONBOX_INCLUDE_MSG_CHECKS_RECV is defined %}
+    INCLUDE_MSG_CHECKS_RECV = {{MONBOX_INCLUDE_MSG_CHECKS_RECV}}
+{% else %}
+    INCLUDE_MSG_CHECKS_RECV = 0
+{% endif %}
+  </Active>
+  <File>
+    DB_FILE=/etc/argo-ncg/ncg.localdb
+  </File>
+  {% if MONBOX_LDAP_ADDRESS is defined %}
+  <LDAP>
+    LDAP_ADDRESS={{ MONBOX_LDAP_ADDRESS }}
+    BDII_LEVEL=top
+  </LDAP>
+  {% endif %}
+</NCG::LocalMetricsAttrs>
+
+
+<NCG::MetricConfig>
+  <POEM>
+    POEM_ROOT_URL = {{monbox_poem_url}}
+    POEM_TAG = production
+    {% if POEM_ROOT_PASSWD is defined %}
+    TOKEN={{POEM_ROOT_PASSWD}}
+    {% endif %}
+  </POEM>
+</NCG::MetricConfig>
+
+include ncg.conf.d/*.conf

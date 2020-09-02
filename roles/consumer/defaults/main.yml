@@ -1,73 +1,72 @@
 ---
+enabled_argo_repo: argo-devel
 
-tenants:
-  TenantA:
+consumer_AMS_enabled: True
+consumer_ams_configuration:
+  PublishAms: True
+  WriteAvro: True
+  ams_host: messaging-devel.argo.grnet.gr
+  ams_type_of_data: sync_data
+  ams_num_of_bulk: 100
+  PackSingleMsg: True
+
+consumer_tenants:
+  TENANTA:
     topics:
-      - "probe.metricOutput.tenantA.ngi.*"
-      - "probe.metricOutput.tenantA.roc.*"
-      - "probe.metricOutput.tenantA.opsmonitor.*"
-      - "probe.metricOutput.tenantA.project.*"
-      - "probe.metricOutput.tenantA.vo.*"
+      - "nagios.metricOutput.TENANTA.PROJECT.*"
     brokers:
-      - "broker1.example.com"
-      - "broker2.example.com"
-    outputdir: "/var/lib/argo-connectors/TenantA/"
-    jobs_all: "JOB_TenantA_ALL, JOB_TenantA_PART"
-    prefilter: "prefilter-tenantA.py"
+      - "tenant.argo.grnet.gr"
+    outputdir: "/mnt/data/argo-connectors/TENANTA/"
+    AuthenticationPoemToken: "token from poem ui"
+    AmsProject: TENANTA
+    AmsToken: TESTTOKEN 
+    jobs_all: "Critical"
+    HTTPAuth: True
+    AuthenticationUsePlainHttpAuth: True
+    AuthenticationHttpUser: tenantA
+    AuthenticationHttpPass: xxxxxx
+    cron_weight_minute: 35
+    MsgIngestion_BulkSize: 1
+    MsgIngestion_Token: TEST_TOKEN
     jobs_details:
-      - name: "JOB_TenantA_ALL"
-        Directory: "TenantA_ALL"
-        Profiles: "ALL_SERVICES"
+      - name: "Critical"
+        Directory: "Critical"
+        Profiles: "CRITICAL"
         TopoType: "GOCDB"
-        TopoFeed: "https://goc.example.com/gocdbpi/"
-        TopoFetchType: "Sites"
-        TopoSelectGroupOfEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
-        TopoSelectGroupOfGroups: "Certification:Certified, Infrastructure:Production, Scope:TenantA"
-        DowntimesFeed: "https://goc.example.com/gocdbpi/"
-      - name: "JOB_TenantA_PART"
-        Directory: "TenantA_PART"
-        Profiles: "PART_SERVICES"
-        TopoType: "GOCDB"
-        TopoFeed: "https://goc.example.com/gocdbpi/"
-        TopoFetchType: "Sites"
-        TopoSelectGroupOfEndpoints: "Production:Y, Monitored:Y, Scope:TenantA"
-        TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantA"
-        DowntimesFeed: "https://goc.example.com/gocdbpi/"
-  TenantB:
-    topics:
-      - "probe.*"
-    brokers:
-      - "broker3.example.com"
-    outputdir: "/var/lib/argo-connectors/TenantB/"
-    jobs_all: "JOB_TenantB_SERVICES"
-    jobs_details:
-      - name: "JOB_TenantB_SERVICES"
-        Directory: "SERVICES"
-        Profiles: "My_Critical_Services"
-        TopoType: "GOCDB"
-        TopoFeed: "https://goc.example.com/gocdbpi/"
+        TopoFeed: "https://dp.eudat.eu/gocdbpi/"
+        TopoFeedPaging: False
         TopoFetchType: "ServiceGroups"
-        TopoSelectGroupOfEndpoints: "Production:Y, Monitored:Y, Scope:TenantB"
-        TopoSelectGroupOfGroups: "Certification:Candidate, Infrastructure:Production, Scope:TenantB"
-        DowntimesFeed: "https://goc.example.com/gocdbpi/"
+        TopoSelectGroupOfEndpoints: "Monitored:Y"
+        TopoSelectGroupOfGroups: 
+        DowntimesFeed: "https://dp.eudat.eu/gocdbpi/"
 
-poem_servers:
-  - host: "poemA.example.com"
+consumer_poem_servers:
+  - host: "tenanta.argo.grnet.gr"
     vos:
       - ops
-      - gridpp
-  - host: "poemB.example.com"
+  - host: "poem-eudat.argo.grnet.gr"
     vos:
       - ops
+      
+consumer_tenants_delete: []
 
-poem_fetch_profiles:
-  - profile_1
-  - profile_2
+consumer_poem_fetch_profiles:
+  - CH.CERN.SAM.ARGO_MON
+  - CH.CERN.SAM.ARGO_MON_OPERATORS
+  - CH.CERN.SAM.ARGO_MON_CRITICAL
+  - CH.CERN.SAM.OPS_MONITOR
+  - CH.CERN.SAM.OPS_MONITOR_CRITICAL
+  - EU.EUDAT.ARGO.CRITICAL
+  - HR.CRO-NGI.TEST.CRITICAL_VISEEM
+  - EU.SDC.ARGO.CRITICAL_SDC
 
-mongo_host_or_ip: "127.0.0.1"
-mongo_port_number: "27017"
-argo_compute_mode: "local"
-prefilter_clean_bool: "false"
-argo_sync_conf_path: "/etc/argo-egi-connectors"
-argo_sync_path: "/var/lib/argo-connectors"
-argo_exec_path: "/usr/libexec/argo-egi-connectors"
+consumer_data_path: "/mnt/data/"
+consumer_cron_status: "false" #needed for cron jobs
+consumer_path: /mnt/data/argo-egi-consumer
+consumer_argo_sync_path: "/mnt/data/argo-connectors"
+
+#Data for ingestion 
+#consumer_WriteMsgFile: True
+#consumer_WriteMsgIngestion: True
+#consumer_MsgIngestion_Host: ingestion-devel.argo.grnet.gr
+#consumer_MsgIngestion_Token: 064ba43b5c8b8d52266b57ead1859786394c6aa7

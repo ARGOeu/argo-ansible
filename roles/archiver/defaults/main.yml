@@ -1,0 +1,9 @@
+---
+
+archiver_config: /etc/argo-ams-consumer/
+archiver_avro_schema: /etc/argo-ams-consumer/metric_data.avsc
+archiver_daemon_component: /usr/bin/ams-consumerd
+archiver_service_unit_files: /usr/lib/systemd/system/
+archiver_pid_files: /var/run/argo-ams-consumer/
+archiver_log_files: /var/log/argo-ams-consumer/
+archiver_daily_log_files: /var/lib/

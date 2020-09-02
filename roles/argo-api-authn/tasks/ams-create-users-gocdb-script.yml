@@ -1,0 +1,26 @@
+---
+# set up the script that creates users to both ams and authn, imported from gocdb
+
+
+- name: "template configuration for ams-create-users-gocdb script"
+  template:
+    src: ams-create-users-gocdb.cfg.j2
+    dest: "{{ service_configuration_folder }}/ams-create-users-gocdb.cfg"
+  tags: authn_gocdb_script_install
+
+- name: change permissions for ams-create-users-gocdb.cfg
+  file:
+    path: "{{ service_configuration_folder }}/ams-create-users-gocdb.cfg"
+    owner: argo-api-authn
+    group: argo-api-authn
+    mode: 0644
+  tags: authn_gocdb_script_install
+
+- name: "set up cron for ams-create-users-gocdb"
+  cron:
+    cron_file: ams-create-users-gocdb
+    name: "set up cron for ams-create-users-gocdb"
+    user: argo-api-authn
+    special_time: hourly
+    job: "{{ virtual_env_installation }}/authn-env/bin/python {{ virtual_env_installation }}/authn-env/bin/ams-create-users-gocdb.py -v"
+  tags: authn_gocdb_script_install

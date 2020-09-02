@@ -1,0 +1,43 @@
+---
+# tasks file for zookeeper
+
+- name: install JDK 1.8
+  yum: name=java-1.8.0-openjdk state=present
+  tags: zookeeper_install
+
+- name: install zktop
+  pip:
+    name: zktop
+  tags: zookeeper_install
+
+- name: install zookeeper
+  yum:
+    name: ['zookeeper', 'zookeeper-server']
+    state: present
+    enablerepo: cloudera-cdh5
+  tags: zookeeper_install
+
+- name: configure zookeeper
+  template: src=zoo.cfg.j2 dest=/etc/zookeeper/conf/zoo.cfg
+            owner=zookeeper group=zookeeper backup=yes
+  notify: restart zookeeper
+  tags: zookeeper_install
+
+- name: set myid
+  shell: sudo su -s /bin/bash zookeeper -c " zookeeper-server-initialize  --force --myid={{ private.id }}"
+  tags: zookeeper_install
+
+- name: Zookeeper init.d script
+  template: src=zookeeper-server.j2 dest=/etc/rc.d/init.d/zookeeper-server
+            owner=root group=root backup=yes
+  notify: restart zookeeper
+  tags: zookeeper_install_initd_script
+
+- name: Run daemon-reload
+  systemd:
+    daemon-reload: true
+  tags: zookeeper_install_initd_script
+
+- name: start zookeeper service
+  service: name=zookeeper-server state=started enabled=yes
+  tags: zookeeper_install

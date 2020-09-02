@@ -1,0 +1,28 @@
+---
+
+- name: Install rsyslog gnutls
+  yum:
+   name: rsyslog-gnutls
+   state: present
+  tags: rsyslog_conf
+
+- name: Rsyslog conf file
+  template:
+    src=rsyslog.conf.j2
+    dest=/etc/rsyslog.conf backup=no
+    owner=root group=root mode=0644
+  tags: rsyslog_conf
+
+- name: Rsyslog remote conf file
+  template:
+    src=50_client_remote.conf.j2
+    dest=/etc/rsyslog.d/50_client_remote.conf backup=no
+    owner=root group=root mode=0644
+  tags: rsyslog_conf
+
+- name: Restart the rsyslog service
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+  tags: rsyslog_conf

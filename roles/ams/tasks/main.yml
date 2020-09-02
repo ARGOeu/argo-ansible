@@ -1,0 +1,4 @@
+---
+# tasks file for ams
+
+- include: '{{task}}.yml'

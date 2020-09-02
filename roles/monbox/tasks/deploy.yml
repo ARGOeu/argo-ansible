@@ -1,0 +1,41 @@
+---
+
+- name: update cache
+  shell: yum -y makecache
+
+- name: Install Nagios
+  yum: name=nagios state=latest disablerepo=epel
+  tags:
+    - monbox_install
+
+- name: Install pnp4nagios
+  yum: name=pnp4nagios state=latest
+  tags:
+    - monbox_install
+
+- name: Install fetch-crl
+  yum: name=fetch-crl state=latest
+  when: ca_bundle
+  tags:
+    - monbox_install
+
+- name: Install NCG and MSG conponents
+  yum: name={{ item.name }} state=latest enablerepo={{ item.repo }}
+  with_items: '{{monbox_nagios_components | default([]) }}'
+  tags:
+    - monbox_install
+    - monbox_install_components
+
+- name: Install Nagios plugins
+  yum: name={{ item }} state=latest
+  with_items: '{{monbox_nagios_plugins | default([]) }}'
+  tags:
+    - monbox_install
+    - monbox_install_nagios_plugins
+
+- name: Install Epel plugins
+  yum: name={{item}} state=latest
+  with_items: '{{monbox_install_nagios_plugins_epel | default([]) }}'
+  tags:
+    - monbox_install
+    - monbox_install_nagios_plugins_epel

@@ -1,0 +1,51 @@
+[DEFAULT]
+SchemaDir = /etc/argo-egi-connectors/schemas/
+EGIDir = {{consumer_argo_sync_path}}/EGI
+
+
+{% if consumer_AMS_enabled %}
+[General]
+PublishAms = {{consumer_ams_configuration.PublishAms}}
+WriteAvro = {{consumer_ams_configuration.WriteAvro}}
+
+[AMS]
+Host = {{consumer_ams_configuration.ams_host}}
+Topic = {{consumer_ams_configuration.ams_type_of_data}}
+Bulk = {{consumer_ams_configuration.ams_num_of_bulk}}
+PackSingleMsg = {{consumer_ams_configuration.PackSingleMsg}}
+{% endif %}
+
+[Authentication]
+VerifyServerCert = False
+CAPath = /etc/grid-security/certificates
+CAFile = /etc/pki/tls/certs/ca-bundle.crt
+HostKey = /etc/grid-security/hostkey.pem
+HostCert = /etc/grid-security/hostcert.pem
+UsePlainHttpAuth = False
+HttpUser = xxxx
+HttpPass = xxxx
+
+[Connection]
+Timeout = 180
+Retry = 3
+SleepRetry = 60
+
+[AvroSchemas]
+Downtimes = %(SchemaDir)s/downtimes.avsc
+Poem = %(SchemaDir)s/metric_profiles.avsc
+Prefilter = %(SchemaDir)s/metric_data.avsc
+TopologyGroupOfEndpoints = %(SchemaDir)s/group_endpoints.avsc
+TopologyGroupOfGroups = %(SchemaDir)s/group_groups.avsc
+Weights = %(SchemaDir)s/weight_sites.avsc
+
+
+[Output]
+Downtimes = downtimes_DATE.avro
+Poem = poem_sync_DATE.avro
+TopologyGroupOfEndpoints = group_endpoints_DATE.avro
+TopologyGroupOfGroups = group_groups_DATE.avro
+Weights = weights_DATE.avro
+
+[InputState]
+SaveDir = {{consumer_data_path}}argo-connectors/states/
+Days = 3

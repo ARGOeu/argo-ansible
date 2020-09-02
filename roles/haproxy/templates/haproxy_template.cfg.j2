@@ -1,0 +1,126 @@
+#---------------------------------------------------------------------
+# Example configuration for a possible web application.  See the
+# full configuration options online.
+#
+#   http://haproxy.1wt.eu/download/1.4/doc/configuration.txt
+#
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+# Global settings
+#---------------------------------------------------------------------
+global
+    # to have these messages end up in /var/log/haproxy.log you will
+    # need to:
+    #
+    # 1) configure syslog to accept network log events.  This is done
+    #    by adding the '-r' option to the SYSLOGD_OPTIONS in
+    #    /etc/sysconfig/syslog
+    #
+    # 2) configure local2 events to go to the /var/log/haproxy.log
+    #   file. A line like the following can be added to
+    #   /etc/sysconfig/syslog
+    #
+    #    local2.*                       /var/log/haproxy.log
+    #
+    log         127.0.0.1 local2
+
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     10000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+# SSL global configuration
+
+    # LS config
+
+    ssl-default-server-options no-tls-tickets
+    ssl-default-bind-options no-sslv3
+
+	## Disabling Session Tickets Although disabling session tickets will undoubtedly have a negative performance impact, for the moment being you will need to do that in order to provide forward secrecy
+
+    tune.ssl.default-dh-param 2048
+    ssl-server-verify none
+
+    # ssl ciphers first test
+    ssl-default-bind-ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH
+
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+	option 					log-health-checks
+    option 					http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+
+    retries		    {{haproxy_retries}}
+    timeout http-request    {{haproxy_timeout_http_request}}
+    timeout queue           {{haproxy_timeout_queue}}
+    timeout connect         {{haproxy_timeout_connect}}
+    timeout client          {{haproxy_timeout_client}}
+    timeout server          {{haproxy_timeout_server}}
+    timeout http-keep-alive {{haproxy_timeout_http_keep_alive}}
+    timeout check           {{haproxy_timeout_check}}
+    maxconn                 {{haproxy_maxconn}}
+
+
+# Statistics Interface Setup
+
+listen stats
+        bind :::9000 ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
+        mode            http
+        log             global
+        maxconn 10
+        timeout client 10s
+        timeout server 10s
+        timeout connect 10s
+        timeout queue 10s
+        stats enable
+        stats hide-version
+        stats refresh 10s
+        stats show-node
+        stats auth {{haproxy_stats_username}}:{{haproxy_stats_password}}
+        stats uri  /haproxy?stats
+
+#---------------------------------------------------------------------
+# main frontend which proxys to the backends
+#---------------------------------------------------------------------
+
+
+#frontend
+frontend  {{haproxy_frontend}}
+   bind :::{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
+   bind :::{{haproxy_port_bind}}
+   redirect scheme https if !{ ssl_fc }
+   http-response set-header Strict-Transport-Security max-age=31536000
+   option http-server-close
+   option forwardfor
+   reqadd X-Forwarded-Proto:\ https
+   reqadd X-Forwarded-Port:\ 443
+
+#---------------------------------------------------------------------
+# round robin balancing between the various msg backends
+#---------------------------------------------------------------------
+
+default_backend {{haproxy_default_backend}}
+
+{% for backend in haproxy_backends %}
+backend {{backend.name}}
+ balance {{backend.algorithm}}
+    {%for server in backend.servers %}
+    server {{server.name}} {{server.host}} {{server.opts}}
+    {% endfor %}
+
+{% endfor %}

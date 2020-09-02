@@ -1,20 +1,59 @@
 ---
+# tasks file for poem
 
-- name: Install CAs metapackage
-  yum: name=ca-policy-egi-core state=latest
-  tags: install_ca_bundle
+- name: yum-clean-metadata
+  command: yum clean metadata
+  args:
+    warn: false
 
 - name: Install poem package from argo repository
-  yum: name=poem state=latest enablerepo={{ enabled_argo_repo }}
+  yum: name=poem state=latest enablerepo={{ repo_enabled_argo }}  update_cache=yes
+  tags: install_poem
 
 - name: Create poem.ini file
+  tags: install_poem_conf
   template: src=poem.ini.j2
-            dest=/etc/poem/poem.ini backup=yes
+            dest=/etc/poem/poem.conf backup=yes
             owner=root group=root mode=0644
 
-- name: Run db creation script
-  shell: poem-createdb creates={{ db_path }}
+- name: check secret_key
+  stat: path=/etc/poem/secret_key
+  tags: poem_secret_key
+  register: poem_secret_key
 
-- name: Start and enable httpd service
-  service: name=httpd state=started enabled=yes
+- name: create secret_key
+  command: poem-genseckey -f /etc/poem/secret_key
+  tags: poem_secret_key
+  when: poem_secret_key.stat.islnk is not defined
 
+- name: fetch the secret_key
+  fetch:
+    src: /etc/poem/secret_key
+    dest: ./private_files/{{inventory_hostname}}/secret_key
+    flat: true
+  tags: poem_secret_key
+
+- name: copy secret_key
+  tags: poem_secret_key
+  copy: src=private_files/{{inventory_hostname}}/secret_key
+        dest=/etc/poem/secret_key
+  when: poem_secret_key.stat.islnk is  defined
+
+- name: check path of db
+  stat:
+    path: /var/lib/poem/poemserv.db
+  register: sym_db
+
+- name: create poem db
+  command: poem-db -c
+  tags: poem_create_db
+  when: sym_db.stat.islnk is not defined
+
+- name: copy DigiCertCA
+  tags: poem_digicert
+  copy: src=private_files/{{inventory_hostname}}/DigiCertCA.crt
+        dest={{cert_dir}}/DigiCertCA.crt
+
+- name: update aai metadata
+  tags: poem_aai_metadata
+  get_url: url={{poem_AAI_metadata}} dest="/etc/poem/metadata-checkin.xml" force="yes"

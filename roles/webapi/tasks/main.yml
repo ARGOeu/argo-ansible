@@ -1,16 +1,2 @@
 ---
-
-- name: Install argo-web-api package
-  yum: name=argo-web-api state=latest enablerepo={{ enabled_argo_repo }}
-  notify: restart argo-web-api service
-  tags: api
-
-- name: Configure argo-web-api
-  template: src=argo-web-api.conf.j2
-            dest=/etc/argo-web-api.conf backup=yes
-            owner=root group=root mode=0644
-  notify: restart argo-web-api service
-
-- name: Start web api service
-  service: name=argo-web-api state=started
-  tags: api
+- include: '{{task}}.yml'

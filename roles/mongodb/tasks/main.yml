@@ -1,34 +1,96 @@
 ---
+# tasks file for mongodb
 
 - name: Install mongoDB packages
   tags: mongoDB-packages
-  yum: name={{ item }} state=present
-  with_items:
-    - mongodb-org-3.0.7
-    - mongodb-org-server-3.0.7
+  yum:
+    name: "{{ item }}"
+    state: present
+    enablerepo: "{{ mongo_repo }}"
+  loop:
+    - mongodb-org
+    - mongodb-org-server
+    - git
+    
+- name: install motop
+  pip:
+    name: git+https://github.com/tart/motop.git
 
-- name: Bind mongod processes to one or more interfaces
-  lineinfile: >
-              dest=/etc/mongod.conf
-              regexp="\ \ bindIp"
-              line='  bindIp: {{ mongo_bind_interfaces }}'
-              state=present
-              backup=yes
+- name: create mongo replicated folder
+  file:
+    path: /var/lib/mongo_repl
+    state: directory
+    owner: mongod
+    group: mongod
+  tags:
+    - mongo_install
+  notify: restart mongo
+  when: mongo_replicated == true
+
+- name: configure mongo
+  template: dest="/etc/mongod.conf" owner=mongod group=mongod mode=640 src=mongod.conf.j2
+  tags:
+    - mongo_install
   notify: restart mongo
 
-- name: Fix issue with mongo init script
-  lineinfile: >
-              dest=/etc/mongod.conf
-              regexp="\ \ pidFilePath"
-              line='  pidFilePath: /var/run/mongodb/mongod.pid'
-              state=present
-              backup=yes
-  notify: restart mongo
+
 
 - name: Increase soft nproc limits
-  copy: src=etc/security/limits.d/99-mongodb-nproc.conf
-        dest=/etc/security/limits.d/99-mongodb-nproc.conf backup=no
-        owner=root group=root mode=0644
+  copy:
+    src: etc/security/limits.d/99-mongodb-nproc.conf
+    dest: /etc/security/limits.d/99-mongodb-nproc.conf
+    backup: false
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mongo
 
 - name: Enable and start mongoDB
-  service: name=mongod enabled=yes state=started
+  service:
+    name: mongod
+    enabled: true
+    state: started
+
+- name: Move init replication script
+  template: dest="/tmp/db_init_rs.js" owner=root group=root mode=640 src=db_init_rs.js.j2
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Run init roles script
+  shell: mongo < /tmp/db_init_rs.js
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Move rs add members script
+  template: dest="/tmp/db_rs_members.js" owner=root group=root mode=640 src=db_rs_members.js.j2
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Run rs add members script
+  shell: mongo < /tmp/db_rs_members.js
+  tags:
+    - mongo_replication
+  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+
+- name: Transfer mongo rotate bash script
+  copy:
+    src: root/mongo_rotate.sh
+    dest: /root/mongo_rotate.sh
+    backup: false
+    owner: root
+    group: root
+    mode: 0744
+  when: mongo_log_rotate == true
+
+- name: Create mongo rotate cron in /etc/cron.d
+  cron:
+    name: mongo rotate
+    minute: 50
+    hour: 23
+    user: root
+    job: "/root/mongo_rotate.sh"
+    cron_file: mongo_rotate
+  when: mongo_log_rotate == true

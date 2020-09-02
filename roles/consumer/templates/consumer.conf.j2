@@ -21,7 +21,7 @@ Server{{ loop.index }} = {{ broker }}:6163
 {% endif %}
 
 [MsgRetention]
-PastDaysOk = 1
+PastDaysOk = 3
 FutureDaysOk = 1
 
 [Authentication]
@@ -36,6 +36,6 @@ ReconnectAttempts = 10
 UseSSL = False
 
 [Output]
-Directory = /var/lib/argo-{{ item.key | lower }}-consumer
+Directory = {{consumer_data_path}}argo-{{ item.key | lower }}-consumer
 Filename = argo-consumer_log_DATE.avro
 ErrorFilename = argo-consumer_error_log_DATE.avro

@@ -1,0 +1,57 @@
+---
+
+- name: Move init roles script
+  template: dest="/tmp/db_init_roles.js" owner=root group=root mode=640 src=db_init_roles.js.j2
+  tags:
+    - ams_install
+    - init_db
+    - init_roles
+
+- name: Run init roles script
+  shell: mongo < /tmp/db_init_roles.js
+  tags:
+    - ams_install
+    - init_db
+    - init_roles
+
+- name: Move init projects script
+  template: dest="/tmp/db_init_projects.js" owner=root group=root mode=640 src=db_init_projects.js.j2
+  tags:
+    - ams_install
+    - init_db
+    - init_projects
+
+- name: Run init projects script
+  shell: mongo < /tmp/db_init_projects.js
+  tags:
+    - ams_install
+    - init_db
+    - init_projects
+
+- name: Move init users script
+  template: dest="/tmp/db_init_users.js" owner=root group=root mode=640 src=db_init_users.js.j2
+  tags:
+    - ams_install
+    - init_db
+    - init_projects
+
+- name: Run init users script
+  shell: mongo < /tmp/db_init_users.js
+  tags:
+    - ams_install
+    - init_db
+    - init_projects
+
+- name: Move init push worker script
+  template: dest="/tmp/db_init_pushworker.js" owner=root group=root mode=640 src=db_init_pushworker.js.j2
+  tags:
+    - ams_install
+    - init_db
+    - init_push_worker
+
+- name: Run init push worker script
+  shell: mongo < /tmp/db_init_pushworker.js
+  tags:
+    - ams_install
+    - init_db
+    - init_push_worker
