@@ -145,6 +145,8 @@ SSLCertificateKeyFile {{ cert_key_path }}
 #   certificate for convinience.
 {% if inventory_hostname in groups['poem'] %}
 SSLCertificateChainFile {{ cert_dir }}/DigiCertCA.crt
+{% elif inventory_hostname in groups['swagger'] %}
+SSLCertificateChainFile {{ cert_dir }}/chain-aai.pem
 {% endif %}
 
 #   Certificate Authority (CA):
@@ -250,7 +252,6 @@ SSLVerifyDepth  5
 SetEnvIf User-Agent ".*MSIE.*" \
          nokeepalive ssl-unclean-shutdown \
          downgrade-1.0 force-response-1.0
-{% elif inventory_hostname in groups['poem'] %}
 {% elif inventory_hostname in groups['poem'] %}
 BrowserMatch "MSIE [2-5]" \
          nokeepalive ssl-unclean-shutdown \
