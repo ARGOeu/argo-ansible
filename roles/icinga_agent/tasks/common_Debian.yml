@@ -62,6 +62,11 @@
     update_cache: yes
 
 
+- name: Get check_mem.pl external probe
+  get_url:
+    url: https://raw.githubusercontent.com/ARGOeu/argo-external-tools/master/src/check_mem.pl
+    dest: /usr/lib/nagios/plugins
+    mode: 0755
 
 
 - name: Configuration Syntax Highlighting using Vim.

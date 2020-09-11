@@ -36,6 +36,10 @@
     state: latest
 
 
+- name: Install Argo External Plugins.
+  yum:
+    name: argo-external-tools
+    state: latest
 
 
 - name: Install Icinga 2 SELinux policy and some utils.
