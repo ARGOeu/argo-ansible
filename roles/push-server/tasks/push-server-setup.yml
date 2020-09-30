@@ -28,8 +28,8 @@
   notify: restart ams-push-server
 
 - name: Copy CA file
-  copy: src=private_files/{{ inventory_hostname }}/DigiCertCA.crt
-        dest=/var/www/ams-push-server/cas/DigiCertCA.pem
+  copy: src=private_files/{{ inventory_hostname }}/CA.crt
+        dest=/var/www/ams-push-server/cas/CA.pem
         backup=yes
         owner=ams-push-server group=ams-push-server mode=0644
   tags: push_install
