@@ -1,0 +1,14 @@
+---
+
+- name:  Update ams-push-server package
+  yum:
+    name: ams-push-server
+    state: latest
+    enablerepo: "{{ repo_enabled_argo }}"
+    update_cache: true
+  tags: ams_push_server_update
+
+- name: Reload the systemd daemon
+  systemd:
+    daemon_reload: yes
+  tags: ams_push_server_update
