@@ -12,3 +12,9 @@
   systemd:
     daemon_reload: yes
   tags: ams_push_server_update
+
+- name: restart ams-push-server
+  service:
+    name: ams-push-server
+    state: restarted
+  tags: ams_push_server_update
