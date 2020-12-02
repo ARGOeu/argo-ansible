@@ -1,0 +1,24 @@
+<VirtualHost *:443>
+    ServerName {{httpd.server}}
+
+    SSLEngine on
+    SSLCertificateFile {{cert_dir}}/{{httpd.cert}}
+    SSLCertificateKeyFile {{cert_dir}}/{{httpd.key}}
+    {% if httpd.chain is defined %}
+    SSLCertificateChainFile {{cert_dir}}/{{httpd.chain}}
+    {% endif %}
+
+    {% if httpd.rev_proxy is defined %}
+    ProxyPass / http://{{httpd.rev_proxy.ip}}:{{httpd.rev_proxy.port}}/
+    ProxyPassReverse / http://{{httpd.rev_proxy.ip}}:{{httpd.rev_proxy.port}}/  
+    {% endif %}
+
+    {% if httpd.file_extend is defined %}
+    {% include httpd.file_extend %}
+    {% endif %}
+    
+    {% if httpd.static_dir is defined %}
+    DocumentRoot {{httpd.static_dir}}
+    {% endif %}
+
+</VirtualHost>

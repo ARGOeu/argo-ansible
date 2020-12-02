@@ -1,0 +1,13 @@
+---
+
+- name: create backup directory
+  file:
+    path: "{{ backup_dir }}/httpd_{{ansible_date_time.date}}"
+    state: directory
+    mode: 0755
+
+- name: copy httpd folder to backup directory
+  copy:
+    src: "/etc/httpd/"
+    dest: "{{ backup_dir }}/httpd_{{ansible_date_time.date}}/"
+    remote_src: yes

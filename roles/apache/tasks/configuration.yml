@@ -1,0 +1,29 @@
+---
+
+- name: Add httpd configuration file
+  copy:
+    src: httpd.conf
+    dest: /etc/httpd/conf/httpd.conf
+    mode: 644
+
+- name: Add ssl configuration file
+  copy:
+    src: ssl.conf
+    dest: /etc/httpd/conf.d/ssl.conf
+    mode: 644
+
+- name: Add strong_ssl configuration file
+  copy:
+    src: strong_ssl.conf
+    dest: /etc/httpd/conf.d/strong_ssl.conf
+    mode: 644
+
+- name: Configure Virtualhost
+  template:
+    src: virtualhost.j2
+    dest: /etc/httpd/conf.d/{{ vhost_name }}-host.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart httpd

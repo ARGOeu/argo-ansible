@@ -1,0 +1,18 @@
+---
+# tasks file for apache role
+
+- name: Backup apache directory
+  include: backup.yml
+
+- name: Install apache and mod_ssl
+  include: install.yml
+
+- name: Clean apache folders
+  include: clean_install.yml
+  when: clean_install is defined
+
+- name: Set ssl certificates
+  include: ssl.yml
+
+- name: Set up configuration files
+  include: configuration.yml

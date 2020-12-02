@@ -1,0 +1,7 @@
+- name: install httpd
+  yum:
+    name:
+      - httpd
+      - mod_ssl
+    state: latest
+  tags: apache

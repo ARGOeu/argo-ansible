@@ -1,0 +1,5 @@
+---
+# defaults file for apache
+
+backup_dir: /var/apache_backup
+cert_dir: /etc/certs
