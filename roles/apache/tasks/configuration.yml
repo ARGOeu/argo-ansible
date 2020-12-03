@@ -24,7 +24,7 @@
 - name: Configure Virtualhost
   template:
     src: virtualhost.j2
-    dest: /etc/httpd/conf.d/{{ vhost_name }}-host.conf
+    dest: /etc/httpd/conf.d/{{ httpd.vhost_name }}-host.conf
     owner: root
     group: root
     mode: 0644

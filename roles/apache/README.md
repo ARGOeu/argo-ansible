@@ -16,8 +16,9 @@ Defaults:
 - `backup_dir`: '/var/apache_backup
 
 Required host variables:
-- `vhost_name`: name # filename for the virtualhost file
+
 - `httpd`:
+  - `vhost_name`: name # filename for the virtualhost file
   - `chain`: chain ca certifiace filename 
   - `cert`: certifiace filename
   - `key`: certifiace key filename
@@ -30,9 +31,9 @@ Required host variables:
 
 example.com host_var
 ```yaml
-vhost_name: example
 cert_dir: /etc/certs
 httpd:
+  vhost_name: example
   chain: chain-ca.crt
   cert: example.argo.grnet.gr.pem
   key: example.argo.grnet.gr.key
