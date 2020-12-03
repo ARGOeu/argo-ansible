@@ -8,15 +8,15 @@
     SSLCertificateChainFile {{cert_dir}}/{{httpd.chain}}
     {% endif %}
 
+    {% if httpd.extra_conf is defined %}
+    {{httpd.extra_conf}}
+    {% endif %}
+
     {% if httpd.rev_proxy is defined %}
     ProxyPass / http://{{httpd.rev_proxy.ip}}:{{httpd.rev_proxy.port}}/
     ProxyPassReverse / http://{{httpd.rev_proxy.ip}}:{{httpd.rev_proxy.port}}/  
     {% endif %}
 
-    {% if httpd.file_extend is defined %}
-    {% include httpd.file_extend %}
-    {% endif %}
-    
     {% if httpd.static_dir is defined %}
     DocumentRoot {{httpd.static_dir}}
     {% endif %}

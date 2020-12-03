@@ -5,18 +5,21 @@
     src: httpd.conf
     dest: /etc/httpd/conf/httpd.conf
     mode: 644
+    backup: yes
 
 - name: Add ssl configuration file
   copy:
     src: ssl.conf
     dest: /etc/httpd/conf.d/ssl.conf
     mode: 644
+    backup: yes
 
 - name: Add strong_ssl configuration file
   copy:
     src: strong_ssl.conf
     dest: /etc/httpd/conf.d/strong_ssl.conf
     mode: 644
+    backup: yes
 
 - name: Configure Virtualhost
   template:
@@ -25,5 +28,6 @@
     owner: root
     group: root
     mode: 0644
+    backup: yes
   notify:
     - restart httpd
