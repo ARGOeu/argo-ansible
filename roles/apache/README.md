@@ -27,7 +27,7 @@ Required host variables:
     - `ip`: service ip
     - `port`: service port
   - `static_dir`: directory path # OPTIONAL if apache serves static files
-  - `file_extend`: file path # OPTIONAL if virtualhost uses additional custom directives
+  - `extra_conf`: extra apache directives # OPTIONAL if virtualhost uses additional custom directives
 
 example.com host_var
 ```yaml
@@ -39,7 +39,9 @@ httpd:
   key: example.argo.grnet.gr.key
   server: example.argo.grnet.gr
   static_dir: /var/www/html/example/
-  file_extend: private_files/example.argo.grnet.gr/virtualhost_directives.conf
+  extra_conf: |
+    RequestHeader set X-Forwarded-Proto "https"
+    RequestHeader set X-Forwarded-Port "443"
 
 ```
 
