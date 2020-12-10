@@ -1,13 +1,20 @@
 ---
 
+- name: Ansible check /etc/httpd exists
+  stat:
+    path: /etc/httpd
+  register: httpd_folder
+
 - name: create backup directory
   file:
     path: "{{ backup_dir }}/httpd_{{ansible_date_time.iso8601_basic_short}}"
     state: directory
     mode: 0755
+  when: httpd_folder.stat.exists and httpd_folder.stat.isdir
 
 - name: copy httpd folder to backup directory
   copy:
     src: "/etc/httpd/"
     dest: "{{ backup_dir }}/httpd_{{ansible_date_time.iso8601_basic_short}}/"
     remote_src: yes
+  when: httpd_folder.stat.exists and httpd_folder.stat.isdir
