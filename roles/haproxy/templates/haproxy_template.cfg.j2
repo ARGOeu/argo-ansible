@@ -109,7 +109,7 @@ frontend  {{haproxy_frontend}}
    option forwardfor
    reqadd X-Forwarded-Proto:\ https
    reqadd X-Forwarded-Port:\ 443
-
+   timeout http-request {{haproxy_timeout_http_request_frontend}}
 #---------------------------------------------------------------------
 # round robin balancing between the various msg backends
 #---------------------------------------------------------------------

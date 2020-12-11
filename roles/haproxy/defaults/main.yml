@@ -2,7 +2,8 @@
 # defaults file for haproxy
 
 haproxy_retries: 3
-haproxy_timeout_http_request: 5000
+haproxy_timeout_http_request: 10s
+haproxy_timeout_http_request_frontend: 10s
 haproxy_timeout_queue: 5000
 haproxy_timeout_connect: 5000
 haproxy_timeout_client: 10000
