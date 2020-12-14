@@ -1,10 +1,9 @@
-{%- for host in groups[cluster_group] -%}
+{% for host in groups[cluster_group] %}
 
-
-;
-
+{% if hostvars[host]['is_arbiter'] is defined %}
+rs.addArb("{{hostvars[host]['private']['hostname']}}:27017")
+{% else %}
 rs.add("{{hostvars[host]['private']['hostname']}}:27017")
+{% endif %}
 
-
-
-{%- endfor -%}
+{% endfor %}
