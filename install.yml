@@ -62,6 +62,12 @@
   roles:
     - { role: push-server, task: push-server-setup, tags: push_install }
 
+- hosts: mongo_private_cluster
+  become: yes
+  roles:
+    - { role: private_hosts }
+    - { role: mongodb }
+
 - hosts: authn
   become: yes
   roles:

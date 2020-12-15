@@ -2,7 +2,7 @@
 # defaults file for commons
 
 # sshd config path
-sshd_config_path: /etc/ssh/sshd_config 
+sshd_config_path: /etc/ssh/sshd_config
 
 # firewall default vars
 firewall_private_interfaces: []
@@ -18,7 +18,9 @@ cert_path: /etc/grid-security/hostcert.pem
 cert_key_path: /etc/grid-security/hostkey.pem
 ca_path: /etc/pki/tls/certs/
 ca_path_bundle: /etc/pki/tls/certs/ca-bundle.crt
-
+# create the cert dir and move the cert and key
+# can be set to false if no cert/key is needed
+requires_cert: true
 
 # defaults for role repos
 repo_enabled_argo: argo-devel  # from which repo to get the packages (argo-devel or argo-prod)
