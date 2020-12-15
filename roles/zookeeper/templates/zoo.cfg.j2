@@ -31,5 +31,9 @@ dataLogDir={{zookeeper_data_logDir}}
 
 
 {% for host in groups[cluster_group] %}
+{% if hostvars[host]['is_zoo_host'] is defined %}
+{% if hostvars[host]['is_zoo_host'] == 'True' %}
 server.{{hostvars[host]['private']['id']}}={% if hostvars[host]['private']['ip'] is defined %}{{ hostvars[host]['private']['ip'] }}{% else %}{{ hostvars[host].ansible_default_ipv4.address }}{% endif %}:{{zookeeper_leaderPort}}:{{zookeeper_electionPort}}
+{% endif %}
+{% endif %}
 {% endfor %}
