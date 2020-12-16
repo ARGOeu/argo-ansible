@@ -2,11 +2,3 @@
 # defaults file for apache
 
 backup_dir: /var/apache_backup
-cert_dir: /etc/certs
-httpd:
-  vhost_name: virtualhost
-  chain: chain.crt
-  cert: "{{inventory_hostname}}.pem"
-  key: "{{inventory_hostname}}.key"
-  server: "{{inventory_hostname}}"
-  static_dir: /var/www/html/

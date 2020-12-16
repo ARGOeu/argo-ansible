@@ -21,13 +21,22 @@
     mode: 644
     backup: yes
 
+- name: Check if chain file exists
+  delegate_to: localhost
+  stat:
+    path: private_files/{{ inventory_hostname }}/chain-{{ inventory_hostname }}.pem
+  register: chain_file
+
 - name: Configure Virtualhost
   template:
     src: virtualhost.j2
-    dest: /etc/httpd/conf.d/{{ httpd.vhost_name }}-host.conf
+    dest: /etc/httpd/conf.d/{{ inventory_hostname }}-host.conf
     owner: root
     group: root
     mode: 0644
     backup: yes
+    force: yes
+  vars:
+    is_chain_file: chain_file.stat.exists | bool
   notify:
     - restart httpd

@@ -139,4 +139,5 @@
 - hosts: apache
   become: yes
   roles:
+    - { role: commons, task: cert, tags: apache_install }
     - { role: apache, tags: apache_install }
