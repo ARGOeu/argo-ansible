@@ -5,5 +5,5 @@
 mongo_bind_interfaces: 127.0.0.1
 mongo_replicated: false
 mongo_log_rotate: false
-
+is_mongo_host: false
 mongo_repo: mongodb-org-3.2

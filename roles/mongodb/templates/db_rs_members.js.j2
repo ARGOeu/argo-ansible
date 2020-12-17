@@ -1,9 +1,23 @@
 {% for host in groups[cluster_group] %}
 
+{% if hostvars[host]['is_mongo_host'] is defined  %}
+
+{% if hostvars[host]['is_mongo_host'] == 'True'  %}
+
 {% if hostvars[host]['is_arbiter'] is defined %}
+
+{% if hostvars[host]['is_arbiter'] == 'True' %}
 rs.addArb("{{hostvars[host]['private']['hostname']}}:27017")
-{% else %}
+{% else  %}
 rs.add("{{hostvars[host]['private']['hostname']}}:27017")
+{% endif %}
+
+{% else  %}
+rs.add("{{hostvars[host]['private']['hostname']}}:27017")
+{% endif %}
+
+{% endif %}
+
 {% endif %}
 
 {% endfor %}

@@ -10,3 +10,4 @@ zookeeper_data_logDir: /var/lib/zookeeper
 zookeeper_clientPort: 2181
 zookeeper_leaderPort: 2888
 zookeeper_electionPort: 3888
+is_zoo_host: false
