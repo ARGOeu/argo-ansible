@@ -22,8 +22,9 @@
     backup: yes
 
 - name: Check if chain file exists
-  delegate_to: localhost
-  stat:
+  become: no
+  local_action:
+    module: stat
     path: private_files/{{ inventory_hostname }}/chain-{{ inventory_hostname }}.pem
   register: chain_file
 
