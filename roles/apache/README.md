@@ -36,6 +36,7 @@ Required host variables:
     - `port`: service port
   - `static_dir`: directory path # OPTIONAL if apache serves static files
   - `extra_conf`: extra apache directives # OPTIONAL if virtualhost uses additional custom directives
+  - `global_conf`: extra global apache directives # OPTIONAL This directives are placed outside of the virtualhost tags
 
 example.com host_var
 ```yaml

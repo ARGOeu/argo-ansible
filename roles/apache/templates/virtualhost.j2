@@ -1,3 +1,7 @@
+{% if httpd.global_conf is defined %}
+  {{ httpd.global_conf | indent(width=2) }}
+{% endif %}
+
 <VirtualHost *:80>
   ServerName {{ inventory_hostname }}
   Redirect permanent / https://{{ inventory_hostname }}/
