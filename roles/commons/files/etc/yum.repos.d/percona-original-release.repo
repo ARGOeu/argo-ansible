@@ -1,0 +1,23 @@
+#
+# This repo is managed by "percona-release" utility, do not edit!
+#
+[percona-release-x86_64]
+name = Percona Original release/x86_64 YUM repository
+baseurl = http://repo.percona.com/percona/yum/release/$releasever/RPMS/x86_64
+enabled = 1
+gpgcheck = 1
+gpgkey = file:///etc/pki/rpm-gpg/PERCONA-PACKAGING-KEY
+
+[percona-release-noarch]
+name = Percona Original release/noarch YUM repository
+baseurl = http://repo.percona.com/percona/yum/release/$releasever/RPMS/noarch
+enabled = 1
+gpgcheck = 1
+gpgkey = file:///etc/pki/rpm-gpg/PERCONA-PACKAGING-KEY
+
+[percona-release-sources]
+name = Percona Original release/sources YUM repository
+baseurl = http://repo.percona.com/percona/yum/release/$releasever/SRPMS
+enabled = 0
+gpgcheck = 1
+gpgkey = file:///etc/pki/rpm-gpg/PERCONA-PACKAGING-KEY
