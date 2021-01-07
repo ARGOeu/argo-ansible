@@ -51,6 +51,10 @@
     state: latest
   notify: Restart Icinga 2 service.
 
-
-
-
+- name: Install Mongo Agent Check.
+  yum:
+    name: percona-nagios-plugins
+    state: latest
+  tags: icinga_mongodb_agent
+  when: repo_mongo_4x is defined or repo_mongo is defined
+  notify: Restart Icinga 2 service.
