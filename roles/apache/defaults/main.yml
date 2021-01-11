@@ -2,3 +2,16 @@
 # defaults file for apache
 
 backup_dir: /var/apache_backup
+
+#httpd_document_root: /var/www/html/{{inventory_hostname}}
+#
+#httpd_rev_proxy:
+#    ip: 127.0.0.1
+#    port: 8080
+#
+#httpd_extra_conf: |
+#    <Directory "/var/www/html">
+#      Options Indexes FollowSymLinks
+#      AllowOverride None
+#      Require all granted
+#    </Directory>

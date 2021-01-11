@@ -21,7 +21,7 @@ Defaults:
 - `cert_key_path`: /etc/grid-security/hostkey.pem
 - `ca_path`: /etc/pki/tls/certs/
 - `ca_path/chain-{{inventory_hostname}}.pem`: /etc/pki/tls/certs/chain-host.pem
-- `backup_dir`: '/var/apache_backup
+- `backup_dir`: /var/apache_backup
 
 If you want to add 2 virtualhosts in the same server with different names you should change the values of
 `cert_path` and `cert_key_path` so the certificates will not be overwritten
@@ -30,21 +30,19 @@ The chain ca file is at `ca_path/chain-{{inventory_hostname}}.pem` and we dont j
 
 Required host variables:
 
-- `httpd`:
-  - `rev_proxy`: # OPTIONAL if apache is reverse proxying a service
-    - `ip`: service ip
-    - `port`: service port
-  - `static_dir`: directory path # OPTIONAL if apache serves static files
-  - `extra_conf`: extra apache directives # OPTIONAL if virtualhost uses additional custom directives
-  - `global_conf`: extra global apache directives # OPTIONAL This directives are placed outside of the virtualhost tags
+- `httpd_rev_proxy`: # OPTIONAL if apache is reverse proxying a service
+  - `ip`: service ip
+  - `port`: service port
+- `httpd_document_root`: directory path # OPTIONAL if apache serves static files
+- `httpd_extra_conf`: extra apache directives # OPTIONAL if virtualhost uses additional custom directives
+- `httpd_global_conf`: extra global apache directives # OPTIONAL This directives are placed outside of the virtualhost tags
 
 example.com host_var
 ```yaml
-httpd:
-  static_dir: /var/www/html/example/
-  extra_conf: |
-    RequestHeader set X-Forwarded-Proto "https"
-    RequestHeader set X-Forwarded-Port "443"
+httpd_document_root: /var/www/html/example/
+httpd_extra_conf: |
+  RequestHeader set X-Forwarded-Proto "https"
+  RequestHeader set X-Forwarded-Port "443"
 
 ```
 
@@ -60,7 +58,13 @@ simple execution:
 ansible-playbook -i devel argo-ansible/install.yml -t apache_install -u root -v
 ```
 
-execution for clean install (remove `/etc/httpd/conf.d` and `/etc/httpd/conf` directory):
+*Clean install*
+
+By running clean install the role will *DELETE* `/etc/httpd/conf.d` and `/etc/httpd/conf` directories after the backup of the apache cofigurations. Find, the backup tarball at the default location /var/apache_backup in case you need to revert the files to the latest version.
+
+*IMPORTANT*, do not run clean install for the *single server - several NameHosts* use case. If you want to make a cleanup use clean_install variable for the first Namehost, and then run the role for the next NameHosts without the variable.
+
+- execution for clean install:
 ```bash
 ansible-playbook -i devel -l apache argo-ansible/install.yml -t apache_install -u root -v --extra-vars "clean_install=True"
 ```
