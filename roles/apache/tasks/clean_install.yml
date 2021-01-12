@@ -1,0 +1,27 @@
+---
+
+- name: clear existing conf.d folder
+  file: 
+    path: /etc/httpd/conf.d
+    state: absent
+
+- name: clear existing conf folder
+  file: 
+    path: /etc/httpd/conf
+    state: absent
+
+- name: create /etc/httpd/conf.d
+  file:
+    path: /etc/httpd/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: 755
+
+- name: create /etc/httpd/conf
+  file:
+    path: /etc/httpd/conf
+    state: directory
+    owner: root
+    group: root
+    mode: 755

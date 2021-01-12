@@ -140,4 +140,10 @@
 - hosts: icinga_agent
   become: yes
   roles:
-     - { role: icinga_agent, tags: deploy_icinga_agent }
+    - { role: icinga_agent, tags: deploy_icinga_agent }
+
+- hosts: apache
+  become: yes
+  roles:
+    - { role: commons, task: cert, tags: apache_install }
+    - { role: apache, tags: apache_install }
