@@ -14,7 +14,7 @@
   SSLCertificateFile {{cert_path}}
   SSLCertificateKeyFile {{cert_key_path}}
 {% if is_chain_file %}
-  SSLCertificateChainFile {{ca_path}}/chain-{{inventory_hostname}}.pem
+  SSLCertificateChainFile {{ca_path}}chain-{{inventory_hostname}}.pem
 {% endif %}
 
 {% if httpd_extra_conf is defined %}
