@@ -106,8 +106,9 @@
 - hosts: swagger
   become: yes
   roles:
-    - { role: httpd, tags: httpd }
-    - { role: swagger }
+    - { role: commons, task: cert, tags: swagger_deploy }
+    - { role: apache, tags: swagger_deploy }
+    - { role: swagger, tags: [swagger_deploy, swagger_update] }
 
 - hosts: c_cluster
   become: yes
