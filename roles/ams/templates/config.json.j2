@@ -8,6 +8,7 @@
   "certificate":"/var/www/argo-messaging/hostcert.pem",
   "certificate_key":"/var/www/argo-messaging/hostkey.pem",
   "per_resource_auth":{{ams_per_resource_auth}},
+  "auth_option": "{{ams_auth_option}}",
   {% if ams_service_token %}
   "service_token":"{{ams_service_token}}",
   {% endif %}
