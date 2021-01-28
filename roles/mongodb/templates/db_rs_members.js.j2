@@ -7,13 +7,13 @@
 {% if hostvars[host]['is_arbiter'] is defined %}
 
 {% if hostvars[host]['is_arbiter'] == 'True' %}
-rs.addArb("{{hostvars[host]['private']['hostname']}}:27017")
+rs.addArb("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
 {% else  %}
-rs.add("{{hostvars[host]['private']['hostname']}}:27017")
+rs.add("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
 {% endif %}
 
 {% else  %}
-rs.add("{{hostvars[host]['private']['hostname']}}:27017")
+rs.add("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
 {% endif %}
 
 {% endif %}

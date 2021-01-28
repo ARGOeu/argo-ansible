@@ -1,0 +1,19 @@
+#!/bin/bash
+
+TIMESTAMP=`date +%FT%H:00`
+MONGODUMP_PATH="/usr/bin/mongodump"
+BACKUPS_DIR="/root/{{inventory_hostname}}-mongo-data"
+
+REPLSET_URI="{{mongo_replica_set_name}}/{% for host in groups[mongo_cluster_group] %}{% if hostvars[host]['private']['hostname'] is defined %}{{ hostvars[host]['private']['hostname'] }}{% else %}{{ hostvars[host].ansible_default_ipv4.address }}{% endif %}:{{mongo_port}}{% if not loop.last %},{% endif %}{% endfor %}"
+
+DATABASES=(
+  {% for host in mongo_backup_dbs %}
+    {{ host }}
+  {% endfor %}
+)
+
+for DB_NAME in "${DATABASES[@]}"; do
+  BACKUP_NAME="$DB_NAME-$TIMESTAMP"
+  mkdir -p $BACKUPS_DIR/$DB_NAME
+  $MONGODUMP_PATH --host $REPLSET_URI --db $DB_NAME --gzip --archive=$BACKUPS_DIR/$DB_NAME/$BACKUP_NAME.archive
+done

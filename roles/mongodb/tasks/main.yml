@@ -11,7 +11,7 @@
     - mongodb-org
     - mongodb-org-server
     - git
-    
+
 - name: install motop
   pip:
     name: git+https://github.com/tart/motop.git
@@ -33,8 +33,6 @@
     - mongo_install
   notify: restart mongo
 
-
-
 - name: Increase soft nproc limits
   copy:
     src: etc/security/limits.d/99-mongodb-nproc.conf
@@ -55,25 +53,25 @@
   template: dest="/tmp/db_init_rs.js" owner=root group=root mode=640 src=db_init_rs.js.j2
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Run init roles script
   shell: mongo < /tmp/db_init_rs.js
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Move rs add members script
   template: dest="/tmp/db_rs_members.js" owner=root group=root mode=640 src=db_rs_members.js.j2
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Run rs add members script
   shell: mongo < /tmp/db_rs_members.js
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Transfer mongo rotate bash script
   copy:
@@ -94,3 +92,33 @@
     job: "/root/mongo_rotate.sh"
     cron_file: mongo_rotate
   when: mongo_log_rotate == true
+
+- name: Ensures mongodb backup directory for script(s) exists
+  file:
+    path: "{{mongo_backup_scripts_location}}"
+    state: directory
+  tags:
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Move MongoDB backup script
+  template:
+    dest: "{{ mongo_backup_scripts_location }}mongo_backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+    src: mongodb_backup.sh.j2
+  tags:
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Set up cron job for mongo backup script
+  cron:
+    cron_file: mongodb_backup
+    name: "Set up cron job for mongo backup script"
+    user: root
+    special_time: daily
+    job: "{{ mongo_backup_scripts_location }}mongo_backup.sh"
+  tags:
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
