@@ -1,5 +1,15 @@
 ---
 
+- name: Move init users script
+  template: dest="/tmp/db_init_users.js" owner=root group=root mode=640 src=db_init_users.js.j2
+  when: groups[cluster_group][0] == inventory_hostname
+  tags: ams_update
+
+- name: Run init users script
+  shell: mongo --host "rs0/{{ams_store_host}}" < /tmp/db_init_users.js
+  when: groups[cluster_group][0] == inventory_hostname
+  tags: ams_update
+
 - name: Update argo-messaging package
   yum: name=argo-messaging state=latest enablerepo={{ repo_argo_enabled }} update_cache=yes
   notify: restart argo-messaging
