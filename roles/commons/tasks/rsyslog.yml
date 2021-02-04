@@ -5,24 +5,61 @@
    name: rsyslog-gnutls
    state: present
   tags: rsyslog_conf
+  notify: restart rsyslog
 
 - name: Rsyslog conf file
   template:
     src=rsyslog.conf.j2
-    dest=/etc/rsyslog.conf backup=no
+    dest=/etc/rsyslog.conf backup=yes
     owner=root group=root mode=0644
   tags: rsyslog_conf
+  notify: restart rsyslog
 
 - name: Rsyslog remote conf file
   template:
     src=50_client_remote.conf.j2
-    dest=/etc/rsyslog.d/50_client_remote.conf backup=no
+    dest=/etc/rsyslog.d/50_client_remote.conf backup=yes
     owner=root group=root mode=0644
   tags: rsyslog_conf
+  notify: restart rsyslog
 
-- name: Restart the rsyslog service
-  service:
-    name: rsyslog
-    state: restarted
-    enabled: true
+
+- name: Copy rsyslog certificates [crt] (1/3)
+  copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr.crt
+        dest={{ cert_dir }} backup=yes
+        owner=root group=root mode=0644
   tags: rsyslog_conf
+
+- name: Copy rsyslog certificates [key] (2/3)
+  copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr.key
+        dest={{ cert_dir }} backup=yes
+        owner=root group=root mode=0400
+  tags: rsyslog_conf
+
+- name: Copy rsyslog certificates [chain] (3/3)
+  copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr_CHAIN_cert.crt
+        dest={{ cert_dir }} backup=yes
+        owner=root group=root mode=0400
+  tags: rsyslog_conf
+
+- meta: flush_handlers
+
+
+- name: Connection check [client] (1/2)
+  syslogger:
+    msg: "[Ansible] Connection check from {{ inventory_hostname }}"
+  tags:
+    - rsyslog_conf
+    - rsyslog_check
+
+- name: Connection check [server] (2/2)
+  debug:
+    msg:
+    - To verify tha the rsyslog client works, go to the remote rsyslog server and check the following log file
+    - "/var/log/rsyslog_client/{{ inventory_hostname }}/ansible_syslogger.log"
+  tags:
+    - rsyslog_conf
+    - rsyslog_check
+
+
+
