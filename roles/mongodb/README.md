@@ -24,11 +24,37 @@ Role Variables
 
  * `mongo_backup_dbs` : list variable that names the mongo databases that we want to backup.
 
+ * `is_arbiter`: boolean variable that declares if a host that belongs to a replica set will have the role of an arbiter.
+
+  * `mongo_port`: declares the port on which the replica member listens, defaults to **27017**.
+
+  * `mongo_log_rotate`: enables logrotate script for MongoDB log at <i>/var/log/mongodb.log</i>
+
+  ---
+  :warning: <b><i>NOTE</i></b> :warning:
+
+  When declaring the hostnames in the inventory group make sure to NOT have the
+  arbiter(s) machine(s) first.
+
+e.g.
+```
+[mongo_private_cluster_devel]
+ mongo1.grnet.gr
+ mongo2.grnet.gr
+ mongo-arbiter.grnet.gr
+```
+
+In case you don't want to rely on the order of the hosts, you should declare
+the variable `is_arbiter` on each one of the host's host vars file.
+
+---
+
+
 Dependencies
 ------------
 
-You need to specify the ansible inventory group that will consist your cluster
-- e.g. mongo_cluster_group: mongo_private_cluster_devel
+<b>You need to specify the ansible inventory group that will consist your cluster
+- e.g. mongo_cluster_group: mongo_private_cluster_devel</b>
 
 You need for each host to set up the following variable for the private interface
 private:

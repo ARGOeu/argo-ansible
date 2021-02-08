@@ -1,22 +1,12 @@
-{% for host in groups[cluster_group] %}
+{% for host in groups[mongo_cluster_group] %}
 
-{% if hostvars[host]['is_mongo_host'] is defined  %}
+{% if hostvars[host]["is_arbiter"] | default(is_arbiter) %}
 
-{% if hostvars[host]['is_mongo_host'] == 'True'  %}
-
-{% if hostvars[host]['is_arbiter'] is defined %}
-
-{% if hostvars[host]['is_arbiter'] == 'True' %}
 rs.addArb("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
-{% else  %}
-rs.add("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
-{% endif %}
 
-{% else  %}
-rs.add("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
-{% endif %}
+{% else %}
 
-{% endif %}
+rs.add("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
 
 {% endif %}
 

@@ -6,7 +6,7 @@ mongo_bind_interfaces: 127.0.0.1
 mongo_port: 27017
 mongo_replicated: false
 mongo_log_rotate: false
-is_mongo_host: false
+is_arbiter: false
 mongo_repo: mongodb-org-3.2
 mongo_backup_scripts_location: /opt/mongobackup/
 mongo_replica_set_name: rs0
