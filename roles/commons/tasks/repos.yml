@@ -14,7 +14,7 @@
         owner=root group=root mode=0644
   when: repo_mongo
 
-- name: Install mongodb 4.2 repo
+- name: Install mongodb 4.0 repo
   tags: repo_mongodb
   copy: src=etc/yum.repos.d/mongodb-org-4.0.repo
         dest=/etc/yum.repos.d/mongodb-org-4.0.repo backup=no

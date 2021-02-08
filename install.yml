@@ -41,13 +41,6 @@
     - { role: haproxy, task: rsyslog }
     - { role: haproxy, task: haproxy , tags: haproxy_install }
 
-- hosts: ams_store
-  become: yes
-  roles:
-    - { role: private_hosts }
-    - { role: mongodb }
-    - { role: ams, task: init_db, tags: ams_install }
-
 - hosts: ams
   become: yes
   roles:
@@ -56,6 +49,7 @@
     - { role: kafka, tags: kafka_install }
     - { role: ams, task: deploy, tags: ams_install }
     - { role: ams, task: deploy_metrics, tags: ams_install }
+    - { role: ams, task: init_db }
 
 - hosts: ams_push_server
   become: yes
