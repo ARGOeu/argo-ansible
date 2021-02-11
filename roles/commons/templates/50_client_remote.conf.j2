@@ -1,8 +1,8 @@
 $DefaultNetstreamDriver gtls
 # certificate files
-$DefaultNetstreamDriverCAFile /etc/grid-security/star.argo.grnet.gr_CHAIN_cert.crt
-$DefaultNetstreamDriverCertFile /etc/grid-security/star.argo.grnet.gr.crt
-$DefaultNetstreamDriverKeyFile /etc/grid-security/star.argo.grnet.gr.key
+$DefaultNetstreamDriverCAFile {{ rsyslog_cert_dir }}rsyslog_chain.crt
+$DefaultNetstreamDriverCertFile {{ rsyslog_cert_dir }}rsyslog.crt
+$DefaultNetstreamDriverKeyFile {{ rsyslog_cert_dir }}rsyslog.key
 
 
 #$ModLoad imtcp  # TCP listener

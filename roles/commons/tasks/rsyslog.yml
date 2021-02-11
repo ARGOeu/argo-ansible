@@ -24,21 +24,27 @@
   notify: restart rsyslog
 
 
+- name: Create {{ rsyslog_cert_dir }} if not exists
+  file: dest={{ rsyslog_cert_dir }} state=directory
+        owner=root group=root mode=0755
+  tags: rsyslog_conf
+
+
 - name: Copy rsyslog certificates [crt] (1/3)
   copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr.crt
-        dest={{ cert_dir }} backup=yes
+        dest={{ rsyslog_cert_dir }}rsyslog.crt backup=yes
         owner=root group=root mode=0644
   tags: rsyslog_conf
 
 - name: Copy rsyslog certificates [key] (2/3)
   copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr.key
-        dest={{ cert_dir }} backup=yes
+        dest={{ rsyslog_cert_dir }}rsyslog.key backup=yes
         owner=root group=root mode=0400
   tags: rsyslog_conf
 
 - name: Copy rsyslog certificates [chain] (3/3)
   copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr_CHAIN_cert.crt
-        dest={{ cert_dir }} backup=yes
+        dest={{ rsyslog_cert_dir }}rsyslog_chain.crt backup=yes
         owner=root group=root mode=0400
   tags: rsyslog_conf
 
@@ -60,6 +66,5 @@
   tags:
     - rsyslog_conf
     - rsyslog_check
-
 
 
