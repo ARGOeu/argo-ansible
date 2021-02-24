@@ -1,0 +1,35 @@
+# {{ ansible_managed }}
+
+# Send Apache logs.
+## https://www.rsyslog.com/doc/master/configuration/modules/imfile.html
+## https://www.rsyslog.com/doc/master/configuration/actions.html
+## https://www.rsyslog.com/doc/master/configuration/templates.html
+## https://www.rsyslog.com/doc/master/concepts/queues.html
+## https://www.rsyslog.com/doc/master/rainerscript/queue_parameters.html
+
+Module(load="imfile" mode="inotify")
+
+ruleset(name="fwdapachetocentrallog"){
+            action(type="omfwd"
+            name="apache"
+            template="RSYSLOG_TraditionalForwardFormat"
+            queue.type="LinkedList" # In Memory Queue
+            queue.filename="fwd_q_apache" # File name to be used for the queue files.
+            queue.size="100000" # The maximum size of the queue in number of messages.
+            action.resumeRetryCount="-1" # Sets how often an action is retried before it is considered to have failed. Failed actions discard messages. (-1 means eternal)
+            queue.saveonshutdown="on" # This parameter specifies if data should be saved at shutdown.
+            Target="rsyslog.argo.grnet.gr" Port="6514" Protocol="tcp"
+            StreamDriver="gtls"
+            StreamDriverMode="1" # run driver in TLS-only mode
+            StreamDriverAuthMode="x509/name"
+            StreamDriverPermittedPeers="*.argo.grnet.gr"
+            )
+}
+
+input(type="imfile"
+      File="/var/log/httpd/*log"
+      Tag="apache:"
+      ruleset="fwdapachetocentrallog"
+)
+
+
