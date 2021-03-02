@@ -7,6 +7,7 @@
   tags: rsyslog_conf
   notify: restart rsyslog
 
+
 - name: Rsyslog conf file
   template:
     src=rsyslog.conf.j2
@@ -17,9 +18,18 @@
 
 - name: Rsyslog remote conf file
   template:
-    src=50_client_remote.conf.j2
+    src=etc/rsyslog.d/50_client_remote.conf.j2
     dest=/etc/rsyslog.d/50_client_remote.conf backup=yes
     owner=root group=root mode=0644
+  tags: rsyslog_conf
+  notify: restart rsyslog
+
+- name: Rsyslog apache logs conf file
+  template:
+    src=etc/rsyslog.d/apache.log.conf.j2
+    dest=/etc/rsyslog.d/apache.log.conf backup=yes
+    owner=root group=root mode=0644
+  when: rsyslog_apache_logs
   tags: rsyslog_conf
   notify: restart rsyslog
 
