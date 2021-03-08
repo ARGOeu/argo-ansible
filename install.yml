@@ -141,3 +141,15 @@
   roles:
     - { role: commons, task: cert, tags: apache_install }
     - { role: apache, tags: apache_install }
+
+- hosts: eseal
+  become: yes
+  remote_user: root
+  roles:
+    - { role: commons,  task: firewall,  tags: firewall         }
+    - { role: commons,  task: cert,      tags: cert             }
+    - { role: commons,  task: rsyslog,   tags: rsyslog_conf     }
+    - { role: apache,   task: main,      tags: apache_install   }
+    - { role: eseal,    task: main,      tags: eseal            }
+
+
