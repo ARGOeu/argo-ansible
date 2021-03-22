@@ -29,6 +29,15 @@
    name: git
   tags: authn_env_install
 
+- name: Install ldap utility
+  yum:
+   name: '{{ item }}'
+   state: present
+  loop:
+   - gcc
+   - openldap-devel
+  tags: authn_env_install
+
 - name: Clear any previous authn-env directory
   file:
    path: "{{ virtual_env_installation }}/authn-env"
