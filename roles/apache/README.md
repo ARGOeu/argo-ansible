@@ -88,6 +88,17 @@ Execution with `--ask-become-pass`
 ansible-playbook --ask-become-pass -i devel -l apache argo-ansible/install.yml -t apache_install -u root -vv
 ```
 
+### Apache (httpd) modules
+
+If you want to enable/disable some extra apache module, you can use the following list variables:
+
+* `httpd_extra_system_packages` : System packages that required for the extra apache modules.
+* `httpd_mods_disabled` : The name of the apache module where you want to disable.
+* `httpd_mods_enabled`  : The name of the apache module where you want to enable.
+
+* See `defaults/main.yml` for usage examples.
+
+
 License
 -------
 
