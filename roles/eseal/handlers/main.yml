@@ -1,0 +1,21 @@
+---
+# handlers file for eseal
+
+
+- name: Reload the systemd daemon
+  systemd:
+   daemon_reload: yes
+
+
+- name: ESEAL service restart and enable
+  service:
+   name: eseal.service
+   state: restarted
+   enabled: true
+
+- name: Wait a few seconds for the service to wake up
+  become: no
+  wait_for:
+    timeout: 20
+  delegate_to: localhost
+

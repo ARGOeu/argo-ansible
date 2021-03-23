@@ -1,0 +1,211 @@
+---
+# tasks file for eseal
+
+
+- name: Install Java 8
+  yum:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+    - java-1.8.0-openjdk
+    - java-1.8.0-openjdk-devel
+  tags:
+    - eseal
+    - eseal:packages
+    - eseal:java
+
+
+- name: Ensure group "{{ eseal_group }}" exists
+  group:
+    name: "{{ eseal_group }}"
+    state: present
+  tags:
+    - eseal
+    - eseal:user
+
+- name: Add user "{{ eseal_user }}"
+  user:
+    name: "{{ eseal_user }}"
+    groups: "{{ eseal_group }}"
+    append: yes
+    create_home: no
+    shell: /sbin/nologin
+    comment: ESEAL nologin user
+  tags:
+    - eseal
+    - eseal:user
+
+
+- name: Create systemd file for ESEAL
+  template:
+   src: eseal.service.j2
+   dest: /etc/systemd/system/eseal.service
+   owner: root
+   group: root
+   mode: '0644'
+  notify:
+    - Reload the systemd daemon
+    - ESEAL service restart and enable
+    - Wait a few seconds for the service to wake up
+  tags:
+    - eseal
+    - eseal:service_file
+
+
+- name: "Create {{ eseal_root_dir }}, {{ eseal_conf_dir }} directories if it does not exist"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ eseal_user }}"
+    group: "{{ eseal_group }}"
+    mode: '0755'
+  loop:
+    - "{{ eseal_root_dir }}"
+    - "{{ eseal_conf_dir }}"
+  tags:
+    - eseal
+    - eseal:directories
+
+- name: "Create ESEAL logs directory if it doesn't exist"
+  file:
+    path: /var/log/eseal
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  tags:
+    - eseal
+    - eseal:directories
+
+
+- name: Find the artifact of the last successful build
+  uri:
+    url: https://{{ jenkins.host }}/job/{{ jenkins.job }}/job/{{ jenkins.repository }}/job/{{ jenkins.branch }}/lastSuccessfulBuild/api/json
+    user: "{{ jenkins.user }}"
+    password: "{{ jenkins.password }}"
+    method: GET
+    force_basic_auth: yes
+    status_code: 200
+  register: _jenkins_results
+  tags:
+    - eseal
+    - eseal:jenkins
+    - eseal:jar
+
+- name: Download the latest Jenkins artifact
+  get_url:
+    url: https://{{ jenkins.host }}/job/{{ jenkins.job }}/job/{{ jenkins.repository }}/job/{{ jenkins.branch }}/lastSuccessfulBuild/artifact/{{ _jenkins_results.json.artifacts[0].relativePath }}
+    dest: "{{ eseal_root_dir }}/eseal.jar"
+    username: "{{ jenkins.user }}"
+    password: "{{ jenkins.password }}"
+    force_basic_auth: yes
+  tags:
+    - eseal
+    - eseal:jar
+
+
+- name: Create ESEAL properties file
+  template:
+    src: application.properties.j2
+    dest: "{{ eseal_conf_dir }}/application.properties.j2"
+    owner: "{{ eseal_user }}"
+    group: "{{ eseal_group }}"
+    mode: '0644'
+    backup: yes 
+  tags:
+    - eseal
+    - eseal:jar
+    - eseal:properties
+
+- name: Recursively change ownership of the ESEAL directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ eseal_user }}"
+    group: "{{ eseal_group }}"
+  loop:
+    - "{{ eseal_root_dir }}"
+    - "{{ eseal_conf_dir }}"
+  tags:
+    - eseal
+    - eseal:directories
+
+
+- name: Create rsyslog filter for ESEAL logs
+  copy:
+    src: etc/rsyslog.d/eseal.conf
+    dest: /etc/rsyslog.d/eseal.conf
+    backup: yes
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart rsyslog
+  tags:
+    - eseal
+    - eseal:logs
+    - eseal:rsyslog
+
+- name: Create logrotate configuration for ESEAL logs
+  copy:
+    src: etc/logrotate.d/eseal
+    dest: /etc/logrotate.d/eseal
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart rsyslog
+  tags:
+    - eseal
+    - eseal:logs
+    - eseal:logrotate
+
+
+- meta: flush_handlers
+
+
+- name: Check API calls (1/2)
+  become: no
+  local_action:
+    module: uri
+    url: "https://{{ inventory_hostname }}/api/v1/validation/validateDocument"
+    method: POST
+    validate_certs: false
+    status_code: 400
+    return_content: yes
+  register: this
+  failed_when: "'Malformed JSON body' not in this.content"
+  tags:
+    - eseal
+    - eseal:check
+
+- name: Check API calls (2/2)
+  become: no
+  local_action:
+    module: uri
+    url: "https://{{ inventory_hostname }}/api/v1/signing/remoteSignDocument"
+    method: POST
+    validate_certs: false
+    status_code: 400
+    return_content: yes
+  register: this
+  failed_when: "'Malformed JSON body' not in this.content"
+  tags:
+    - eseal
+    - eseal:check
+
+
+- name: More about E-signature Rest API.
+  debug:
+    msg:
+    - https://argoeu.github.io/gr.grnet.eseal/
+    - https://github.com/ARGOeu/gr.grnet.eseal/tree/devel
+  tags:
+    - eseal
+    - eseal:check
+
+
+
+

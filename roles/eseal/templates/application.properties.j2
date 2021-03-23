@@ -1,0 +1,45 @@
+# {{ ansible_managed }}
+
+# Filesystem configuration path, for the application properties file
+spring.config.import = {{ eseal_spring_config_import }}
+
+# Configuration values that are needed for the remote provider's http client
+# remote provider rest api endpoint
+eseal.remote.provider.endpoint = {{ eseal_remote_provider_endpoint }}
+# remote provider enable retry on failed requests
+eseal.remote.provider.retry.enabled = {{ eseal_remote_provider_retry_enabled }}
+# remote provider how many times we should retry failed requests
+eseal.remote.provider.retry.counter = {{ eseal_remote_provider_retry_counter }}
+# remote provider how much time should the client wait before the next retry in seconds
+eseal.remote.provider.retry.interval = {{ eseal_remote_provider_retry_interval }}
+# remote provider time threshold that indicates that we should generate a new totp token
+# for time values lower than the threshold
+eseal.remote.provider.totp.refresh.seconds.wait = {{ eseal_remote_provider_totp_refresh_seconds_wait }}
+# remote provider verify the API certs
+eseal.remote.provider.tls.verify = {{ eseal_remote_provider_tls_verify }}
+# remote provider client truststore that contains the API certs
+eseal.remote.provider.truststore.file = {{ eseal_remote_provider_truststore_file }}
+# remote provider client truststore password to access
+eseal.remote.provider.truststore.password = {{ eseal_remote_provider_truststore_password }}
+# remote provider client truststore type
+eseal.remote.provider.truststore.type = {{ eseal_remote_provider_truststore_type }}
+
+#### Validation properties #####
+# official journal client keystore
+eseal.validation.oj.keystore.filename = {{ eseal_validation_oj_keystore_filename }}
+# official journal client keystore type
+eseal.validation.oj.keystore.type = {{ eseal_validation_oj_keystore_type }}
+# official journal client keystore password
+eseal.validation.oj.keystore.password = {{ eseal_validation_oj_keystore_password }}
+# official journal url
+eseal.validation.oj.url = {{ eseal_validation_oj_url }}
+# european list of trusted lists URL
+eseal.validation.lotl.url = {{ eseal_validation_lotl_url }}
+# keep refreshing the lotl sources on a fixed interval
+eseal.validation.lotl.refresh.enable = {{ eseal_validation_lotl_refresh_enable }}
+# initial delay for the lotl sources online refresh in milliseconds
+eseal.validation.lotl.refresh.initial.delay = {{ eseal_validation_lotl_refresh_initial_delay }}
+# online refresh interval for the lotl sources in milliseconds
+eseal.validation.lotl.refresh.interval = {{ eseal_validation_lotl_refresh_interval }}
+# lotl trust sources filesystem cache
+eseal.validation.lotl.cache.dir = {{ eseal_validation_lotl_cache_dir }}

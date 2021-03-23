@@ -1,0 +1,24 @@
+[Unit]
+Description=E-seal API for signing, validating and timestamping documents.
+After=network.target remote-fs.target nss-lookup.target
+Documentation=https://argoeu.github.io/gr.grnet.eseal/
+#ConditionPathIsDirectory={{ eseal_root_dir }}
+#ConditionPathExists={{ eseal_conf_dir }}/application.properties.j2
+
+[Service]
+#Type=simple
+User={{ eseal_user }}
+Group={{ eseal_group }}
+WorkingDirectory={{ eseal_root_dir }}
+ExecStart=/usr/bin/java -jar {{ eseal_root_dir }}/eseal.jar
+SyslogIdentifier=eseal
+Restart=on-failure
+RestartSec=5s
+SuccessExitStatus=143
+#KillMode=mixed
+
+
+[Install]
+WantedBy=multi-user.target
+#Alias=eseal.service
+#Alias=eseald.service
