@@ -15,3 +15,28 @@ backup_dir: /var/apache_backup
 #      AllowOverride None
 #      Require all granted
 #    </Directory>
+
+#httpd_extra_system_packages:
+#  - httpd-tools
+#  - httpd-devel
+#  - openssl
+#  - mod_ssl
+#  - mod_wsgi
+#  - mod_geoip
+#  - mod_gnutls
+#  - mod_fcgid
+#  - mod_security
+
+#httpd_mods_disabled:
+#  - mpm_prefork
+#  - gnutls
+
+#httpd_mods_enabled:
+#  - rewrite
+#  - ssl
+#  - headers
+#  - http2
+#  - env
+#  - dir
+#  - mime
+
