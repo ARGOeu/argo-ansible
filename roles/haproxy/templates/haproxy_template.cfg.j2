@@ -23,26 +23,29 @@ global
     #
     #    local2.*                       /var/log/haproxy.log
     #
-    log         127.0.0.1 local2
+    log                  127.0.0.1 local2
 
-    chroot      /var/lib/haproxy
-    pidfile     /var/run/haproxy.pid
-    maxconn     10000
-    user        haproxy
-    group       haproxy
+    chroot               /var/lib/haproxy
+    pidfile              /var/run/haproxy.pid
+    maxconn              10000
+    user                 haproxy
+    group                haproxy
     daemon
 
     # turn on stats unix socket
     stats socket /var/lib/haproxy/stats
 
-# SSL global configuration
+    # SSL global configuration
 
     # LS config
 
     ssl-default-server-options no-tls-tickets
     ssl-default-bind-options no-sslv3
 
-	## Disabling Session Tickets Although disabling session tickets will undoubtedly have a negative performance impact, for the moment being you will need to do that in order to provide forward secrecy
+    ## Disabling Session Tickets Although disabling session
+    ## tickets will undoubtedly have a negative performance
+    ## impact, for the moment being you will need to do that
+    ## in order to provide forward secrecy
 
     tune.ssl.default-dh-param 2048
     ssl-server-verify none
@@ -55,17 +58,18 @@ global
 # common defaults that all the 'listen' and 'backend' sections will
 # use if not designated in their block
 #---------------------------------------------------------------------
+
 defaults
     mode                    http
     log                     global
     option                  httplog
     option                  dontlognull
-	option 					log-health-checks
-    option 					http-server-close
+    option                  log-health-checks
+    option                  http-server-close
     option forwardfor       except 127.0.0.0/8
     option                  redispatch
 
-    retries		    {{haproxy_retries}}
+    retries                 {{haproxy_retries}}
     timeout http-request    {{haproxy_timeout_http_request}}
     timeout queue           {{haproxy_timeout_queue}}
     timeout connect         {{haproxy_timeout_connect}}
@@ -82,34 +86,36 @@ listen stats
         bind :::9000 ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
         mode            http
         log             global
-        maxconn 10
-        timeout client 10s
-        timeout server 10s
-        timeout connect 10s
-        timeout queue 10s
-        stats enable
-        stats hide-version
-        stats refresh 10s
-        stats show-node
-        stats auth {{haproxy_stats_username}}:{{haproxy_stats_password}}
-        stats uri  /haproxy?stats
+        maxconn         10
+        timeout         client 10s
+        timeout         server 10s
+        timeout         connect 10s
+        timeout         queue 10s
+        stats           enable
+        stats           hide-version
+        stats           refresh 10s
+        stats           show-node
+        stats           auth {{haproxy_stats_username}}:{{haproxy_stats_password}}
+        stats           uri  /haproxy?stats
+
 
 #---------------------------------------------------------------------
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
 
-
 #frontend
 frontend  {{haproxy_frontend}}
-   bind :::{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
-   bind :::{{haproxy_port_bind}}
-   redirect scheme https if !{ ssl_fc }
-   http-response set-header Strict-Transport-Security max-age=31536000
-   option http-server-close
-   option forwardfor
-   reqadd X-Forwarded-Proto:\ https
-   reqadd X-Forwarded-Port:\ 443
-   timeout http-request {{haproxy_timeout_http_request_frontend}}
+   bind             :::{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
+   bind             :::{{haproxy_port_bind}}
+   reqadd           X-Forwarded-Proto:\ https
+   reqadd           X-Forwarded-Port:\ 443
+   redirect         scheme https if !{ ssl_fc }
+   http-response    set-header Strict-Transport-Security max-age=31536000
+   option           http-server-close
+   option           forwardfor
+   timeout          http-request  {{haproxy_timeout_http_request_frontend}}
+
+
 #---------------------------------------------------------------------
 # round robin balancing between the various msg backends
 #---------------------------------------------------------------------
