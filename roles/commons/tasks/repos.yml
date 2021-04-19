@@ -109,3 +109,15 @@
         dest=/etc/yum.repos.d/unicore-7.repo backup=no
         owner=root group=root mode=0644
   when: repo_unicore
+
+- name: Install rsyslog stable official repo
+  tags: repo_rsyslog
+  yum_repository:
+    name: rsyslog_v8
+    description: "Adiscon CentOS-$releasever - local packages for $basearch"
+    baseurl: "http://rpms.adiscon.com/v8-stable/epel-$releasever/$basearch"
+    enabled: yes
+    protect: yes
+    gpgcheck: yes
+    gpgkey: "http://rpms.adiscon.com/RPM-GPG-KEY-Adiscon"
+
