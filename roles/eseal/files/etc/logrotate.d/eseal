@@ -1,4 +1,4 @@
-/var/log/eseal/*log {
+/var/log/eseal/eseal.log {
     rotate 7
     daily
     compress

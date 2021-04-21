@@ -7,7 +7,7 @@ spring.config.import = {{ eseal_spring_config_import }}
 # remote provider rest api endpoint
 eseal.remote.provider.endpoint = {{ eseal_remote_provider_endpoint }}
 # remote provider enable retry on failed requests
-eseal.remote.provider.retry.enabled = {{ eseal_remote_provider_retry_enabled }}
+eseal.remote.provider.retry.enabled = {{ eseal_remote_provider_retry_enabled | lower }}
 # remote provider how many times we should retry failed requests
 eseal.remote.provider.retry.counter = {{ eseal_remote_provider_retry_counter }}
 # remote provider how much time should the client wait before the next retry in seconds
@@ -16,7 +16,7 @@ eseal.remote.provider.retry.interval = {{ eseal_remote_provider_retry_interval }
 # for time values lower than the threshold
 eseal.remote.provider.totp.refresh.seconds.wait = {{ eseal_remote_provider_totp_refresh_seconds_wait }}
 # remote provider verify the API certs
-eseal.remote.provider.tls.verify = {{ eseal_remote_provider_tls_verify }}
+eseal.remote.provider.tls.verify = {{ eseal_remote_provider_tls_verify | lower  }}
 # remote provider client truststore that contains the API certs
 eseal.remote.provider.truststore.file = {{ eseal_remote_provider_truststore_file }}
 # remote provider client truststore password to access
@@ -36,7 +36,7 @@ eseal.validation.oj.url = {{ eseal_validation_oj_url }}
 # european list of trusted lists URL
 eseal.validation.lotl.url = {{ eseal_validation_lotl_url }}
 # keep refreshing the lotl sources on a fixed interval
-eseal.validation.lotl.refresh.enable = {{ eseal_validation_lotl_refresh_enable }}
+eseal.validation.lotl.refresh.enable = {{ eseal_validation_lotl_refresh_enable | lower  }}
 # initial delay for the lotl sources online refresh in milliseconds
 eseal.validation.lotl.refresh.initial.delay = {{ eseal_validation_lotl_refresh_initial_delay }}
 # online refresh interval for the lotl sources in milliseconds
