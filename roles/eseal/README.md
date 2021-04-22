@@ -1,5 +1,5 @@
 Ansible role to deploy E-signature Rest API.
-==============================================1
+==============================================
 
 The role installs the ESEAl service.
 
@@ -45,6 +45,11 @@ How you can use the role:
 ansible-playbook -i devel argo-ansible/install.yml -vv --tags="eseal"
 ```
 
+## Update only the .jar
+Download the latest .jar file from Jenkins.
+```bash
+ansible-playbook -i devel argo-ansible/install.yml -vv --tags="eseal:jar, eseal:check"
+```
 
 ## Check the functionality with Ansible.
 You can check if the endpoints work only with Ansible:

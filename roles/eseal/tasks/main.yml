@@ -100,6 +100,9 @@
     username: "{{ jenkins.user }}"
     password: "{{ jenkins.password }}"
     force_basic_auth: yes
+  notify:
+    - ESEAL service restart and enable
+    - Wait a few seconds for the service to wake up
   tags:
     - eseal
     - eseal:jar
@@ -108,7 +111,7 @@
 - name: Create ESEAL properties file
   template:
     src: application.properties.j2
-    dest: "{{ eseal_conf_dir }}/application.properties.j2"
+    dest: "{{ eseal_conf_dir }}/application.properties"
     owner: "{{ eseal_user }}"
     group: "{{ eseal_group }}"
     mode: '0644'
