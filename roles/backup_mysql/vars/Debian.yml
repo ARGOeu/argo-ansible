@@ -1,0 +1,6 @@
+---
+
+
+# Apache.
+apache_name: "apache2"
+apache_dir: "/etc/apache2/"

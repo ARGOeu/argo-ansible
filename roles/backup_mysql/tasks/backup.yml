@@ -1,0 +1,125 @@
+---
+
+
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+    - mysql
+    - mysql:cron
+    - mysql:backup-now
+
+
+## MySQL Backup
+# https://github.com/ARGOeu/argo-utils/tree/devel
+
+- name: Install MySQL driver on CentOS Linux
+  yum:
+    name: mysql
+    state: latest
+  when: ansible_os_family == 'RedHat' and ansible_distribution == 'CentOS'
+  tags:
+    - mysql
+    - mysql:install
+
+- name: Install MySQL driver on Debian GNU/Linux
+  apt:
+    name: mysql-client
+    state: latest
+    update_cache: yes
+  when: ansible_os_family == 'Debian' and ansible_distribution == 'Debian'
+  tags:
+    - mysql
+    - mysql:install
+
+
+- name: Clone ARGOeu/argo-utils repository
+  git:
+    repo: "{{ backup_repo }}"
+    version: "{{ backup_branch }}"
+    dest: "{{ backup_repo_root }}"
+    force: yes
+  tags:
+    - mysql
+    - mysql:git
+
+
+- name: Ensure the bash script have execution previleges
+  file:
+    path: "{{ item }}"
+    mode: '0755'
+  loop:
+    - "{{ backup_script_path }}"
+    - "{{ rsync_backup_script_path }}"
+  tags:
+    - mysql
+    - mysql:git
+
+
+- name: Copy SSH keys
+  copy:
+    src: "{{ item }}"
+    dest: /root/.ssh/
+    owner: root
+    group: root
+  with_fileglob:
+    - "private_files/{{ inventory_hostname }}/ssh_keys/*"
+  when: remote_user is defined and remote_ip is defined and remote_location is defined
+  tags:
+    - mysql
+    - mysql:ssh
+
+
+- name: Set the appropriate privileges on the SSH keys (1/2)
+  file:
+    path: /root/.ssh/backup
+    owner: root
+    group: root
+    mode: '0600'
+  when: remote_user is defined and remote_ip is defined and remote_location is defined
+  tags:
+    - mysql
+    - mysql:ssh
+
+- name: Set the appropriate privileges on the SSH keys (2/2)
+  file:
+    path: /root/.ssh/backup.pub
+    owner: root
+    group: root
+    mode: '0644'
+  when: remote_user is defined and remote_ip is defined and remote_location is defined
+  tags:
+    - mysql
+    - mysql:ssh
+
+
+## Cron jobs.
+- name: MySQL Backup cron job
+  cron:
+    name: "MySQL Backup"
+    minute: "0"
+    hour: "0"
+    #job: "{{ backup_script_path }} -u '{{ db_user }}' -p '{{ db_pass }}' -d '{{ db_name }}' -f {{ apache_dir }}:/etc/agora/"
+    job: "{{ backup_script_path }} -u '{{ db_user }}' -p '{{ db_pass }}' -d '{{ db_name }}' {{ '-f ' ~ more_directories_to_backup if more_directories_to_backup }}"
+  tags:
+    - mysql
+    - mysql:cron
+
+
+- name: rSync backups cron jon
+  cron:
+    name: "rSync Backups"
+    minute: "5"
+    hour: "0"
+    job: "{{ rsync_backup_script_path }} -u {{ remote_user }} -r {{ remote_ip }} -k {{ remote_ssh_key }} -f {{ archives }} -t {{ remote_location }}"
+  when: remote_user is defined and remote_ip is defined and remote_location is defined
+  tags:
+    - mysql
+    - mysql:cron
+
+
+## Run backup script for MySQL
+- name: Create backup
+  shell: "{{ backup_script_path }} -u '{{ db_user }}' -p '{{ db_pass }}' -d '{{ db_name }}' {{ '-f ' ~ more_directories_to_backup if more_directories_to_backup }}"
+  tags:
+    - mysql
+    - mysql:backup-now
