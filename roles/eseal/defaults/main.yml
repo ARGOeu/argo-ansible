@@ -24,8 +24,11 @@ eseal_conf_dir: /etc/eseal/conf.d
 #  password: 123
 
 
-# Application properties.
-# 
+####################################
+#     Application properties       #
+####################################
+
+
 # Filesystem configuration path, for the application properties file
 eseal_spring_config_import: optional:file:/etc/eseal/conf.d/application.properties
 
@@ -50,7 +53,12 @@ eseal_remote_provider_truststore_password: providerpass
 # remote provider client truststore type
 eseal_remote_provider_truststore_type: JKS
 
-#### Validation properties #####
+
+####################################
+#      Validation properties       #
+####################################
+
+
 # official journal client keystore
 eseal_validation_oj_keystore_filename: oj.keystore.p12
 # official journal client keystore type
@@ -70,6 +78,58 @@ eseal_validation_lotl_refresh_interval: 21600000
 # lotl trust sources filesystem cache
 eseal_validation_lotl_cache_dir: /etc/eseal/conf.d/
 
+
+####################################
+#      Truststore properties       #
+####################################
+
+
+# truststore containing extra trust certs needed during the initialization of the LOTL source
+eseal.validation.lotl.extra.truststore.file: extra-lotl.truststore.jks
+
+# extra lotl truststore password
+eseal.validation.lotl.extra.truststore.password: extra-tl
+# extra lotl truststore type
+eseal.validation.lotl.extra.truststore.type: JKS
+
+
+####################################
+# Timestamping Provider properties #
+####################################
+
+
+## APED
+
+# aped tsa url
+eseal.tsa.aped.url: https://timestamp.aped.gov.gr/qtss
+# aped tsa truststore type
+eseal.tsa.aped.truststore.type: JKS
+# aped tsa truststore file
+eseal.tsa.aped.truststore.file: aped.truststore.jks
+# aped tsa truststore password
+eseal.tsa.aped.truststore.password: apedts
+
+
+####################################
+#             HARICA               #
+####################################
+
+
+# harica tsa url
+eseal.tsa.harica.url: https://qts.harica.gr
+# harica tsa truststore type
+eseal.tsa.harica.truststore.type: JKS
+# harica tsa truststore file
+eseal.tsa.harica.truststore.file: harica.truststore.jks
+# harica tsa host
+eseal.tsa.harica.host: qts.harica.gr
+
+# harica tsa truststore password
+eseal.tsa.harica.truststore.password: harica-qtsa
+# harica tsa basic auth username
+#eseal.tsa.harica.username: -- secret --
+# harica tsa basic auth password
+#eseal.tsa.harica.password: -- secret --
 
 
 

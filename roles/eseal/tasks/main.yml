@@ -79,6 +79,28 @@
     - eseal:directories
 
 
+- name: "Check if {{ eseal_root_dir }}/eseal.jar exist"
+  stat:
+    path: "{{ eseal_root_dir }}/eseal.jar"
+  register: eseal_jar
+  tags:
+    - eseal
+    - eseal:jar
+    - eseal:jar:backup
+
+- name: "Create a backup of {{ eseal_root_dir }}/eseal.jar into {{ eseal_root_dir }}/eseal.{{ ansible_date_time.iso8601_basic_short }}.tar.gz"
+  archive:
+    path: "{{ eseal_root_dir }}/eseal.jar"
+    dest: "{{ eseal_root_dir }}/eseal.{{ ansible_date_time.iso8601_basic_short }}.tar.gz"
+    format: gz
+    force_archive: true
+  when: eseal_jar.stat.exists
+  tags:
+    - eseal
+    - eseal:jar
+    - eseal:jar:backup
+
+
 - name: Find the artifact of the last successful build
   uri:
     url: https://{{ jenkins.host }}/job/{{ jenkins.job }}/job/{{ jenkins.repository }}/job/{{ jenkins.branch }}/lastSuccessfulBuild/api/json
