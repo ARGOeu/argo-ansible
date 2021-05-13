@@ -120,6 +120,9 @@
     group: "{{ eseal_group }}"
     mode: '0644'
     backup: yes 
+  notify:
+    - ESEAL service restart and enable
+    - Wait a few seconds for the service to wake up
   tags:
     - eseal
     - eseal:jar
