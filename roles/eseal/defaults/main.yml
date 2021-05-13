@@ -116,7 +116,7 @@ eseal_tsa_aped_truststore_password: apedts
 
 
 # harica tsa url
-eseal_tsa_harica_url: https://qts_harica_gr
+eseal_tsa_harica_url: https://qts.harica.gr
 # harica tsa truststore type
 eseal_tsa_harica_truststore_type: JKS
 # harica tsa truststore file
