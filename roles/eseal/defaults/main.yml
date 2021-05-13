@@ -85,12 +85,12 @@ eseal_validation_lotl_cache_dir: /etc/eseal/conf.d/
 
 
 # truststore containing extra trust certs needed during the initialization of the LOTL source
-eseal.validation.lotl.extra.truststore.file: extra-lotl.truststore.jks
+eseal_validation_lotl_extra_truststore_file: extra-lotl.truststore.jks
 
 # extra lotl truststore password
-eseal.validation.lotl.extra.truststore.password: extra-tl
+eseal_validation_lotl_extra_truststore_password: extra-tl
 # extra lotl truststore type
-eseal.validation.lotl.extra.truststore.type: JKS
+eseal_validation_lotl_extra_truststore_type: JKS
 
 
 ####################################
@@ -101,13 +101,13 @@ eseal.validation.lotl.extra.truststore.type: JKS
 ## APED
 
 # aped tsa url
-eseal.tsa.aped.url: https://timestamp.aped.gov.gr/qtss
+eseal_tsa_aped_url: https://timestamp.aped.gov.gr/qtss
 # aped tsa truststore type
-eseal.tsa.aped.truststore.type: JKS
+eseal_tsa_aped_truststore_type: JKS
 # aped tsa truststore file
-eseal.tsa.aped.truststore.file: aped.truststore.jks
+eseal_tsa_aped_truststore_file: aped.truststore.jks
 # aped tsa truststore password
-eseal.tsa.aped.truststore.password: apedts
+eseal_tsa_aped_truststore_password: apedts
 
 
 ####################################
@@ -116,20 +116,20 @@ eseal.tsa.aped.truststore.password: apedts
 
 
 # harica tsa url
-eseal.tsa.harica.url: https://qts.harica.gr
+eseal_tsa_harica_url: https://qts_harica_gr
 # harica tsa truststore type
-eseal.tsa.harica.truststore.type: JKS
+eseal_tsa_harica_truststore_type: JKS
 # harica tsa truststore file
-eseal.tsa.harica.truststore.file: harica.truststore.jks
+eseal_tsa_harica_truststore_file: harica.truststore.jks
 # harica tsa host
-eseal.tsa.harica.host: qts.harica.gr
+eseal_tsa_harica_host: qts.harica.gr
 
 # harica tsa truststore password
-eseal.tsa.harica.truststore.password: harica-qtsa
+eseal_tsa_harica_truststore_password: harica-qtsa
 # harica tsa basic auth username
-#eseal.tsa.harica.username: -- secret --
+#eseal_tsa_harica_username: -- secret --
 # harica tsa basic auth password
-#eseal.tsa.harica.password: -- secret --
+#eseal_tsa_harica_password: -- secret --
 
 
 
