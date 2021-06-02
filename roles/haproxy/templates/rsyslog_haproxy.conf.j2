@@ -1,7 +1,9 @@
+# Collect log with UDP
 $ModLoad imudp
+$UDPServerAddress 127.0.0.1
 $UDPServerRun 514
-$template Haproxy,”%msg%\n”
-local0.=info -/var/log/haproxy.log;Haproxy
-local0.notice -/var/log/haproxy-status.log;Haproxy
-### keep logs in localhost ##
-local0.* ~
+
+# Creating separate log files based on the severity
+local0.*         /var/log/haproxy/haproxy-traffic.log
+local0.notice    /var/log/haproxy/haproxy-admin.log
+local0.err       /var/log/haproxy/haproxy-error.log

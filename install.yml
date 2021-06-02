@@ -38,7 +38,6 @@
 - hosts: haproxy
   become: yes
   roles:
-    - { role: haproxy, task: rsyslog }
     - { role: haproxy, task: haproxy , tags: haproxy_install }
 
 - hosts: ams

@@ -3,12 +3,15 @@
 # full configuration options online.
 #
 #   http://haproxy.1wt.eu/download/1.4/doc/configuration.txt
+#   https://cbonte.github.io/haproxy-dconv/1.8/configuration.html
 #
 #---------------------------------------------------------------------
+
 
 #---------------------------------------------------------------------
 # Global settings
 #---------------------------------------------------------------------
+
 global
     # to have these messages end up in /var/log/haproxy.log you will
     # need to:
@@ -23,26 +26,34 @@ global
     #
     #    local2.*                       /var/log/haproxy.log
     #
-    log         127.0.0.1 local2
-
-    chroot      /var/lib/haproxy
-    pidfile     /var/run/haproxy.pid
-    maxconn     10000
-    user        haproxy
-    group       haproxy
-    daemon
+    log                  127.0.0.1:514 local0               # send logs to the Syslog server listening at 127.0.0.1:514
+    log-send-hostname    {{inventory_hostname}}             # Sets the hostname field in the syslog header.
+    chroot               /var/lib/haproxy
+    pidfile              /var/run/haproxy.pid
+    maxconn              {{haproxy_global_maxconn}}         # Limits the maximum number of connections that HAProxy will accept.
+                                                            # Its purpose is to protect your load balancer from running out of memory
+    nbproc               1                                  # Creates <number> processes when going daemon.
+    nbthread             4                                  # Makes haproxy run on <number> threads.
+    user                 haproxy
+    group                haproxy
+    daemon                                                  # Makes the process fork into background.
+                                                            # This option is ignored in systemd mode.
+    master-worker                                           # Launch a "master" which will monitor the "workers".
 
     # turn on stats unix socket
-    stats socket /var/lib/haproxy/stats
+    stats socket /var/lib/haproxy/stats.sock mode 660 level admin
 
-# SSL global configuration
+    # SSL global configuration
 
     # LS config
 
     ssl-default-server-options no-tls-tickets
     ssl-default-bind-options no-sslv3
 
-	## Disabling Session Tickets Although disabling session tickets will undoubtedly have a negative performance impact, for the moment being you will need to do that in order to provide forward secrecy
+    ## Disabling Session Tickets Although disabling session
+    ## tickets will undoubtedly have a negative performance
+    ## impact, for the moment being you will need to do that
+    ## in order to provide forward secrecy
 
     tune.ssl.default-dh-param 2048
     ssl-server-verify none
@@ -55,61 +66,81 @@ global
 # common defaults that all the 'listen' and 'backend' sections will
 # use if not designated in their block
 #---------------------------------------------------------------------
-defaults
-    mode                    http
-    log                     global
-    option                  httplog
-    option                  dontlognull
-	option 					log-health-checks
-    option 					http-server-close
-    option forwardfor       except 127.0.0.0/8
-    option                  redispatch
 
-    retries		    {{haproxy_retries}}
-    timeout http-request    {{haproxy_timeout_http_request}}
-    timeout queue           {{haproxy_timeout_queue}}
-    timeout connect         {{haproxy_timeout_connect}}
-    timeout client          {{haproxy_timeout_client}}
-    timeout server          {{haproxy_timeout_server}}
-    timeout http-keep-alive {{haproxy_timeout_http_keep_alive}}
-    timeout check           {{haproxy_timeout_check}}
-    maxconn                 {{haproxy_maxconn}}
+defaults
+    mode                    http                 # The instance will work in HTTP mode.
+    log                     global               # Use the log line that was set in the global section.
+
+    option                  httplog              # Enable more verbose HTTP logging.
+    option                  dontlognull          # Enable logging of null connections.
+    option                  log-separate-errors  # Change log level for non-completely successful connections.
+    option                  log-health-checks    # Enable logging of health checks status updates.
+    option                  http-server-close    # Enable HTTP connection closing on the server side.
+
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch           # Enable session redistribution in case of connection failure.
+
+    {% if haproxy_defaults_retries is defined %} retries            {{haproxy_defaults_retries}}                 # The number of retries to perform on a server after a connection failure. {% endif %}
+
+    timeout http-request    {{haproxy_defaults_timeout_http_request}}       # The maximum allowed time to wait for a complete HTTP request.
+    timeout queue           {{haproxy_defaults_timeout_queue}}              # The maximum time to wait in the queue for a connection slot to be free.
+    timeout connect         {{haproxy_defaults_timeout_connect}}            # The maximum time to wait for a connection attempt to a server to succeed.
+    timeout client          {{haproxy_defaults_timeout_client}}             # The maximum inactivity time on the client side.
+    timeout server          {{haproxy_defaults_timeout_server}}             # The maximum time for pending data staying into output buffer.
+    timeout http-keep-alive {{haproxy_defaults_timeout_http_keep_alive}}    # The maximum allowed time to wait for a new HTTP request to appear.
+    timeout check           {{haproxy_defaults_timeout_check}}              # Additional check timeout, but only after a connection has been already established.
+
+    # Limits the maximum number of connections that HAProxy will accept.
+    # Its purpose is to protect your load balancer from running out of memory.
+    maxconn                 {{haproxy_defaults_maxconn}}
 
 
 # Statistics Interface Setup
 
 listen stats
-        bind :::9000 ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
-        mode            http
-        log             global
-        maxconn 10
-        timeout client 10s
-        timeout server 10s
-        timeout connect 10s
-        timeout queue 10s
-        stats enable
-        stats hide-version
-        stats refresh 10s
-        stats show-node
-        stats auth {{haproxy_stats_username}}:{{haproxy_stats_password}}
-        stats uri  /haproxy?stats
+    # Logged also an HTTP request header
+    http-request    capture req.hdr(Host) len 30
+    http-request    capture req.hdr(User-Agent) len 100
+
+    bind            :::{{haproxy_listen_stats_port}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3 {% if haproxy_http2 is defined %}{{haproxy_http2}}{% endif %}
+
+    mode            http
+    log             global
+    maxconn         10
+    timeout         client   {{haproxy_listen_timeout_client}}
+    timeout         server   {{haproxy_listen_timeout_server}}
+    timeout         connect  {{haproxy_listen_timeout_connect}}
+    timeout         queue    {{haproxy_listen_timeout_queue}}
+    timeout         check    {{haproxy_listen_timeout_check}}
+    stats           enable
+    stats           hide-version
+    stats           refresh 10s
+    stats           show-node
+    stats           auth {{haproxy_listen_stats_username}}:{{haproxy_listen_stats_password}}
+    stats           uri  /haproxy?stats
+
 
 #---------------------------------------------------------------------
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
 
-
-#frontend
 frontend  {{haproxy_frontend}}
-   bind :::{{haproxy_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3
-   bind :::{{haproxy_port_bind}}
-   redirect scheme https if !{ ssl_fc }
-   http-response set-header Strict-Transport-Security max-age=31536000
-   option http-server-close
-   option forwardfor
-   reqadd X-Forwarded-Proto:\ https
-   reqadd X-Forwarded-Port:\ 443
-   timeout http-request {{haproxy_timeout_http_request_frontend}}
+    # Logged also an HTTP request header
+    http-request    capture req.hdr(Host) len 30
+    http-request    capture req.hdr(User-Agent) len 100
+
+    bind            :::{{haproxy_frontend_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3 {% if haproxy_http2 is defined %}{{haproxy_http2}}{% endif %}
+
+    bind            :::{{haproxy_frontend_port_bind}}
+    reqadd          X-Forwarded-Proto:\ https
+    reqadd          X-Forwarded-Port:\ 443
+    redirect        scheme https if !{ ssl_fc }
+    http-response   set-header Strict-Transport-Security max-age=31536000
+    option          http-server-close
+    option          forwardfor
+    timeout         http-request  {{haproxy_frontend_timeout_http_request}}
+
+
 #---------------------------------------------------------------------
 # round robin balancing between the various msg backends
 #---------------------------------------------------------------------
