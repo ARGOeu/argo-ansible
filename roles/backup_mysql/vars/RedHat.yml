@@ -1,0 +1,6 @@
+---
+
+
+# Apache.
+apache_name: "httpd"
+apache_dir: "/etc/httpd/"
