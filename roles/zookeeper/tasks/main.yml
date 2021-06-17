@@ -1,43 +1,50 @@
 ---
-# tasks file for zookeeper
+# tasks file for Apache Zookeeper
 
-- name: install JDK 1.8
-  yum: name=java-1.8.0-openjdk state=present
-  tags: zookeeper_install
 
-- name: install zktop
+- name: "Install OpenJDK Runtime Environment {{ java_version }}"
+  yum:
+    name: java-{{ java_version }}-openjdk
+    state: present
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:java
+
+- name: Install zktop
   pip:
     name: zktop
-  tags: zookeeper_install
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:utills
 
-- name: install zookeeper
+
+- name: Install some utilities
   yum:
-    name: ['zookeeper', 'zookeeper-server']
-    state: present
-    enablerepo: cloudera-cdh5
-  tags: zookeeper_install
+    name:
+      - wget
+      - tar
+      - net-tools
+      - netcat
+      #- ca-certificates
+    state: latest
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:utills
 
-- name: configure zookeeper
-  template: src=zoo.cfg.j2 dest=/etc/zookeeper/conf/zoo.cfg
-            owner=zookeeper group=zookeeper backup=yes
-  notify: restart zookeeper
-  tags: zookeeper_install
 
-- name: set myid
-  shell: sudo su -s /bin/bash zookeeper -c " zookeeper-server-initialize  --force --myid={{ private.id }}"
-  tags: zookeeper_install
+- name: Include configuration tasks
+  include: "config.yml"
+  tags:
+    - zookeeper
+    - zookeeper:config
 
-- name: Zookeeper init.d script
-  template: src=zookeeper-server.j2 dest=/etc/rc.d/init.d/zookeeper-server
-            owner=root group=root backup=yes
-  notify: restart zookeeper
-  tags: zookeeper_install_initd_script
 
-- name: Run daemon-reload
-  systemd:
-    daemon-reload: true
-  tags: zookeeper_install_initd_script
+- name: Include Apache Zookeeper tasks
+  include: "zookeeper.yml"
+  tags:
+    - zookeeper
+    - zookeeper:install
 
-- name: start zookeeper service
-  service: name=zookeeper-server state=started enabled=yes
-  tags: zookeeper_install

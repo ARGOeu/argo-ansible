@@ -1,0 +1,27 @@
+[Unit]
+Description=Apache ZooKeeper service
+Documentation=https://zookeeper.apache.org/doc/r3.4.13/zookeeperAdmin.html
+Requires=network.target
+After=syslog.target network.target remote-fs.target
+ConditionPathExists={{ zookeeper_conf_dir }}/zoo.cfg
+ConditionPathExists={{ zookeeper_conf_dir }}/log4j.properties
+
+[Service]
+Type=forking
+User={{ zookeeper_user }}
+Group={{ zookeeper_group }}
+SyslogIdentifier=zookeeper-{{ zookeeper_version }}
+WorkingDirectory={{ zookeeper_data }}
+UMask=0027
+Environment="ZOOCFGDIR={{ zookeeper_conf_dir }}/"
+Environment="ZOO_LOG_DIR={{zookeeper_logs}}"
+Environment="JMXLOCALONLY=false"
+Environment="ZOO_LOG4J_PROP=INFO,ROLLINGFILE"
+ExecStart={{ zookeeper_root }}/bin/zkServer.sh    start   {{ zookeeper_conf_dir }}/zoo.cfg
+ExecStop={{ zookeeper_root }}/bin/zkServer.sh     stop    {{ zookeeper_conf_dir }}/zoo.cfg
+ExecReload={{ zookeeper_root }}/bin/zkServer.sh  restart  {{ zookeeper_conf_dir }}/zoo.cfg
+#Restart=on-failure
+SuccessExitStatus=SIGKILL
+
+[Install]
+WantedBy=multi-user.target

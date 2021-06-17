@@ -1,7 +1,15 @@
 ---
-# handlers file for kafka
+# handlers file for Apache Kafka
 
-- name: restart kafka
-  service:
-    name: kafka-server
+- name: Restart Kafka
+  systemd:
+    daemon_reload: true
+    name: kafka
     state: restarted
+    enabled: true
+
+
+- name: Wait Kafka to startup
+  wait_for:
+    timeout: "{{ kafka_health_check_delay }}"
+

@@ -17,7 +17,11 @@
 ############################# Server Basics #############################
 
 # The id of the broker. This must be set to a unique integer for each broker.
-broker.id={{private.id}}
+{% if kafka_broker_id is defined %}
+broker.id={{ kafka_broker_id }}
+{% else %}
+broker.id={{ groups[cluster_group].index(inventory_hostname) + 1}}
+{% endif %}
 
 # Default replication factors for automatically created topics
 default.replication.factor={{default_replication_factor}}
@@ -28,7 +32,13 @@ default.replication.factor={{default_replication_factor}}
 port=9092
 
 # Hostname the broker will bind to. If not set, the server will bind to all interfaces
+{# Old way - for backward compatibility reasons #}
+{% if private is defined %}
 host.name={{private.hostname}}
+{% else %}
+{# New way #}
+host.name={{ hostvars[inventory_hostname]['private']['hostname'] }}
+{% endif %}
 
 # Hostname the broker will advertise to producers and consumers. If not set, it uses the
 # value for "host.name" if configured.  Otherwise, it will use the value returned from
@@ -122,7 +132,9 @@ log.cleaner.enable=false
 # server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
 # You can also append an optional chroot string to the urls to specify the
 # root directory for all kafka znodes.
-zookeeper.connect={% for host in groups[cluster_group] %}={% if hostvars[host]['is_zoo_host'] is defined %}{% if hostvars[host]['is_zoo_host'] == 'True' %}{{hostvars[host]['private']['hostname']}}:2181{% if not loop.last %},{% endif %}{% endif %}{% endif %}{% endfor %}
+zookeeper.connect={% for host in groups[cluster_group] %}{% if hostvars[host]['is_zoo_host'] is defined %}{% if hostvars[host]['is_zoo_host'] | bool == True %}{{hostvars[host]['private']['hostname']}}:2181{% if not loop.last %},{% endif %}{% endif %}{% endif %}{% endfor %}
+
+
 
 auto.create.topics.enable=true
 

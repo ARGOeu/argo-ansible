@@ -1,0 +1,85 @@
+---
+# tasks file for Apache Zookeeper system configurations
+
+
+# System groups & users.
+
+- name: "Ensure group '{{ zookeeper_group }}' exists"
+  group:
+    name: "{{ zookeeper_group }}"
+    system: yes
+  tags:
+    - zookeeper
+    - zookeeper:config
+    - zookeeper:install
+    - zookeeper:system
+    - zookeeper:group
+
+- name: "Ensure user '{{ zookeeper_user }}' exists"
+  user:
+    name: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    create_home: no
+    system: yes
+    comment: Apache Kafka user
+  tags:
+    - zookeeper
+    - zookeeper:config
+    - zookeeper:install
+    - zookeeper:system
+    - zookeeper:user
+
+
+# Directories
+
+- name: "Create {{ zookeeper_data }} directory for Apache Zookeeper DATA if it does not exist"
+  file:
+    path: "{{ zookeeper_data }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:data
+
+- name: "Create {{ zookeeper_logs }} directory for Apache Zookeeper LOGs if it does not exist"
+  file:
+    path: "{{ zookeeper_logs }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:logs
+
+
+# System SWAP
+
+#- name: Disable SWAP memory
+#  command: sysctl vm.swappiness=1
+#  tags:
+#    - zookeeper
+#    - zookeeper:config
+#    - zookeeper:install
+#    - zookeeper:system
+#
+#- name: Disable SWAP memory permanently
+#  blockinfile:
+#    path: /etc/sysctl.conf
+#    block: |
+#      vm.swappiness=1
+#    backup: yes
+#  tags:
+#    - zookeeper
+#    - zookeeper:config
+#    - zookeeper:install
+#    - zookeeper:system
+
+# System heap
+
