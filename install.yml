@@ -138,8 +138,8 @@
 - hosts: apache
   become: yes
   roles:
-    - { role: commons, task: cert, tags: apache_install }
-    - { role: apache, tags: apache_install }
+    - { role: commons, task: cert, tags: apache_certs }
+    - { role: apache,  task: main, tags: apache_install }
 
 - hosts: eseal
   become: yes
