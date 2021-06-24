@@ -33,7 +33,7 @@ haproxy_listen_stats_port: 9000
 
 
 ## frontend
-haproxy_frontend: {{ inventory_hostname }}
+haproxy_frontend: "{{ inventory_hostname }}"
 haproxy_frontend_timeout_http_request: "10s"
 haproxy_frontend_port_bind_ssl: 443
 haproxy_frontend_port_bind: 80
