@@ -6,15 +6,12 @@
   template:
     src: ams-create-users-cloud-info.cfg.j2
     dest: "{{ service_configuration_folder }}/ams-create-users-cloud-info.cfg"
-  tags: authn_cloud_info_script_install
-
-- name: change permissions for ams-create-users-cloud-info.cfg
-  file:
-    path: "{{ service_configuration_folder }}/ams-create-users-cloud-info.cfg"
     owner: argo-api-authn
     group: argo-api-authn
     mode: 0644
+    backup: yes
   tags: authn_cloud_info_script_install
+
 
 - name: "set up cron for ams-create-users-cloud-info"
   cron:

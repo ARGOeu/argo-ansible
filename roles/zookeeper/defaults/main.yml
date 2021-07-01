@@ -7,7 +7,6 @@
 ###############################################
 
 java_version: 1.8.0
-#java_version: 11
 
 
 ###############################################
@@ -30,13 +29,13 @@ firewall_services:
 zookeeper_version: "3.4.13"
 
 zookeeper_installation_dir: /etc
-zookeeper_root: "{{ zookeeper_installation_dir }}/zookeeper-{{ zookeeper_version }}"
+zookeeper_root: "{{ zookeeper_installation_dir }}/zookeeper"
 #zookeeper_dataDir: /var/lib/zookeeper
 #zookeeper_data_logDir: /var/lib/zookeeper
-#zookeeper_dir: /opt/zookeeper-{{zookeeper_version}}
+#zookeeper_dir: /opt/zookeeper
 zookeeper_conf_dir: "{{ zookeeper_root }}/conf"
 zookeeper_data: /var/lib/zookeeper
-zookeeper_logs: "/var/log/apache/zookeeper-{{ zookeeper_version }}"
+zookeeper_logs: "/var/log/apache/zookeeper"
 
 zookeeper_user: "zookeeper"
 zookeeper_group: "zookeeper"
@@ -49,7 +48,6 @@ zookeeper_myid: 1
 zookeeper_tickTime: 2000
 zookeeper_initLimit: 10
 zookeeper_syncLimit: 5
-#zookeeper_heap_opt: ??
 
 zookeeper_clientPort: 2181
 zookeeper_client_port: 2181

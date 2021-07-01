@@ -9,7 +9,7 @@ ConditionPathExists={{ kafka_root }}/config/server.properties
 Type=simple
 User={{ kafka_user  }}
 Group={{ kafka_group }}
-SyslogIdentifier=kafka-{{ scala_version }}-{{ kafka_version }}
+SyslogIdentifier=kafka
 LimitNOFILE=32768
 Environment="KAFKA_HEAP_OPTS={{ kafka_heap_opts }}"
 Environment="KAFKA_OPTS=-Djava.net.preferIPv4Stack=true"

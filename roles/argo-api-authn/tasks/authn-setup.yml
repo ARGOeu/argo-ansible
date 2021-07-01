@@ -36,6 +36,17 @@
     mode: 0644
   tags: authn_install
 
+
+- name: Configure argo-api-authn log(rsyslog)
+  template:
+   src: rsyslog_authn.conf.j2
+   dest: /etc/rsyslog.d/authn.conf
+   backup: true
+  notify: restart rsyslog
+  tags:
+    - authn_install
+    - authn_rsyslog
+
 - name: Start argo-api-authn service
   service:
     name: argo-api-authn

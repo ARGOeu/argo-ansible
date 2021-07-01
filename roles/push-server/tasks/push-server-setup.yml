@@ -45,6 +45,23 @@
   tags: push_install
   notify: restart ams-push-server
 
+
+- name: Allow bind port 443
+  shell: setcap 'cap_net_bind_service=+ep' /var/www/ams-push-server/ams-push-server
+  tags: push_install
+
+
+- name: Configure argo-ams-push log(rsyslog)
+  template:
+   src: rsyslog_ams-push.conf.j2
+   dest: /etc/rsyslog.d/ams-push.conf
+   backup: true
+  notify: restart rsyslog
+  tags:
+    - push_install
+    - push_rsyslog
+
+
 - name: Start the ams push server
   service:
     name: ams-push-server

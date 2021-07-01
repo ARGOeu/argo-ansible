@@ -51,6 +51,33 @@
     - ams_config
   notify: restart argo-messaging
 
+
+- name: Configure argo-messaging log(rsyslog)
+  template:
+   src: rsyslog_ams.conf.j2
+   dest: /etc/rsyslog.d/ams.conf
+   backup: true
+  notify: restart rsyslog
+  tags:
+    - ams_install
+    - ams_config
+    - ams_rsyslog
+
+
+- name: Download Republisher ( ARGOeu/argo-messaging/devel )
+  get_url:
+    url: https://raw.githubusercontent.com/ARGOeu/argo-messaging/devel/tools/republisher.py
+    dest: /etc/argo-messaging/republisher.py
+    owner: argo-messaging
+    group: argo-messaging
+    mode: '0755'
+    backup: yes
+  tags:
+    - ams_install
+    - ams_config
+    - ams_republisher
+
+
 - name: Start argo-messaging service
   service: name=argo-messaging state=started enabled=true
   tags:
