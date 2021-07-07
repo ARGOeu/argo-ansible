@@ -7,4 +7,9 @@
     state: restarted
     enabled: true
 
+- name: restart haproxy
+  service:
+    name: haproxy
+    state: restarted
+    enabled: true
 

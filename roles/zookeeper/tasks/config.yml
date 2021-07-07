@@ -32,6 +32,20 @@
 
 # Directories
 
+- name: "Create {{ zookeeper_root }} directory for Apache Zookeeper if it does not exist"
+  file:
+    path: "{{ zookeeper_root }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:root
+
+
 - name: "Create {{ zookeeper_data }} directory for Apache Zookeeper DATA if it does not exist"
   file:
     path: "{{ zookeeper_data }}"

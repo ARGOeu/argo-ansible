@@ -24,6 +24,12 @@
     - { role: private_hosts,    task: main,    tags: local_dns    }
 
 
+- hosts: mongo_private_cluster
+  become: yes
+  roles:
+    - { role: mongodb,    task: main,     tags: mongodb          }
+
+
 - hosts: ams
   become: yes
   roles:
@@ -40,12 +46,6 @@
     - { role: push-server,   task: push-server-setup,    tags: push_install     }
 
 
-- hosts: mongo_private_cluster
-  become: yes
-  roles:
-    - { role: mongodb,    task: main,     tags: mongodb          }
-
-
 - hosts: haproxy
   become: yes
   roles:
@@ -60,6 +60,5 @@
     - { role: argo-api-authn,    task: ams-create-users-gocdb-script,       tags: authn_ams_create_users   }
     - { role: argo-api-authn,    task: ams-create-users-cloud-info-script,  tags: authn_ams_create_users   }
     - { role: argo-api-authn,    task: scripts_cert                                                        }
-
 
 

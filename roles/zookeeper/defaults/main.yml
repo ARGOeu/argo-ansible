@@ -13,13 +13,13 @@ java_version: 1.8.0
 # ~~~~~~~~~~~~~~~~~ Firewall ~~~~~~~~~~~~~~~~ #
 ###############################################
 
-firewall_services:
- - name: zookeeper-client   # Zookeeper main
-   port: 2181/tcp
- - name: zookeeper-peer
-   port: 2888/tcp
- - name: zookeeper-leader
-   port: 3888/tcp
+#firewall_services:
+# - name: zookeeper-client   # Zookeeper main
+#   port: "{{ zookeeper_clientPort }}/tcp"
+# - name: zookeeper-peer
+#   port: "{{ zookeeper_leaderPort }}/tcp"
+# - name: zookeeper-leader
+#   port: "{{ zookeeper_electionPort }}/tcp"
 
 
 ###############################################

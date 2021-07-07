@@ -2,15 +2,15 @@
 # tasks file for Apache Zookeeper
 
 
-
-- name: "Download Official Apache Zookeeper & unarchive to {{ zookeeper_installation_dir }}"
+- name: "Download Official Apache Zookeeper & unarchive to {{ zookeeper_root }}"
   unarchive:
     src: "https://archive.apache.org/dist/zookeeper/zookeeper-{{ zookeeper_version }}/zookeeper-{{ zookeeper_version }}.tar.gz"
-    dest: "{{ zookeeper_installation_dir }}/"
+    dest: "{{ zookeeper_root }}"
     owner: "{{ zookeeper_user }}"
     group: "{{ zookeeper_group }}"
     remote_src: yes
-    creates: "{{ zookeeper_root }}"
+    #creates: "{{ zookeeper_root }}"
+    extra_opts: [--strip-components=1]
   tags:
     - zookeeper
     - zookeeper:install
@@ -179,7 +179,7 @@
   loop: "{{ groups[cluster_group] }}"
   loop_control:
     index_var: node_idx
-  when: "groups[cluster_group] | count > 1"
+  when: "( groups[cluster_group] | count > 1 ) and ( hostvars[item]['is_zoo_host'] is defined and hostvars[item]['is_zoo_host'] |  bool == True )"
   tags:
     - zookeeper
     - zookeeper:install

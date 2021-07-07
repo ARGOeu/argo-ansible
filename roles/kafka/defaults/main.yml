@@ -13,9 +13,9 @@ java_version: 1.8.0
 # ~~~~~~~~~~~~~~~~~ Firewall ~~~~~~~~~~~~~~~~ #
 ###############################################
 
-firewall_services:
- - name: kafka
-   port: 9092/tcp
+#firewall_services:
+# - name: kafka
+#   port: "{{ kafka_port }}/tcp"
 
 
 ###############################################
