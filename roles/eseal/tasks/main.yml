@@ -185,6 +185,8 @@
     validate_certs: false
     status_code: 400
     return_content: yes
+  retries: 3
+  delay: 3
   register: this
   failed_when: "'Malformed JSON body' not in this.content"
   tags:
@@ -200,6 +202,8 @@
     validate_certs: false
     status_code: 400
     return_content: yes
+  retries: 3
+  delay: 3
   register: this
   failed_when: "'Malformed JSON body' not in this.content"
   tags:
