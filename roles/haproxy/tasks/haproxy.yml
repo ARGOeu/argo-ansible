@@ -1,4 +1,5 @@
 ---
+
 - name: install haproxy
   yum:
    name: '{{ item }}'
@@ -51,7 +52,10 @@
    src: haproxy_template.cfg.j2
    dest: /etc/opt/rh/rh-haproxy18/haproxy/haproxy.cfg
    backup: true
-  tags: haproxy_install
+  tags:
+    - haproxy
+    - haproxy_install
+    - haproxy_config
 
 - name: configure haproxy log(rsyslog)
   template:
@@ -59,7 +63,10 @@
    dest: /etc/rsyslog.d/haproxy.conf
    backup: true
   notify: restart rsyslog
-  tags: haproxy_install
+  tags:
+    - haproxy
+    - haproxy_install
+    - haproxy_rsyslog
 
 - name: start haproxy
   service:
