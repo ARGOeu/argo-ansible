@@ -185,10 +185,11 @@
     validate_certs: false
     status_code: 400
     return_content: yes
-  retries: 3
-  delay: 3
+  retries: 5
+  delay: 5
   register: this
   failed_when: "'Malformed JSON body' not in this.content"
+  until: this is not failed
   tags:
     - eseal
     - eseal:check
@@ -202,10 +203,11 @@
     validate_certs: false
     status_code: 400
     return_content: yes
-  retries: 3
-  delay: 3
+  retries: 5
+  delay: 5
   register: this
   failed_when: "'Malformed JSON body' not in this.content"
+  until: this is not failed
   tags:
     - eseal
     - eseal:check
