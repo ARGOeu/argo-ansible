@@ -183,13 +183,14 @@
     url: "https://{{ inventory_hostname }}/api/v1/validation/validateDocument"
     method: POST
     validate_certs: false
-    status_code: 400
+    status_code:
+      - 200
+      - 400
     return_content: yes
   retries: 5
-  delay: 5
-  register: this
-  failed_when: "'Malformed JSON body' not in this.content"
-  until: this is not failed
+  delay: 10
+  register: validate
+  until: validate.status == 400
   tags:
     - eseal
     - eseal:check
@@ -201,13 +202,14 @@
     url: "https://{{ inventory_hostname }}/api/v1/signing/remoteSignDocument"
     method: POST
     validate_certs: false
-    status_code: 400
+    status_code:
+      - 200
+      - 400
     return_content: yes
   retries: 5
-  delay: 5
-  register: this
-  failed_when: "'Malformed JSON body' not in this.content"
-  until: this is not failed
+  delay: 10
+  register: sign
+  until: sign.status == 400
   tags:
     - eseal
     - eseal:check
@@ -221,7 +223,6 @@
   tags:
     - eseal
     - eseal:check
-
 
 
 
