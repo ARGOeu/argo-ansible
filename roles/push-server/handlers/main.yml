@@ -3,3 +3,9 @@
 
 - name: restart ams-push-server
   service: name=ams-push-server state=restarted
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+

@@ -1,0 +1,189 @@
+---
+# tasks file for Apache Zookeeper
+
+
+- name: "Download Official Apache Zookeeper & unarchive to {{ zookeeper_root }}"
+  unarchive:
+    src: "https://archive.apache.org/dist/zookeeper/zookeeper-{{ zookeeper_version }}/zookeeper-{{ zookeeper_version }}.tar.gz"
+    dest: "{{ zookeeper_root }}"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    remote_src: yes
+    #creates: "{{ zookeeper_root }}"
+    extra_opts: [--strip-components=1]
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:download
+
+
+- name: Apache Zookeeper configuration
+  template:
+    src: zoo.cfg.j2
+    dest: "{{ zookeeper_conf_dir }}/zoo.cfg"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:new_node
+
+
+- name: Apache Zookeeper log4j configuration
+  template:
+    src: log4j.properties.j2
+    dest: "{{ zookeeper_conf_dir }}/log4j.properties"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+
+#- name: set myid
+#  shell: sudo su -s /bin/bash zookeeper -c " zookeeper-server-initialize  --force --myid={{ private.id }}"
+#  tags:
+#    - zookeeper
+#    - zookeeper:install
+#    - zookeeper:config
+
+
+- name: Setup myid (1/2)
+  template:
+    src: myid.j2
+    dest: "{{ zookeeper_conf_dir }}/myid"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:new_node
+
+- name: Setup myid (2/2)
+  template: 
+    src: myid.j2
+    dest: "{{ zookeeper_data }}/myid"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:new_node
+  
+
+- name: Setup environment
+  template:
+    src: environment.j2
+    dest: "{{ zookeeper_conf_dir }}/environment"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+
+- name: Setup java.env
+  template: 
+    src: java.env.j2
+    dest: "{{zookeeper_conf_dir}}/java.env"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+
+
+- name: Apache Zookeeper systemd service file
+  template:
+    src: etc/systemd/system/zookeeper.service.j2
+    dest: /etc/systemd/system/zookeeper.service
+    owner: root 
+    group: root
+    mode: 0644
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:system
+    - zookeeper:daemon
+    - zookeeper:initd
+    - zookeeper:service
+
+
+- meta: flush_handlers
+
+
+- name: Check Apache Zookeeper local (1/2)
+  command: "{{ zookeeper_root }}/bin/zkServer.sh status {{ zookeeper_conf_dir }}/zoo.cfg"
+  register: zookeeper_server_status
+  changed_when: "'Mode: ' not in zookeeper_server_status.stdout"
+  tags:
+    - zookeeper
+    - zookeeper:check
+
+
+- name: Check Apache Zookeeper local (2/2)
+  shell: |
+    echo "ruok" | nc -N localhost 2181;
+  register: zookeeper_check
+  changed_when: zookeeper_check.changed and 'imok' not in zookeeper_check.stdout
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:check
+
+
+- name: Check Apache Zookeeper cluster
+  shell: |
+    echo "ruok" | nc -N {{ hostvars[item]['private']['hostname'] }} 2181;
+  register: zookeeper_cluster_check
+  changed_when: zookeeper_cluster_check.changed and 'imok' not in zookeeper_cluster_check.stdout
+  loop: "{{ groups[cluster_group] }}"
+  loop_control:
+    index_var: node_idx
+  when: "( groups[cluster_group] | count > 1 ) and ( hostvars[item]['is_zoo_host'] is defined and hostvars[item]['is_zoo_host'] |  bool == True )"
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:check
+
+

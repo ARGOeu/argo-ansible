@@ -34,7 +34,7 @@ authn_token: {{authn_gocdb_script.token}}
 authn_host: {{authn_gocdb_script.host}}
 
 # service's uuid where bindings will belong
-service_uuid: {{authn_gocdb_script.service_uuid}}
+service_uuid: {{ get_uuid_response.json.service_types[0].uuid }}
 
 # service's host where bindings will belong
 service_host: {{authn_gocdb_script.service_host}}

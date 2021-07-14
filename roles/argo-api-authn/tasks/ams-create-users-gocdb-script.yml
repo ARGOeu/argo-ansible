@@ -6,15 +6,12 @@
   template:
     src: ams-create-users-gocdb.cfg.j2
     dest: "{{ service_configuration_folder }}/ams-create-users-gocdb.cfg"
-  tags: authn_gocdb_script_install
-
-- name: change permissions for ams-create-users-gocdb.cfg
-  file:
-    path: "{{ service_configuration_folder }}/ams-create-users-gocdb.cfg"
     owner: argo-api-authn
     group: argo-api-authn
     mode: 0644
+    backup: yes
   tags: authn_gocdb_script_install
+
 
 - name: "set up cron for ams-create-users-gocdb"
   cron:

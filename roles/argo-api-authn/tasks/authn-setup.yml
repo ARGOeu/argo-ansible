@@ -36,9 +36,87 @@
     mode: 0644
   tags: authn_install
 
+
+- name: Configure argo-api-authn log(rsyslog)
+  template:
+   src: rsyslog_authn.conf.j2
+   dest: /etc/rsyslog.d/authn.conf
+   backup: true
+  notify: restart rsyslog
+  tags:
+    - authn_install
+    - authn_rsyslog
+
 - name: Start argo-api-authn service
   service:
     name: argo-api-authn
     enabled: true
     state: started
   tags: authn_install
+
+
+- name: Authn initialization - Creating the service type
+  uri:
+    url: "https://{{ authn_gocdb_script.host }}/v1/service-types?key={{ authn_service_token }}"
+    method: POST
+    body: "{{ lookup('template', 'authn_create_service_type_body.j2') }}"
+    body_format: json
+    return_content: yes
+    status_code: 201
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: create_service_type_call_response
+  failed_when: create_service_type_call_response.failed and 'ams already exists' not in create_service_type_call_response.json.error.message
+  tags:
+    - authn_install
+    - authn_init
+    - authn_init:create_service_type
+
+- name: Get the uuid of ams service type
+  uri:
+    url: "https://{{ authn_gocdb_script.host }}/v1/service-types?key={{ authn_service_token }}"
+    method: GET
+    body: "{{ lookup('template', 'authn_create_service_type_body.j2') }}"
+    body_format: json
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: get_uuid_response
+  tags:
+    - authn_install
+    - authn_init
+    - authn_init:get_service_type
+
+- name: Display uuid of ams service type
+  debug:
+    msg: "{{ get_uuid_response.json.service_types[0].uuid }}"
+  tags:
+    - authn_install
+    - authn_init
+    - authn_init:get_service_type
+
+
+- name: Creating the authm (auth method) in the service-type
+  uri:
+    url: "https://{{ authn_gocdb_script.host }}/v1/service-types/ams/authm?key={{ authn_service_token }}"
+    method: POST
+    body: "{{ lookup('template', 'authn_creating_the_authn_in_service_type_body.j2') }}"
+    body_format: json
+    return_content: yes
+    status_code:
+      - 201   # Created
+      - 409   # HTTP Error 409: Conflict - already exists
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: creating_authn_call_response
+  tags:
+    - authn_install
+    - authn_init
+    - authn_init:creating_authn
+
+
+

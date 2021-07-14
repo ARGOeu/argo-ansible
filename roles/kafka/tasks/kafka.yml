@@ -1,0 +1,104 @@
+---
+# tasks file for Apache Kafka
+
+
+- name: "Download Official Apache Kafka & unarchive to {{ kafka_root }}"
+  unarchive:
+    src: "https://archive.apache.org/dist/kafka/{{ kafka_version }}/kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
+    dest: "{{ kafka_root }}"
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    #creates: "{{ kafka_root }}"
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+  tags:
+    - kafka
+    - kafka:install
+
+
+- name: Apache Kafka configuration
+  template:
+    src: server.properties.j2
+    dest: "{{ kafka_conf_dir }}/server.properties"
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: 0644
+    backup: yes
+  notify: 
+    - Restart Kafka
+    - Wait Kafka to startup
+  tags:
+    - kafka
+    - kafka:install
+    - kafka:config
+    - kafka:server:properties
+    - kafka:new_node
+
+
+- name: Apache Kafka log4j configuration
+  template:
+    src: log4j.properties.j2
+    dest: "{{ kafka_conf_dir }}/log4j.properties"
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: '0644'
+    backup: yes
+  notify: 
+    - Restart Kafka
+    - Wait Kafka to startup
+  tags:
+    - kafka
+    - kafka:install
+    - kafka:config
+    - kafka:server:properties
+
+
+- name: Apache Kafka systemd service file
+  template:
+    src: etc/systemd/system/kafka.service.j2
+    dest: /etc/systemd/system/kafka.service
+    owner: root 
+    group: root
+    mode: 0644
+    backup: yes
+  notify: 
+    - Restart Kafka
+    - Wait Kafka to startup
+  tags:
+    - kafka
+    - kafka:install
+    - kafka:config
+    - kafka:service
+
+
+- meta: flush_handlers
+
+
+- name: Check Apache Kafka local [Create topic] (1/3)
+  command: "{{ kafka_root }}/bin/kafka-topics.sh --zookeeper localhost:2181 --topic ansible --create --partitions 3 --replication-factor 1"
+  register: kafka_create_topic_status
+  changed_when: "'Created topic ansible' in kafka_create_topic_status.stdout and 'already exists' not in kafka_create_topic_status.stdout"
+  failed_when: "kafka_create_topic_status.failed and 'already exists' not in kafka_create_topic_status.stdout"
+  tags:
+    - kafka
+    - kafka:check
+
+
+- name: Check Apache Kafka local [List of topics] (2/3)
+  command: "{{ kafka_root }}/bin/kafka-topics.sh --zookeeper localhost:2181 --list"
+  register: kafka_topics_list
+  changed_when: "kafka_topics_list.changed and 'ansible' not in kafka_topics_list.stdout"
+  tags:
+    - kafka
+    - kafka:check
+
+
+- name: Check Apache Kafka local [Delete topic] (3/3)
+  command: "{{ kafka_root }}/bin/kafka-topics.sh --zookeeper localhost:2181 --topic ansible --delete"
+  register: kafka_topic_delete
+  changed_when: "'Topic ansible is marked for deletion' in kafka_topic_delete.stdout"
+  failed_when: "kafka_topic_delete.failed and 'does not exist' not in kafka_topic_delete.stdout"
+  tags:
+    - kafka
+    - kafka:check
+

@@ -1,13 +1,76 @@
 ---
-# defaults file for zookeeper
+# defaults file for Apache Zookeeper
+
+
+###############################################
+# ~~~~~~~~~ Java - OpenJDK version  ~~~~~~~~~ #
+###############################################
+
+java_version: 1.8.0
+
+
+###############################################
+# ~~~~~~~~~~~~~~~~~ Firewall ~~~~~~~~~~~~~~~~ #
+###############################################
+
+#firewall_services:
+# - name: zookeeper-client   # Zookeeper main
+#   port: "{{ zookeeper_clientPort }}/tcp"
+# - name: zookeeper-peer
+#   port: "{{ zookeeper_leaderPort }}/tcp"
+# - name: zookeeper-leader
+#   port: "{{ zookeeper_electionPort }}/tcp"
+
+
+###############################################
+# ~~~~~~~~~~~~~ Apache Zookeeper ~~~~~~~~~~~~ #
+###############################################
+
+zookeeper_version: "3.4.13"
+
+zookeeper_installation_dir: /etc
+zookeeper_root: "{{ zookeeper_installation_dir }}/zookeeper"
+#zookeeper_dataDir: /var/lib/zookeeper
+#zookeeper_data_logDir: /var/lib/zookeeper
+#zookeeper_dir: /opt/zookeeper
+zookeeper_conf_dir: "{{ zookeeper_root }}/conf"
+zookeeper_data: /var/lib/zookeeper
+zookeeper_logs: "/var/log/apache/zookeeper"
+
+zookeeper_user: "zookeeper"
+zookeeper_group: "zookeeper"
+
+#zookeeper_id: 1
+#is_zoo_host: true
+
 zookeeper_maxClientCnxns: 60
 zookeeper_myid: 1
 zookeeper_tickTime: 2000
 zookeeper_initLimit: 10
 zookeeper_syncLimit: 5
-zookeeper_dataDir: /var/lib/zookeeper
-zookeeper_data_logDir: /var/lib/zookeeper
+
 zookeeper_clientPort: 2181
+zookeeper_client_port: 2181
 zookeeper_leaderPort: 2888
 zookeeper_electionPort: 3888
-is_zoo_host: false
+
+
+# Time in seconds to wait before starting Zookeeper Health Checks.
+zookeeper_health_check_delay: 5
+
+
+# Based on
+# https://github.com/hpcloud-mon/ansible-zookeeper
+zookeeper_log_level: WARN
+## zookeeper_client_port_address: 'localhost'
+## zookeeper_client_port_address: '{{current_priv}}'
+
+## zookeeper_hosts: "{{ansible_fqdn}}:2181"
+## zookeeper_hosts: "msg1.priv:2181,msg2.priv:2181,msg3.priv:2181"
+## zookeeper_hosts: "zk.1:2181,zk.2:2181,zk.3:2181"
+
+## zookeeper_connection_timeout_ms: 1000000
+
+
+
+

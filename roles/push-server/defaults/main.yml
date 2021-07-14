@@ -1,2 +1,7 @@
 ---
 # defaults file for push-server
+
+
+#push_ams_token: "5d....2d32"
+#push_ams_host: "snf-xx.ok-kno.grnetcloud.net"
+
