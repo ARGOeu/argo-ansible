@@ -5,4 +5,6 @@ virtual_env_installation: /opt/virtualenv
 service_configuration_folder: /etc/argo-api-authn/conf.d
 scripts_cert_dir: /etc/grid-security/scripts-cert
 
-# haproxy_host_domain_name: snf-xxx1.ok-kno.grnetcloud.net
+# haproxy_host_domain_name: haproxy.example.com
+# authn_host_domain_name: authn.example.com
+authn_service_port: 8443

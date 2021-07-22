@@ -39,6 +39,7 @@
 - name: Bundle x509 crt and key in a single pem file
   shell: cat {{ cert_dir }}hostcert.pem {{cert_dir}}hostkey.pem > {{cert_dir}}{{inventory_hostname}}.crt
   tags: haproxy_install, msg_certificate
+  notify: restart haproxy
 
 - name: Change owner and group for bundled cert
   file:

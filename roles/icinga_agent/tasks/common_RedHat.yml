@@ -56,5 +56,5 @@
     name: percona-nagios-plugins
     state: latest
   tags: icinga_mongodb_agent
-  when: repo_mongo_4x or repo_mongo
+  when: ( repo_mongo_4x | default(false) | bool ) or ( repo_mongo | default(false) | bool )
   notify: Restart Icinga 2 service.

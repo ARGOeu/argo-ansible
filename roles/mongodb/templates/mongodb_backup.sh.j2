@@ -4,7 +4,9 @@ TIMESTAMP=`date +%FT%H:00`
 MONGODUMP_PATH="/usr/bin/mongodump"
 BACKUPS_DIR="/root/{{inventory_hostname}}-mongo-data"
 
+{% if mongo_replicated | default(false) | bool %}
 REPLSET_URI="{{mongo_replica_set_name}}/{% for host in groups[mongo_cluster_group] %}{% if hostvars[host]['private']['hostname'] is defined %}{{ hostvars[host]['private']['hostname'] }}{% else %}{{ hostvars[host].ansible_default_ipv4.address }}{% endif %}:{{mongo_port}}{% if not loop.last %},{% endif %}{% endfor %}"
+{% endif %}
 
 DATABASES=(
   {% for host in mongo_backup_dbs %}
