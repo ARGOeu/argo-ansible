@@ -53,6 +53,27 @@
     - kafka:server:properties
 
 
+- name: "mv {{ kafka_conf_dir }}/* --> /etc/kafka/conf"
+  shell: "mv {{ kafka_conf_dir }}/* /etc/kafka/conf"
+  tags:
+    - kafka
+    - kafka:install
+    - kafka:config
+
+- name: "Create symbolic link {{ kafka_conf_dir }} --> /etc/kafka/conf"
+  file:
+    src: "/etc/kafka/conf"
+    path: "{{ kafka_conf_dir }}"
+    state: link
+    force: yes
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+  tags:
+    - kafka
+    - kafka:install
+    - kafka:config
+
+
 - name: Apache Kafka systemd service file
   template:
     src: etc/systemd/system/kafka.service.j2

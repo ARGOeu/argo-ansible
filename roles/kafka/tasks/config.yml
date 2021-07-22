@@ -30,6 +30,8 @@
     - kafka:user
 
 
+# Directories
+
 - name: "Create {{ kafka_log_dirs }} directory for Apache Kafka DATA if it does not exist"
   file:
     path: "{{ kafka_log_dirs }}"
@@ -46,6 +48,22 @@
     - kafka:disk
     - kafka:data_directory
     - kafka:create_data_directory
+
+
+- name: "Create  /etc/kafka/   directory for Apache config files if it does not exist"
+  file:
+    path: "/etc/kafka/conf"
+    state: directory
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: '0755'
+    recurse: yes
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:config_directory
 
 
 - name: "Set appropriate ownership, group and permissions in {{ kafka_root }}"
