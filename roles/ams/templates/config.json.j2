@@ -1,7 +1,7 @@
 {
   "bind_ip":"{{ams_bind_ip}}",
   "port":{{ams_port}},
-  "zookeeper_hosts":[{% for host in groups[zookeeper_group] %}{% if hostvars[host]['is_zoo_host'] is defined %}{% if hostvars[host]['is_zoo_host'] | bool == True %}"{{hostvars[host]['private']['hostname']}}:2181"{% if not loop.last %},{% endif %}{% endif %}{% endif %}{% endfor %} ],
+  "zookeeper_hosts":[{% for host in groups[zookeeper_cluster_group] %}{% if hostvars[host]['is_zoo_host'] is defined %}{% if hostvars[host]['is_zoo_host'] | bool == True %}"{{hostvars[host]['private']['hostname']}}:2181"{% if not loop.last %},{% endif %}{% endif %}{% endif %}{% endfor %} ],
   "kafka_znode":"{{ams_kafka_znode}}",
   "store_host":"{{ams_store_host}}",
   "store_db":"{{ams_store_db}}",
