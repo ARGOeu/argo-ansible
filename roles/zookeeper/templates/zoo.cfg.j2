@@ -27,7 +27,7 @@ dataDir={{zookeeper_data}}
 # the port at which the clients will connect
 clientPort=2181
 # the directory where the transaction logs are stored.
-dataLogDir={{zookeeper_logs}}
+dataLogDir={{zookeeper_data}}
 
 {% if cluster_group is defined %}
 {% for host in groups[cluster_group] %}
