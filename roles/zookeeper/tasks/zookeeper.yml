@@ -127,6 +127,27 @@
     - zookeeper:config
 
 
+- name: "mv {{ zookeeper_conf_dir }}/* --> /etc/zookeeper/conf"
+  shell: "mv {{ zookeeper_conf_dir }}/* /etc/zookeeper"
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+
+- name: "Create symbolic link {{ zookeeper_conf_dir }} --> /etc/zookeeper/conf"
+  file:
+    src: "/etc/zookeeper/conf"
+    path: "{{ zookeeper_conf_dir }}"
+    state: link
+    force: yes
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+
+
 - name: Apache Zookeeper systemd service file
   template:
     src: etc/systemd/system/zookeeper.service.j2

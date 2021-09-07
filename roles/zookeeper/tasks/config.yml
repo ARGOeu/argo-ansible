@@ -21,7 +21,7 @@
     group: "{{ zookeeper_group }}"
     create_home: no
     system: yes
-    comment: Apache Kafka user
+    comment: Apache Zookeeper user
   tags:
     - zookeeper
     - zookeeper:config
@@ -49,6 +49,20 @@
 - name: "Create {{ zookeeper_data }} directory for Apache Zookeeper DATA if it does not exist"
   file:
     path: "{{ zookeeper_data }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper:install
+    - zookeeper:config
+    - zookeeper:data
+
+
+- name: "Create  /etc/zookeeper/conf   directory for Apache Zookeeper config files if it does not exist"
+  file:
+    path: "/etc/zookeeper/conf"
     state: directory
     owner: "{{ zookeeper_user }}"
     group: "{{ zookeeper_group }}"
