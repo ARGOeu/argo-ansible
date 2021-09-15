@@ -9,39 +9,51 @@
     owner: root
     group: root
     mode: '0755'
+  tags:
+    - icinga_agent
+    - script
 
+# TODO:
+#- name: Delete previous certificates ( if exists )
+#  shell: rm /var/lib/icinga2/certs/{{ inventory_hostname }}.*
 
 - name: Get ICINGA2_CA_TICKET from Icinga master
   shell: |
-          sed -i "/ICINGA2\_CA\_TICKET/s/'.*'/'$(curl -k -s -u client-pki-ticket:kcjRc8ddPgJ9E64px9Y= -H 'Accept: application/json' -X POST 'https://{{ icinga_master_domain  }}:5665/v1/actions/generate-ticket' -d '{ "cn": "{{ inventory_hostname }}" }' | jq '.results[0] .ticket' --raw-output)'/" icinga2-agent-kickstart.bash
+          sed -i "/ICINGA2\_CA\_TICKET/s/'.*'/'$(curl -k -s -u client-pki-ticket:{{ client_pki_ticket_token }} -H 'Accept: application/json' -X POST 'https://{{ icinga_master_domain }}:5665/v1/actions/generate-ticket' -d '{ "cn": "{{ inventory_hostname }}" }' | jq '.results[0] .ticket' --raw-output)'/" icinga2-agent-kickstart.bash
   args:
     chdir: /tmp/
+  tags:
+    - icinga_agent
+    - ca_ticket
+    - agent_kickstart
 
 - name: Execute Agent script
   shell: ICINGA2_UPDATE_CONFIG=1 ./icinga2-agent-kickstart.bash
   args:
     chdir: /tmp/
-
-
-- name: Restart Icinga 2 service.
-  service:
-    name: icinga2
-    state: restarted
+  notify: Restart Icinga 2 service
+  tags:
+    - icinga_agent
+    - ca_ticket
+    - agent_kickstart
 
 
 - name: Don't forget to config your firewall!
   debug:
     msg:
     - iptables/ip6tables
-    - -A INPUT -p tcp -s 83.212.76.0/32 --dport 5665 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+    - -A INPUT -p tcp -s {{ lookup('dig', icinga_master_domain ) }}/32 --dport 5665 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
     - UFW
-    - ufw allow from 83.212.76.0/32 to any port 5665 proto tcp
+    - ufw allow from {{ lookup('dig', icinga_master_domain ) }}/32 to any port 5665 proto tcp
     - Firewalld.
     - firewall-cmd --new-zone=icinga --permanent
     - firewall-cmd --reload
-    - firewall-cmd --zone=icinga --add-source=83.212.76.0/32
+    - firewall-cmd --zone=icinga --add-source={{ lookup('dig', icinga_master_domain ) }}/32
     - firewall-cmd --zone=icinga --add-port=5665/tcp
     - firewall-cmd --runtime-to-permanent
     - firewall-cmd --get-active-zones
+  tags:
+    - icinga_agent
+    - firewall_message
 
  

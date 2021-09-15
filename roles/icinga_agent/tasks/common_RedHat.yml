@@ -32,7 +32,9 @@
 
 - name: Install Icinga 2 Check Plugins.
   yum:
-    name: nagios-plugins-all
+    name:
+      - nagios-plugins-all
+      - nagios-plugins-check-updates
     state: latest
 
 
