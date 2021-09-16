@@ -1,5 +1,10 @@
 ---
 # defaults file for icinga
 
-icinga_master_domain: "icinga.argo.grnet.gr"
-#client_pki_ticket_token: "Token from /etc/icinga2/conf.d/api-users.conf: ApiUser client-pki-ticket"
+#icinga_master_domain: "icinga.example.com"
+
+## Client-pki-ticket user & token from /etc/icinga2/conf.d/api-users.conf: ApiUser client-pki-ticket
+#client_pki_ticket_user: "ApiUser"
+#client_pki_ticket_token: "password"
+
+

@@ -19,7 +19,7 @@
 
 - name: Get ICINGA2_CA_TICKET from Icinga master
   shell: |
-          sed -i "/ICINGA2\_CA\_TICKET/s/'.*'/'$(curl -k -s -u client-pki-ticket:{{ client_pki_ticket_token }} -H 'Accept: application/json' -X POST 'https://{{ icinga_master_domain }}:5665/v1/actions/generate-ticket' -d '{ "cn": "{{ inventory_hostname }}" }' | jq '.results[0] .ticket' --raw-output)'/" icinga2-agent-kickstart.bash
+          sed -i "/ICINGA2\_CA\_TICKET/s/'.*'/'$(curl -k -s -u {{ client_pki_ticket_user }}:{{ client_pki_ticket_token }} -H 'Accept: application/json' -X POST 'https://{{ icinga_master_domain }}:5665/v1/actions/generate-ticket' -d '{ "cn": "{{ inventory_hostname }}" }' | jq '.results[0] .ticket' --raw-output)'/" icinga2-agent-kickstart.bash
   args:
     chdir: /tmp/
   tags:

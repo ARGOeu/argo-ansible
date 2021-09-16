@@ -38,9 +38,9 @@ node-agent    ansible_user=root
 
 * Example 1:
 ```
-ansible-playbook -i production argo-ansible/install.yml --list-hosts --list-tasks
+ansible-playbook -i production argo-ansible/icinga-agent.yml --list-hosts --list-tasks
 
-playbook: argo-ansible/install.yml
+playbook: argo-ansible/icinga-agent.yml
 
   play #1 (all): all    TAGS: []
     pattern: ['all']
@@ -144,11 +144,11 @@ changed: [snf-TEST.ok.net]
 
 * Example 2:
 ```
-ansible-playbook -i production argo-ansible/install.yml \
+ansible-playbook -i production argo-ansible/icinga-agent.yml \
 -e "icinga_master_domain=icinga.master.example.com client_pki_ticket_token=abcd123" \
 --ssh-common-args='-o StrictHostKeyChecking=no' -vv --list-hosts --list-tasks
 
-playbook: argo-ansible/install.yml
+playbook: argo-ansible/icinga-agent.yml
 
   play #1 (icinga_agent): icinga_agent	TAGS: []
     pattern: ['icinga_agent']
