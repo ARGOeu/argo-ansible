@@ -14,8 +14,10 @@ This role needs to be executed after `commons/firewall` role, so that the firewa
 Role Variables
 --------------
 
-* `defaults/icinga_master_domain` : The domain name of Icinga master.
+* `icinga_master_domain` (**mandatory**) : The domain name of Icinga master.
+* `client_pki_ticket_token` (**mandatory**) : The password of `client-pki-ticket` **API user** from master (`/etc/icinga2/conf.d/api-users.conf`).
 * `group_vars/source` : The IPv4 address of the Icinga master, so as to allow communication with it from firewall.
+
 
 Example Playbook
 ----------------
@@ -26,6 +28,15 @@ Example Playbook
          - { role: icinga, tags: deploy_icinga_agent }
 ```
 
+
+Example Inventory
+-----------------
+```
+[icinga_agent]
+node-agent    ansible_user=root
+```
+
+* Example 1:
 ```
 ansible-playbook -i production argo-ansible/install.yml --list-hosts --list-tasks
 
@@ -129,6 +140,31 @@ RUNNING HANDLER [icinga : Restart Icinga 2 service.] ***************************
 changed: [snf-TEST.ok.net]
 ```
 </details>
+
+
+* Example 2:
+```
+ansible-playbook -i production argo-ansible/install.yml \
+-e "icinga_master_domain=icinga.master.example.com client_pki_ticket_token=abcd123" \
+--ssh-common-args='-o StrictHostKeyChecking=no' -vv --list-hosts --list-tasks
+
+playbook: argo-ansible/install.yml
+
+  play #1 (icinga_agent): icinga_agent	TAGS: []
+    pattern: ['icinga_agent']
+    hosts (1):
+     icinga-agent.example.com
+    tasks:
+      icinga_agent : Include common Icinga tasks for Master & Agent nodes.	TAGS: [deploy_icinga_agent]
+      icinga_agent : Installing some utils for Icigna	TAGS: [deploy_icinga_agent]
+      icinga_agent : Set Agent script.	TAGS: [deploy_icinga_agent]
+      icinga_agent : Get ICINGA2_CA_TICKET from Icinga master	TAGS: [deploy_icinga_agent]
+      icinga_agent : Execute Agent script	TAGS: [deploy_icinga_agent]
+      icinga_agent : Restart Icinga 2 service.	TAGS: [deploy_icinga_agent]
+      icinga_agent : Don't forget to config your firewall!	TAGS: [deploy_icinga_agent]
+```
+
+
 
 License
 -------
