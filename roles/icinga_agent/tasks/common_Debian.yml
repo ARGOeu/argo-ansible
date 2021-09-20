@@ -38,7 +38,7 @@
   with_items:
     - "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free"
     - "deb-src http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free"
-  when: ansible_distribution_release == 'stretch'
+  when: ansible_distribution_release == 'stretch' or ansible_distribution_release == 'buster'
 
 
 
@@ -72,7 +72,7 @@
 
 - name: Configuration Syntax Highlighting using Vim.
   shell: vim-addon-manager -w install icinga2
-  notify: Restart Icinga 2 service.
+  notify: Restart Icinga 2 service
 
 
 
