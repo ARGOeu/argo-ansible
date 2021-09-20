@@ -11,6 +11,7 @@ User={{ kafka_user  }}
 Group={{ kafka_group }}
 SyslogIdentifier=kafka
 LimitNOFILE=32768
+Environment="LOG_DIR={{ kafka_logs }}"
 Environment="KAFKA_HEAP_OPTS={{ kafka_heap_opts }}"
 Environment="KAFKA_OPTS=-Djava.net.preferIPv4Stack=true"
 ExecStart={{ kafka_root }}/bin/kafka-server-start.sh {{ kafka_root }}/config/server.properties

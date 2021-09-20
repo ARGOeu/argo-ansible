@@ -128,7 +128,7 @@
 
 
 - name: "mv {{ zookeeper_conf_dir }}/* --> /etc/zookeeper/conf"
-  shell: "mv {{ zookeeper_conf_dir }}/* /etc/zookeeper"
+  shell: "mv {{ zookeeper_conf_dir }}/* /etc/zookeeper/conf"
   tags:
     - zookeeper
     - zookeeper:install
