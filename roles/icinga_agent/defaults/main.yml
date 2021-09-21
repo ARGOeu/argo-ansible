@@ -1,10 +1,15 @@
 ---
 # defaults file for icinga
 
-#icinga_master_domain: "icinga.example.com"
+
+#icinga_master:
+#  domain: "icinga.example.com"
+#  port: "5665"
+
 
 ## Client-pki-ticket user & token from /etc/icinga2/conf.d/api-users.conf: ApiUser client-pki-ticket
-#client_pki_ticket_user: "ApiUser"
-#client_pki_ticket_token: "password"
 
+#icinga_api_user:
+#  username: "ApiUser"
+#  token: "password"
 

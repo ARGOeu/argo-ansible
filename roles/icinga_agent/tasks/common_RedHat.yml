@@ -51,7 +51,7 @@
       - icinga2-selinux
       - vim-icinga2
     state: latest
-  notify: Restart Icinga 2 service.
+  notify: Restart Icinga 2 service
 
 - name: Install Mongo Agent Check.
   yum:
@@ -59,4 +59,4 @@
     state: latest
   tags: icinga_mongodb_agent
   when: ( repo_mongo_4x | default(false) | bool ) or ( repo_mongo | default(false) | bool )
-  notify: Restart Icinga 2 service.
+  notify: Restart Icinga 2 service

@@ -14,8 +14,10 @@ This role needs to be executed after `commons/firewall` role, so that the firewa
 Role Variables
 --------------
 
-* `icinga_master_domain` (**mandatory**) : The domain name of Icinga master.
-* `client_pki_ticket_token` (**mandatory**) : The password of `client-pki-ticket` **API user** from master (`/etc/icinga2/conf.d/api-users.conf`).
+* `icinga_master.domain` (**mandatory**) : The domain name of Icinga master.
+* `icinga_master.port` (**mandatory**) : The port of Icinga master.
+* `icinga_api_user.username` (**mandatory**) : The  username of `client-pki-ticket` **API user** from master (`/etc/icinga2/conf.d/api-users.conf`).
+* `icinga_api_user.token` (**mandatory**) : The password of `client-pki-ticket` **API user** from master (`/etc/icinga2/conf.d/api-users.conf`).
 * `group_vars/source` : The IPv4 address of the Icinga master, so as to allow communication with it from firewall.
 
 
@@ -145,7 +147,7 @@ changed: [snf-TEST.ok.net]
 * Example 2:
 ```
 ansible-playbook -i production argo-ansible/icinga-agent.yml \
--e "icinga_master_domain=icinga.master.example.com client_pki_ticket_token=abcd123" \
+-e "icinga_master.domain=icinga.master.example.com icinga_master.port=5665 icinga_api_user.username=pki-user icinga_api_user.token=abcd123" \
 --ssh-common-args='-o StrictHostKeyChecking=no' -vv --list-hosts --list-tasks
 
 playbook: argo-ansible/icinga-agent.yml
