@@ -8,8 +8,8 @@
 ICINGA2_NODENAME='{{ inventory_hostname }}'
 ICINGA2_CA_TICKET='request it from master'
 ICINGA2_PARENT_ZONE='master'
-ICINGA2_PARENT_ENDPOINTS=('{{ icinga_master_domain }},')
-ICINGA2_CA_NODE='{{ icinga_master_domain }}'
+ICINGA2_PARENT_ENDPOINTS=('{{ icinga_master.domain }},')
+ICINGA2_CA_NODE='{{ icinga_master.domain }}'
 ICINGA2_GLOBAL_ZONES=('director-global')
 
 # Internal defaults
