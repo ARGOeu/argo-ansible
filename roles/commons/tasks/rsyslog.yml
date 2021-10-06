@@ -41,22 +41,50 @@
 
 
 - name: Copy rsyslog certificates [crt] (1/3)
-  copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr.crt
-        dest={{ rsyslog_cert_dir }}rsyslog.crt backup=yes
-        owner=root group=root mode=0644
-  tags: rsyslog_conf
+  copy:
+    src: "private_files/{{ inventory_hostname }}/rsyslog-gnutls/rsyslog-cert.pem"
+    dest: "{{ rsyslog_cert_dir }}rsyslog.crt"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart rsyslog
+  tags:
+    - rsyslog
+    - rsyslog_conf
+    - rsyslog_certs
+    - rsyslog_cert
 
 - name: Copy rsyslog certificates [key] (2/3)
-  copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr.key
-        dest={{ rsyslog_cert_dir }}rsyslog.key backup=yes
-        owner=root group=root mode=0400
-  tags: rsyslog_conf
+  copy:
+    src: "private_files/{{ inventory_hostname }}/rsyslog-gnutls/rsyslog-key.pem"
+    dest: "{{ rsyslog_cert_dir }}rsyslog.key"
+    owner: root
+    group: root
+    mode: 0400
+    backup: yes
+  notify: restart rsyslog
+  tags:
+    - rsyslog
+    - rsyslog_conf
+    - rsyslog_certs
+    - rsyslog_key
 
-- name: Copy rsyslog certificates [chain] (3/3)
-  copy: src=private_files/star.argo.grnet.gr/star.argo.grnet.gr_CHAIN_cert.crt
-        dest={{ rsyslog_cert_dir }}rsyslog_chain.crt backup=yes
-        owner=root group=root mode=0400
-  tags: rsyslog_conf
+- name: Copy rsyslog certificates [CA] (3/3)
+  copy:
+    src: "private_files/{{ inventory_hostname }}/rsyslog-gnutls/rsyslog-ca.pem"
+    dest: "{{ rsyslog_cert_dir }}rsyslog_ca.crt"
+    owner: root
+    group: root
+    mode: 0400
+    backup: yes
+  notify: restart rsyslog
+  tags:
+    - rsyslog
+    - rsyslog_conf
+    - rsyslog_certs
+    - rsyslog_ca
+
 
 - meta: flush_handlers
 
