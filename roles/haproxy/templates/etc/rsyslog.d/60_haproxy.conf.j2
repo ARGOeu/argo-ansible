@@ -1,0 +1,46 @@
+# {{ ansible_managed }}
+
+ 
+# Collect log with UDP
+$ModLoad imudp
+$UDPServerAddress 127.0.0.1
+$UDPServerRun 514
+
+# Creating local separate log files based on the severity ( haproxy.cfg for the facility )
+local0.*         /var/log/haproxy/haproxy-traffic.log
+local0.notice    /var/log/haproxy/haproxy-admin.log
+local0.err       /var/log/haproxy/haproxy-error.log
+
+
+# Send HAProxy logs.
+## https://www.rsyslog.com/doc/master/configuration/modules/imfile.html
+## https://www.rsyslog.com/doc/master/configuration/actions.html
+## https://www.rsyslog.com/doc/master/configuration/templates.html
+## https://www.rsyslog.com/doc/master/concepts/queues.html
+## https://www.rsyslog.com/doc/master/rainerscript/queue_parameters.html
+
+
+ruleset(name="fwdhaproxytocentrallog"){
+            action(type="omfwd"
+            name="haproxy"
+            template="RSYSLOG_TraditionalForwardFormat"
+            queue.type="LinkedList" # In Memory Queue
+            queue.filename="fwd_q_haproxy" # File name to be used for the queue files.
+            queue.size="100000" # The maximum size of the queue in number of messages.
+            action.resumeRetryCount="-1" # Sets how often an action is retried before it is considered to have failed. Failed actions discard messages. (-1 means eternal)
+            queue.saveonshutdown="on" # This parameter specifies if data should be saved at shutdown.
+            Target="{{ central_rsyslog.hostname }}" Port="{{ central_rsyslog.port }}" Protocol="tcp"
+            StreamDriver="gtls"
+            StreamDriverMode="1" # run driver in TLS-only mode
+            StreamDriverAuthMode="x509/name"
+            StreamDriverPermittedPeers="{{ central_rsyslog.permittedPeers }}"
+            )
+}
+
+input(type="imfile"
+      File="/var/log/haproxy/*log"
+      Tag="haproxy:"
+      ruleset="fwdhaproxytocentrallog"
+)
+
+
