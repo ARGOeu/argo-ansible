@@ -41,3 +41,16 @@
     is_chain_file: chain_file.stat.exists | bool
   notify:
     - restart httpd
+
+
+- name: Configure apache log(rsyslog)
+  template:
+   src: etc/rsyslog.d/65_apache.conf.j2
+   dest: /etc/rsyslog.d/65_apache.conf
+   backup: true
+  notify: restart rsyslog
+  tags:
+    - apache
+    - apache_install
+    - apache_config
+    - apache_rsyslog
