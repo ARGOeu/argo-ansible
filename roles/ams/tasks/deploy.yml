@@ -54,9 +54,11 @@
 
 - name: Configure argo-messaging log(rsyslog)
   template:
-   src: rsyslog_ams.conf.j2
-   dest: /etc/rsyslog.d/ams.conf
+   src: etc/rsyslog.d/61_ams.conf.j2
+   dest: /etc/rsyslog.d/61_ams.conf
    backup: true
+   owner: root
+   group: root
   notify: restart rsyslog
   tags:
     - ams_install
