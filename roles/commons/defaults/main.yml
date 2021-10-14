@@ -21,8 +21,13 @@ ca_path_bundle: /etc/pki/tls/certs/ca-bundle.crt
 # create the cert dir and move the cert and key
 # can be set to false if no cert/key is needed
 requires_cert: true
+
+# Rsyslog
+#central_rsyslog:
+#  hostname: "rsyslog.example.com"
+#  port: "6514"
 rsyslog_cert_dir: "{{ cert_dir }}rsyslog-client-certs/"
-rsyslog_apache_logs: false
+rsyslog_fail2ban_logs: true
 
 # defaults for role repos
 repo_enabled_argo: argo-devel  # from which repo to get the packages (argo-devel or argo-prod)

@@ -24,12 +24,12 @@
   tags: rsyslog_conf
   notify: restart rsyslog
 
-- name: Rsyslog apache logs conf file
+- name: Rsyslog Fail2Ban logs conf file
   template:
-    src=etc/rsyslog.d/apache.log.conf.j2
-    dest=/etc/rsyslog.d/apache.log.conf backup=yes
+    src=etc/rsyslog.d/59_fail2ban.log.conf.j2
+    dest=/etc/rsyslog.d/59_fail2ban.log.conf backup=yes
     owner=root group=root mode=0644
-  when: rsyslog_apache_logs
+  when: rsyslog_fail2ban_logs
   tags: rsyslog_conf
   notify: restart rsyslog
 
