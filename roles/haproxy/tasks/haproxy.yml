@@ -61,8 +61,8 @@
 
 - name: configure haproxy log(rsyslog)
   template:
-   src: rsyslog_haproxy.conf.j2
-   dest: /etc/rsyslog.d/haproxy.conf
+   src: etc/rsyslog.d/60_haproxy.conf.j2
+   dest: /etc/rsyslog.d/60_haproxy.conf
    backup: true
   notify: restart rsyslog
   tags:
