@@ -144,9 +144,9 @@
 
 
 - name: Create rsyslog filter for ESEAL logs
-  copy:
-    src: etc/rsyslog.d/eseal.conf
-    dest: /etc/rsyslog.d/eseal.conf
+  template:
+    src: etc/rsyslog.d/70_eseal.conf.j2
+    dest: /etc/rsyslog.d/70_eseal.conf
     backup: yes
     owner: root
     group: root
