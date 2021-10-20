@@ -48,6 +48,16 @@
    group: haproxy
   tags: haproxy_install
 
+
+- name: Find icinga group id
+  shell: id -g icinga
+  register: icinga_group_id
+  when: haproxy_monitoring_agent | default(false) | bool
+  tags:
+    - haproxy_install
+    - haproxy_install:icinga_group_id
+
+
 - name: configure haproxy
   template:
    src: haproxy_template.cfg.j2
@@ -82,3 +92,14 @@
    name: rh-haproxy18-haproxy
    enabled: true
   tags: haproxy_install
+
+
+- name: Add HAProxy monitoring agent probe
+  include: haproxy-probe.yml
+  when: haproxy_monitoring_agent | default(false) | bool
+  tags:
+    - haproxy_install
+    - haproxy_probe
+
+
+
