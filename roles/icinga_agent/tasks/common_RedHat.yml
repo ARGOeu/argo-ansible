@@ -9,18 +9,30 @@
   yum:
     name: "https://packages.icinga.com/epel/icinga-rpm-release-{{ ansible_distribution_major_version }}-latest.noarch.rpm"
     state: present
+  tags:
+    - icinga_agent
+    - centos7
+    - repository
 
 - name: Enable EPEL repository.
   yum:
     name:
       - epel-release
     state: latest
+  tags:
+    - icinga_agent
+    - centos7
+    - repository
 
 - name: Install Icinga 2.
   yum:
     name:
       - icinga2
     state: latest
+  tags:
+    - icinga_agent
+    - centos7
+    - packages
 
 
 - name: Ensure icinga2 service is started and enabled on boot.
@@ -28,6 +40,10 @@
     name: icinga2
     state: started
     enabled: yes
+  tags:
+    - icinga_agent
+    - centos7
+    - packages
 
 
 - name: Install Icinga 2 Check Plugins.
@@ -36,13 +52,23 @@
       - nagios-plugins-all
       - nagios-plugins-check-updates
     state: latest
+  tags:
+    - icinga_agent
+    - centos7
+    - packages
+    - nagios_plugins
 
 
 - name: Install Argo External Plugins.
   yum:
     name: argo-external-tools
     state: latest
-  tags: icinga_external_tools
+  tags:
+    - icinga_agent
+    - centos7
+    - packages
+    - argo_external_tools
+    - icinga_external_tools
 
 
 - name: Install Icinga 2 SELinux policy and some utils.
@@ -52,6 +78,11 @@
       - vim-icinga2
     state: latest
   notify: Restart Icinga 2 service
+  tags:
+    - icinga_agent
+    - centos7
+    - packages
+
 
 - name: Install Mongo Agent Check.
   yum:
