@@ -41,7 +41,9 @@ global
     master-worker                                           # Launch a "master" which will monitor the "workers".
 
     # turn on stats unix socket
-    stats socket /var/lib/haproxy/stats.sock mode 660 level admin
+    stats socket /var/lib/haproxy/stats.sock {% if icinga_group_id is defined %}gid {{icinga_group_id.stdout}}{% endif %} mode 660 level admin
+
+
 
     # SSL global configuration
 
