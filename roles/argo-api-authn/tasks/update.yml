@@ -18,3 +18,23 @@
     name: argo-api-authn
     state: restarted
   tags: authn_update
+
+
+- name: Get the uuid of ams service type
+  uri:
+    url: "https://{{ authn_host_domain_name }}:{{ authn_service_port }}/v1/service-types?key={{ authn_service_token }}"
+    method: GET
+    body: "{{ lookup('template', 'authn_create_service_type_body.j2') }}"
+    body_format: json
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: get_uuid_response
+  tags:
+    - authn_update
+    - authn_init:get_service_type
+
+
+
