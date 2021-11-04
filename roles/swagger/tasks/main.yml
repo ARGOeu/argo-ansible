@@ -3,7 +3,7 @@
 
 - name: Install PyYAML
   tags: swagger
-  pip: name=pyYAML state=latest
+  pip: name=pyYAML version=5.4.1
 
 
 - name: Create /tmp/swagger folder
