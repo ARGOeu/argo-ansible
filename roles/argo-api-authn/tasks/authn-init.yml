@@ -28,9 +28,10 @@
     return_content: yes
     status_code: 200
     validate_certs: no
-  retries: 3
-  delay: 3
+  retries: 5
+  delay: 10
   register: get_uuid_response
+  until: get_uuid_response.status == 200
   tags:
     - authn_install
     - authn_init
