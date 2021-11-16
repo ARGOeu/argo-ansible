@@ -1,6 +1,11 @@
 ---
 # defaults file for commons
 
+
+# SELinux
+disable_selinux: yes
+
+
 # sshd config path
 sshd_config_path: /etc/ssh/sshd_config
 
