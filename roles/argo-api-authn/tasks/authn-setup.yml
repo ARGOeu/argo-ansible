@@ -15,7 +15,9 @@
     owner: argo-api-authn
     group: argo-api-authn
     mode: 0644
-  tags: authn_install
+  tags:
+    - authn_install
+    - authn-scripts-cert
   notify: restart argo-api-authn
 
 - name: permissions for authn cert key
