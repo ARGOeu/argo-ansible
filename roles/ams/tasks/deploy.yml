@@ -6,6 +6,7 @@
   notify: restart argo-messaging
   tags:
     - ams_install
+    - ams_package
     - ams_config
 
 - name: copy cert to ams folder
@@ -13,6 +14,7 @@
       owner=argo-messaging group=argo-messaging mode=0644
   tags:
     - ams_install
+    - ams_certs
     - ams_config
   notify: restart argo-messaging
 
@@ -21,6 +23,7 @@
       owner=argo-messaging group=argo-messaging mode=0644
   tags:
     - ams_install
+    - ams_certs
     - ams_config
   notify: restart argo-messaging
 
@@ -29,6 +32,7 @@
         owner=argo-messaging group=argo-messaging mode=0755
   tags:
     - ams_install
+    - ams_certs
     - ams_config
   notify: restart argo-messaging
 
@@ -39,6 +43,7 @@
         owner=argo-messaging group=argo-messaging mode=0644
   tags:
     - ams_install
+    - ams_certs
     - ams_config
   notify: restart argo-messaging
 
