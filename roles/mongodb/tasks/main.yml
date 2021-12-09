@@ -13,6 +13,26 @@
     - git
 
 
+- name: Instsall python2-pip
+  package:
+    name: python2-pip
+    state: latest
+  tags:
+    - python2
+    - python2-pip
+
+- name: Set specific version of pip
+  pip:
+    name:
+      - pip>10,<21.0
+    state: forcereinstall
+    executable: pip2
+    extra_args: --upgrade
+  tags:
+    - python2
+    - python2-pip
+    - python2-pip-fix
+
 - name: install pymongo==3.12.3
   pip:
     name: pymongo==3.12.3

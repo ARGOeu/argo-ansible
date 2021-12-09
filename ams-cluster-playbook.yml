@@ -4,6 +4,7 @@
 - hosts: all
   become: yes
   roles:
+    - { role: commons,                 task: selinux,         tags: disable_selinux       }
     - { role: commons,                 task: timezone,        tags: timezone              }
     - { role: commons,                 task: repos,           tags: repos                 }
     - { role: commons,                 task: basic_utils,     tags: basic_utils           }
@@ -16,6 +17,12 @@
     - { role: nickhammond.logrotate,                          tags: logrotate             }
     #- { role: commons,                 task: is_monitored,    tags: monitored             }
     #- { role: commons,                 task: backupamsmongo,  tags: rsyslog_conf          }
+
+
+- hosts: icinga_agent
+  become: yes
+  roles:
+     - { role: icinga_agent, tags: deploy_icinga_agent }
 
 
 - hosts: ams_cluster

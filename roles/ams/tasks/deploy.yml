@@ -35,6 +35,7 @@
     - ams_certs
     - ams_config
   notify: restart argo-messaging
+  when: ams_push_enabled is defined and ams_push_enabled | default(false) | bool
 
 - name: Copy CA file to validate push server
   copy: src=private_files/{{ inventory_hostname }}/PushCA.crt
@@ -46,6 +47,7 @@
     - ams_certs
     - ams_config
   notify: restart argo-messaging
+  when: ams_push_enabled is defined and ams_push_enabled | default(false) | bool
 
 - name: Configure argo-messaging api
   template: src=config.json.j2
