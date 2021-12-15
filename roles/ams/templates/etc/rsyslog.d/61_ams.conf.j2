@@ -9,7 +9,7 @@ template(name="ams-error-logs"     type="string"  string="/var/log/argo_messagin
 
 
 # Local logs
-if ($syslogtag contains "argo_messaging" and $msg contains "type=backend_log") then {
+if ($programname contains "argo_messaging" and $msg contains "type=backend_log") then {
   action(type="omfile"
   name="AMS-Backend"
   dynaFile="ams-backend-logs"
@@ -22,7 +22,7 @@ if ($syslogtag contains "argo_messaging" and $msg contains "type=backend_log") t
   & stop
 }
 
-if ($syslogtag contains "argo_messaging" and $msg contains "type=request_log" and $msg contains 'level=error') then {
+if ($programname contains "argo_messaging" and $msg contains "type=request_log" and $msg contains 'level=error') then {
   action(type="omfile"
   name="AMS-Error"
   dynaFile="ams-error-logs"
@@ -35,7 +35,7 @@ if ($syslogtag contains "argo_messaging" and $msg contains "type=request_log" an
   & stop
 }
 
-if ($syslogtag contains "argo_messaging" and $msg contains "type=request_log" ) then {
+if ($programname contains "argo_messaging" and $msg contains "type=request_log" ) then {
   action(type="omfile"
   name="AMS-Traffic"
   dynaFile="ams-traffic-logs"
@@ -48,7 +48,7 @@ if ($syslogtag contains "argo_messaging" and $msg contains "type=request_log" ) 
   & stop
 }
 
-if ($syslogtag contains "argo_messaging") then {
+if ($programname contains "argo_messaging") then {
   action(type="omfile"
   name="AMS"
   dynaFile="ams-logs"
