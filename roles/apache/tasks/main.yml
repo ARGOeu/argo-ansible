@@ -3,13 +3,25 @@
 
 - name: Backup apache directory if exists
   include: backup.yml
+  tags:
+    - apache
+    - apache:backup
 
 - name: Install apache and mod_ssl
   include: install.yml
+  tags:
+    - apache
+    - apache:install
 
 - name: Clean apache folders
   include: clean_install.yml
   when: clean_install is defined
+  tags:
+    - apache
+    - apache:clean_install
 
 - name: Set up configuration files
   include: configuration.yml
+  tags:
+    - apache
+    - apache:configuration
