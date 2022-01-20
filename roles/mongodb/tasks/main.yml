@@ -12,9 +12,24 @@
     - mongodb-org-server
     - git
 
+
+- name: install pymongo==3.12.3
+  pip:
+    name: pymongo==3.12.3
+    state: present
+    executable: pip2.7
+  tags:
+    - pymongo
+    - motop
+
 - name: install motop
   pip:
     name: git+https://github.com/tart/motop.git
+    state: present
+    executable: pip2.7
+  tags:
+    - motop
+
 
 - name: create mongo replicated folder
   file:
