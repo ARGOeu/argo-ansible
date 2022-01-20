@@ -57,4 +57,9 @@
     - apache_modules_enabled
 
 
+#- name: "Ensure DocumentRoot {{ httpd_document_root }} directory exists"
+#  file:
+#    path: "{{ httpd_document_root }}"
+#    state: directory
+
 

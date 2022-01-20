@@ -39,6 +39,10 @@
     force: yes
   vars:
     is_chain_file: chain_file.stat.exists | bool
+  tags:
+    - apache
+    - apache:configuration
+    - apache:configuration:vhost_file
   notify:
     - restart httpd
 
