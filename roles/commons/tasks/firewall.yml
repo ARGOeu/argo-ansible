@@ -44,14 +44,18 @@
   with_items: "{{firewall_zones}}"
   notify: restart firewall
   tags: firewall
-  ignore_errors: true
+  register: new_zone_result
+  failed_when: new_zone_result is failed and "NAME_CONFLICT" not in new_zone_result.stderr
+  changed_when: new_zone_result is changed and "NAME_CONFLICT" not in new_zone_result.stderr
 
 - name: Create firewall new services
   command: firewall-cmd --permanent --new-service="{{item.name}}"
   with_items: "{{firewall_services}}"
   notify: restart firewall
   tags: firewall
-  ignore_errors: true
+  register: new_service_result
+  failed_when: new_service_result is failed and "NAME_CONFLICT" not in new_service_result.stderr
+  changed_when: new_service_result is changed and "NAME_CONFLICT" not in new_service_result.stderr
 
 - name: Add port to services
   command: firewall-cmd --permanent --service="{{item.name}}" --add-port={{item.port}}
