@@ -32,7 +32,7 @@
     permanent: true
     state: enabled
   with_items:
-    - ssh
+    #- ssh
     - dhcpv6-client
   tags: firewall
   notify: restart firewall
@@ -91,5 +91,15 @@
     permanent: true
     state: enabled
   with_items: "{{firewall_interfaces}}"
+  tags: firewall
+  notify: restart firewall
+
+
+- name: Remove ssh service from public zone
+  firewalld:
+    zone: public
+    service: "ssh"
+    permanent: true
+    state: disabled
   tags: firewall
   notify: restart firewall
