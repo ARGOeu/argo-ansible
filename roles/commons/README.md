@@ -81,6 +81,28 @@ repo related
 - repo_nagios: false
 
 
+Firewall
+------------
+If you want to just **add** some new sources to your firewall and some services
+to them, but you don't want ( or afraid ) to change anything else in the firewall
+configuration you already have, you can run the role with the following tags:
+```bash
+ansible-playbook -i test-intentory argo-ansible/install.yml -vv --tags="create_new_zones, add_services_to_zones, add_sources_to_zones, remove_ssh_from_public"
+```
+
+If you just want to **remove** public ssh access:
+```bash
+ansible-playbook -i test-intentory argo-ansible/install.yml -vv --tags="remove_ssh_from_public"
+```
+
+or all together:
+```bash
+ansible-playbook -i test-intentory argo-ansible/install.yml -vv  --tags="create_new_zones, add_services_to_zones, add_sources_to_zones, remove_ssh_from_public"
+```
+
+So you can change only the essentials and nothing else!
+
+
 Dependencies
 ------------
 
