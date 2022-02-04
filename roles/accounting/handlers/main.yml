@@ -1,0 +1,28 @@
+---
+# handlers file for accounting
+
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+
+
+- name: Reload the systemd daemon
+  systemd:
+   daemon_reload: yes
+
+
+- name: accounting service restart and enable
+  service:
+   name: accounting.service
+   state: restarted
+   enabled: true
+
+- name: Wait a few seconds for the service to wake up
+  become: no
+  wait_for:
+    timeout: 20
+  delegate_to: localhost
+
