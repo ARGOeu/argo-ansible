@@ -126,7 +126,7 @@ listen stats
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
 
-frontend  {{haproxy_frontend}}
+frontend  {{haproxy_frontend | default(inventory_hostname) }}
     # Logged also an HTTP request header
     http-request    capture req.hdr(Host) len 30
     http-request    capture req.hdr(User-Agent) len 100

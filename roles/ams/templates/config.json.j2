@@ -12,7 +12,6 @@
   {% if ams_service_token %}
   "service_token":"{{ams_service_token}}",
   {% endif %}
-  "log_level": "{{ams_log_level}}",
   {% if ams_push_enabled %}
   "push_enabled": {{ams_push_enabled}},
   "push_server_host": "{{ams_push_server_host}}",
@@ -21,7 +20,8 @@
   {% if ams_push_tls_enabled %}
   "push_tls_enabled": {{ams_push_tls_enabled}},
   "verify_push_server": {{ams_verify_push_server}},
-  "certificate_authorities_dir": "/var/www/argo-messaging/cas"
+  "certificate_authorities_dir": "/var/www/argo-messaging/cas",
   {% endif %}
   {% endif %}
+  "log_level": "{{ams_log_level}}"
 }
