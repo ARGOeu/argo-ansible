@@ -35,11 +35,11 @@ private:
 commons-role-vars:
   repos_cloudera_kafka: true
 
-  firewall_services:
+  firewall_services_extra:
     - name: kafka
       port: 9092/tcp
 
-  firewall_services_zones:
+  firewall_services_zones_extra:
     - service: kafka
       zone: internal
 

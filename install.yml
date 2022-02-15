@@ -159,4 +159,3 @@
   become: yes
   roles:
     - { role: backup_mysql,  task: backup,  tags: mysql-backup   }
-

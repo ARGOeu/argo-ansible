@@ -11,11 +11,11 @@ sshd_config_path: /etc/ssh/sshd_config
 
 # firewall default vars
 firewall_private_interfaces: []
-firewall_sources: []
+firewall_sources_extra: []
 firewall_interfaces: []
-firewall_zones: []
-firewall_services: []
-firewall_services_zones: []
+firewall_zones_extra: []
+firewall_services_extra: []
+firewall_services_zones_extra: []
 
 # firewall
 cert_dir: /etc/grid-security/
