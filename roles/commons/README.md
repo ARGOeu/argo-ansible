@@ -44,11 +44,11 @@ Role Variables
 
 firewall related:
 - firewall_private_interfaces: a list of interfaces to be in private networks
-- firewall_sources: a list of sources to be created
+- firewall_sources_extra: a list of sources to be created
 - firewall_interfaces: a list of interfaces to be added to zones (items: {"interface":"ethX", "zone":"zone to map to"})
-- firewall_zones: a list of zones to be created
-- firewall_services: a list of services to be created (items: {"name": "service name", "port": "port_num/tcp"})
-- firewall_services_zones: a list that maps services to zones (items: {"service":"service name", "zone": "zone to map to"})
+- firewall_zones_extra: a list of zones to be created
+- firewall_services_extra: a list of services to be created (items: {"name": "service name", "port": "port_num/tcp"})
+- firewall_services_zones_extra: a list that maps services to zones (items: {"service":"service name", "zone": "zone to map to"})
 
 sshd related:
 - sshd_config_path: path to configuration file of ssh daemon (default: /etc/ssh/sshd_config)
