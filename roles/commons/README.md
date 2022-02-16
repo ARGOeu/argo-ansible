@@ -44,10 +44,13 @@ Role Variables
 
 firewall related:
 - firewall_private_interfaces: a list of interfaces to be in private networks
-- firewall_sources_extra: a list of sources to be created
+- firewall_sources_base: a list of basic sources to be created
+- firewall_sources_extra: a list of extra sources to be created
 - firewall_interfaces: a list of interfaces to be added to zones (items: {"interface":"ethX", "zone":"zone to map to"})
-- firewall_zones_extra: a list of zones to be created
-- firewall_services_extra: a list of services to be created (items: {"name": "service name", "port": "port_num/tcp"})
+- firewall_zones_base: a list of basic zones to be created
+- firewall_zones_extra: a list of extra zones to be created
+- firewall_services_base: a list of basic services to be created (items: {"name": "service name", "port": "port_num/tcp"})
+- firewall_services_extra: a list of extra services to be created (items: {"name": "service name", "port": "port_num/tcp"})
 - firewall_services_zones_extra: a list that maps services to zones (items: {"service":"service name", "zone": "zone to map to"})
 
 sshd related:
@@ -83,6 +86,10 @@ repo related
 
 Firewall
 ------------
+This role uses 2 types of variables, first the basic variables that contain zones and
+services that all vms need such as vpn access or monitoring checks.
+Second, the specific variables that a host need for it's services.
+
 If you want to just **add** some new sources to your firewall and some services
 to them, but you don't want ( or afraid ) to change anything else in the firewall
 configuration you already have, you can run the role with the following tags:
