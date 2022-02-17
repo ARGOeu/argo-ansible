@@ -90,6 +90,19 @@ This role uses 2 types of variables, first the basic variables that contain zone
 services that all vms need such as vpn access or monitoring checks.
 Second, the specific variables that a host need for it's services.
 
+For example:
+The generic services are saved in the *base variable.
+  firewall_services_base:
+  - name: icinga_agent
+    port: "{{ icinga_master_port }}"
+
+For a specific domain we need ntp so we add it in the *extra field.
+  firewall_services_extra:
+  - name: ntp
+    port: 123/udp
+
+
+
 If you want to just **add** some new sources to your firewall and some services
 to them, but you don't want ( or afraid ) to change anything else in the firewall
 configuration you already have, you can run the role with the following tags:
