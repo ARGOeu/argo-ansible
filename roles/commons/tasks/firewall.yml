@@ -45,7 +45,9 @@
 
 - name: Create firewall new zones
   command: firewall-cmd --permanent --new-zone="{{item}}"
-  with_items: "{{firewall_zones}}"
+  with_items:
+    - "{{ firewall_zones_base }}"
+    - "{{ firewall_zones_extra }}"
   notify: restart firewall
   tags:
     - firewall
@@ -56,7 +58,9 @@
 
 - name: Create firewall new services
   command: firewall-cmd --permanent --new-service="{{item.name}}"
-  with_items: "{{firewall_services}}"
+  with_items:
+    - "{{ firewall_services_base }}"
+    - "{{ firewall_services_extra }}"
   notify: restart firewall
   tags:
     - firewall
@@ -67,7 +71,9 @@
 
 - name: Add port to services
   command: firewall-cmd --permanent --service="{{item.name}}" --add-port={{item.port}}
-  with_items: "{{firewall_services}}"
+  with_items:
+    - "{{ firewall_services_base }}"
+    - "{{ firewall_services_extra }}"
   notify: restart firewall
   tags:
     - firewall
@@ -80,7 +86,9 @@
     service: "{{item.service}}"
     permanent: true
     state: enabled
-  with_items: "{{firewall_services_zones}}"
+  with_items:
+    - "{{ firewall_services_zones_base }}"
+    - "{{ firewall_services_zones_extra }}"
   tags:
     - firewall
     - add_services_to_zones
@@ -92,7 +100,9 @@
     source: "{{item.source}}"
     permanent: true
     state: enabled
-  with_items: "{{firewall_sources}}"
+  with_items:
+    - "{{ firewall_sources_base }}"
+    - "{{ firewall_sources_extra }}"
   tags:
     - firewall
     - add_sources_to_zones

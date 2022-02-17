@@ -24,7 +24,7 @@ Dependencies
 Uses Httpd and Commons roles.
 Following variables should be set-up for swagger http access (from role: commons, task: firewall)
 ```yaml
-firewall_services_zones:
+firewall_services_zones_extra:
  - service: https
    zone: public
  - service: http

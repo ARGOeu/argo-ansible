@@ -13,7 +13,7 @@ java_version: 1.8.0
 # ~~~~~~~~~~~~~~~~~ Firewall ~~~~~~~~~~~~~~~~ #
 ###############################################
 
-#firewall_services:
+#firewall_services_extra:
 # - name: zookeeper-client   # Zookeeper main
 #   port: "{{ zookeeper_clientPort }}/tcp"
 # - name: zookeeper-peer

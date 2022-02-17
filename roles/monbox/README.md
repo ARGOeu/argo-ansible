@@ -32,7 +32,7 @@ monbox_authorized_for_all_host_commands:
   - "/C=GR/O=HellasGrid/OU=grnet.gr/CN=LL"
 
 # firewall settings for all monbox hosts
-firewall_services_zones:
+firewall_services_zones_extra:
  - service: https
    zone: public
  - service: http

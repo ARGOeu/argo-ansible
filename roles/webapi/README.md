@@ -79,7 +79,7 @@ so the following external role variables must be set
 
 also the following firewall variable must be set for public access to the argo-web-api
 ```yaml
-firewall_services_zones:
+firewall_services_zones_extra:
  - service: https
    zone: public
  - service: http
