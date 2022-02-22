@@ -1,0 +1,9 @@
+/var/log/accounting/accounting.log {
+    rotate 7
+    daily
+    compress
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+}

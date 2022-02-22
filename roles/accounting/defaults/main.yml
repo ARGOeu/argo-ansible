@@ -1,0 +1,16 @@
+---
+# defaults file for accounting
+
+
+## Privileged user for accounting
+#
+accounting_user: accounting
+accounting_group: accounting
+
+
+# Directories
+#
+accounting_root_dir: /opt/accounting
+accounting_conf_dir: /etc/accounting/conf.d
+accounting_logs_dir: /var/log/accounting
+

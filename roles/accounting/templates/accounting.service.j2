@@ -1,0 +1,27 @@
+[Unit]
+Description=ARGO Accounting.
+After=network.target remote-fs.target nss-lookup.target
+Documentation=https://github.com/ARGOeu/ARGO-accounting/tree/devel
+
+[Service]
+#Type=simple
+User={{ accounting_user }}
+Group={{ accounting_group }}
+WorkingDirectory={{ accounting_root_dir }}
+ExecStart=/usr/bin/java -jar {{ accounting_root_dir }}/accounting.jar
+SyslogIdentifier=accounting
+Restart=on-failure
+RestartSec=5s
+SuccessExitStatus=143
+#KillMode=mixed
+Environment="QUARKUS_MONGODB_CONNECTION_STRING=mongodb://127.0.0.1:27017"
+Environment="UNIT_TYPES_FILE=/etc/accounting/conf.d/unit_type.conf"
+Environment="METRIC_TYPES_FILE=/etc/accounting/conf.d/metric_type.conf"
+Environment="SERVER_URL=https://{{ inventory_hostname }}"
+
+
+
+[Install]
+WantedBy=multi-user.target
+#Alias=accounting.service
+#Alias=accountingd.service
