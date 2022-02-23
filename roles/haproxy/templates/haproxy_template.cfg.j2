@@ -50,7 +50,7 @@ global
     # LS config
 
     ssl-default-server-options no-tls-tickets
-    ssl-default-bind-options no-sslv3
+    ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11
 
     ## Disabling Session Tickets Although disabling session
     ## tickets will undoubtedly have a negative performance
@@ -104,7 +104,7 @@ listen stats
     http-request    capture req.hdr(Host) len 30
     http-request    capture req.hdr(User-Agent) len 100
 
-    bind            :::{{haproxy_listen_stats_port}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3 {% if haproxy_http2 is defined %}{{haproxy_http2}}{% endif %}
+    bind            :::{{haproxy_listen_stats_port}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3 no-tlsv10 no-tlsv11 {% if haproxy_http2 is defined %}{{haproxy_http2}}{% endif %}
 
     mode            http
     log             global
@@ -131,7 +131,7 @@ frontend  {{haproxy_frontend | default(inventory_hostname) }}
     http-request    capture req.hdr(Host) len 30
     http-request    capture req.hdr(User-Agent) len 100
 
-    bind            :::{{haproxy_frontend_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3 {% if haproxy_http2 is defined %}{{haproxy_http2}}{% endif %}
+    bind            :::{{haproxy_frontend_port_bind_ssl}} ssl crt {{cert_dir}}{{inventory_hostname}}.crt no-sslv3 no-tlsv10 no-tlsv11 {% if haproxy_http2 is defined %}{{haproxy_http2}}{% endif %}
 
     bind            :::{{haproxy_frontend_port_bind}}
     reqadd          X-Forwarded-Proto:\ https
