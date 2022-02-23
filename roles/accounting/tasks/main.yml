@@ -183,20 +183,6 @@
     - accounting:logs
     - accounting:rsyslog
 
-- name: Create logrotate configuration for accounting logs
-  copy:
-    src: etc/logrotate.d/accounting
-    dest: /etc/logrotate.d/accounting
-    owner: root
-    group: root
-    mode: '0644'
-  notify:
-    - restart rsyslog
-  tags:
-    - accounting
-    - accounting:logs
-    - accounting:logrotate
-
 
 - meta: flush_handlers
 
