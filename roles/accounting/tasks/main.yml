@@ -201,47 +201,6 @@
 - meta: flush_handlers
 
 
-- name: Check API call (1/2)
-  become: no
-  local_action:
-    module: uri
-    url: "https://{{ inventory_hostname }}/accounting-system/metric-definition"
-    method: GET
-    validate_certs: false
-    status_code:
-      - 200
-    return_content: yes
-  retries: 5
-  delay: 10
-  register: validate
-  until: validate.status == 200
-  tags:
-    - accounting
-    - accounting:check
-    - accounting:update
-
-- name: Check API call (2/2)
-  become: no
-  local_action:
-    module: uri
-    url: "https://{{ inventory_hostname }}/accounting-system/metric-definition/unit-types"
-    method: GET
-    validate_certs: false
-    status_code:
-      - 200
-    return_content: yes
-  retries: 5
-  delay: 10
-  register: validate
-  until: validate.status == 200
-  tags:
-    - accounting
-    - accounting:check
-    - accounting:update
-
-
-
-
 - name: More about Accounting project.
   debug:
     msg:
