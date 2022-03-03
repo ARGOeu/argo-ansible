@@ -27,4 +27,4 @@ accounting_logs_dir: /var/log/accounting
 #  realm: example
 #  client_id: example-system-public
 
-
+quarkus_authorization: true

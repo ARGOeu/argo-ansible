@@ -27,6 +27,8 @@ Environment="KEYCLOAK_SERVER_URL={{ keycloak_server.url }}"
 Environment="KEYCLOAK_SERVER_REALM={{ keycloak_server.realm }}"
 Environment="KEYCLOAK_SERVER_CLIENT_ID={{ keycloak_server.client_id }}"
 
+Environment="DISABLE_AUTHORIZATION={{ quarkus_authorization | lower }}"
+
 
 [Install]
 WantedBy=multi-user.target
