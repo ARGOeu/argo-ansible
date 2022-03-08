@@ -2,15 +2,17 @@
 ssmtp_debug: YES;
 alerta_admin_list: ['admin@localhost']
 alerta_plugin_list: ['reject','amqp']
+alerta_default_env: 'production'
 alerta_allowed_env_list: ['production']
 alerta_dashboard_dir: '/var/www/html/'
 alerta_dashboard_repo: https://github.com/alerta/alerta-webui.git
-alerta_dashboard_release: 'v7.2.11' 
+alerta_dashboard_release: 'v8.7.0' 
 alerta_amqp_release: '8b1b3b3'
 alerta_mailer_release: '74834e6'
 alerta_secret_key: 'HOf%A)w6de5oJXJ^F=Jb@rfz4YDRKui9'
 alerta_server_dir: '/opt/alerta/'
 alerta_token: ''
+alerta_default_severity: 'ok'
 
 
 alerta_www_url: 'localhost'
@@ -20,8 +22,8 @@ alerta_mail_from: ''
 alerta_smtp_host: ''
 alerta_smtp_port: 587
 alerta_mail_debug: true
-alerta_version: 7.2.2
-alerta_server_version: 7.2.11
+alerta_version: 8.5.1
+alerta_server_version: 8.7.0
 
 # default: use pip to install argo-alert from github repo using devel branch
 argo_alert_repo: 'git+https://github.com/ARGOeu/argo-alert@devel#egg=argoalert'

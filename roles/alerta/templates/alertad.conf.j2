@@ -3,6 +3,11 @@
 DEBUG=True
 ADMIN_USERS = {{alerta_admin_list}}
 
+DATABASE_URL='mongodb://localhost:27017/monitoring'
+
+DEFAULT_ENVIRONMENT='{{alerta_default_env}}'
+DEFAULT_NORMAL_SEVERITY='{{alerta_default_severity}}'
+
 SECRET_KEY='{{alerta_secret_key}}'
 SEVERITY_MAP = {
     'fatal': 0,
