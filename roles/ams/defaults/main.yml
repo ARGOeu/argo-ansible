@@ -13,6 +13,7 @@ ams_auth_option: 'both'
 repo_argo_disabled: "*cloudera*"
 # ams_metrics_token: 'secret_key' this should be overridden in host vars
 # ams_service_token: 'secret_key' this should be overridden in host vars
+# ams_proxy_hostname: 'proxy.argo.gr' this should be overridden in host vars
 
 # ams_data_projects:
 #   -  name: TEST #the project name

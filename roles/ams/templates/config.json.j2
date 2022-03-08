@@ -23,5 +23,10 @@
   "certificate_authorities_dir": "/var/www/argo-messaging/cas",
   {% endif %}
   {% endif %}
+
+  {% if ams_proxy_hostname %}
+  "proxy_hostname": "{{ams_proxy_hostname}}",
+  {% endif %}
+
   "log_level": "{{ams_log_level}}"
 }
