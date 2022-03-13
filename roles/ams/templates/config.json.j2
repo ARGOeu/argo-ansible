@@ -8,7 +8,6 @@
   "certificate":"/var/www/argo-messaging/hostcert.pem",
   "certificate_key":"/var/www/argo-messaging/hostkey.pem",
   "per_resource_auth":{{ams_per_resource_auth}},
-  "auth_option": "{{ams_auth_option}}",
   {% if ams_service_token %}
 "service_token":"{{ams_service_token}}",
   {% endif %}
@@ -23,10 +22,11 @@
   "certificate_authorities_dir": "/var/www/argo-messaging/cas",
   {% endif %}
   {% endif %}
-
   {% if ams_proxy_hostname %}
   "proxy_hostname": "{{ams_proxy_hostname}}",
   {% endif %}
-
+  {% if ams_auth_option %}
+  "auth_option": "{{ams_auth_option}}",
+  {% endif %}
   "log_level": "{{ams_log_level}}"
 }

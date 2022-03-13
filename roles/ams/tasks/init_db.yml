@@ -25,7 +25,6 @@
     - ams_install
     - init_db
     - init_roles
-    #- ams_update
 
 - name: Run init roles script
   shell: mongo --host "rs0/{{ams_store_host}}" < /tmp/db_init_roles.js
@@ -34,7 +33,6 @@
     - ams_install
     - init_db
     - init_roles
-    #- ams_update
 
 - name: Move init projects script
   template: dest="/tmp/db_init_projects.js" owner=root group=root mode=640 src=db_init_projects.js.j2
@@ -83,50 +81,3 @@
     - ams_install
     - init_db
     - init_push_worker
-
-
-- name: AMS check - Version (1/3)
-  uri:
-    url: "https://localhost/v1/version"
-    method: GET
-    return_content: yes
-    status_code: 200
-    validate_certs: no
-  retries: 3
-  delay: 3
-  register: ams_version_response
-  tags:
-    - ams_install
-    - ams_check
-    - ams_check:version
-
-- name: AMS check - Health status (2/3)
-  uri:
-    url: "https://localhost/v1/status"
-    method: GET
-    return_content: yes
-    status_code: 200
-    validate_certs: no
-  retries: 3
-  delay: 3
-  register: ams_status_response
-  tags:
-    - ams_install
-    - ams_check
-    - ams_check:stats
-
-- name: AMS check - All projects (3/3)
-  uri:
-    url: "https://localhost/v1/projects?key={{ ams_service_token }}"
-    method: GET
-    return_content: yes
-    status_code: 200
-    validate_certs: no
-  retries: 3
-  delay: 3
-  register: ams_projects_response
-  tags:
-    - ams_install
-    - ams_check
-    - ams_check:projects
-
