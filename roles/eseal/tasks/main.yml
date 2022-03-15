@@ -158,20 +158,6 @@
     - eseal:logs
     - eseal:rsyslog
 
-- name: Create logrotate configuration for ESEAL logs
-  copy:
-    src: etc/logrotate.d/eseal
-    dest: /etc/logrotate.d/eseal
-    owner: root
-    group: root
-    mode: '0644'
-  notify:
-    - restart rsyslog
-  tags:
-    - eseal
-    - eseal:logs
-    - eseal:logrotate
-
 
 - meta: flush_handlers
 
