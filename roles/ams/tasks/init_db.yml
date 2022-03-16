@@ -25,6 +25,7 @@
     - ams_install
     - init_db
     - init_roles
+    #- ams_update
 
 - name: Run init roles script
   shell: mongo --host "rs0/{{ams_store_host}}" < /tmp/db_init_roles.js
@@ -33,6 +34,7 @@
     - ams_install
     - init_db
     - init_roles
+    #- ams_update
 
 - name: Move init projects script
   template: dest="/tmp/db_init_projects.js" owner=root group=root mode=640 src=db_init_projects.js.j2
