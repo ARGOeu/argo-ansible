@@ -158,13 +158,3 @@
     - mongo_backup
   when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
 
-
-- name: Install Mongo Agent Check.
-  yum:
-    name: percona-nagios-plugins
-    state: latest
-  tags: icinga_mongodb_agent
-  when: ( repo_mongo_4x | default(false) | bool ) or ( repo_mongo | default(false) | bool )
-  notify: Restart Icinga 2 service
-
-

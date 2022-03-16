@@ -21,33 +21,6 @@
         owner=root group=root mode=0644
   when: repo_mongo_4x
 
-- name: Install mongo agent repo perconal-original
-  copy: src=etc/yum.repos.d/percona-original-release.repo
-        dest=/etc/yum.repos.d/percona-original-release.repo backup=no
-        owner=root group=root mode=0644
-  when: repo_mongo_4x or repo_mongo
-  tags:
-    - repo_mongodb
-    - icinga_mongodb_agent
-
-- name: Install mongo agent repo perconal-prel
-  copy: src=etc/yum.repos.d/percona-prel-release.repo
-        dest=/etc/yum.repos.d/percona-prel-release.repo backup=no
-        owner=root group=root mode=0644
-  when: repo_mongo_4x or repo_mongo
-  tags:
-    - repo_mongodb
-    - icinga_mongodb_agent
-
-- name: Install mongo agent repo percona key
-  copy: src=etc/pki/rpm-gpg/PERCONA-PACKAGING-KEY
-        dest=/etc/pki/rpm-gpg/PERCONA-PACKAGING-KEY backup=no
-        owner=root group=root mode=0644
-  when: repo_mongo_4x or repo_mongo
-  tags:
-    - repo_mongodb
-    - icinga_mongodb_agent
-
 - name: Install EGI-trustanchors repository definitions
   tags: repo_ca_bundle
   copy: src=etc/yum.repos.d/EGI-trustanchors.repo
