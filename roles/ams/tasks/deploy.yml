@@ -6,6 +6,7 @@
   notify: restart argo-messaging
   tags:
     - ams_install
+    #- ams_update
     - ams_package
     - ams_config
 
@@ -56,6 +57,7 @@
   tags:
     - ams_install
     - ams_config
+    - ams_config_json
   notify: restart argo-messaging
 
 
