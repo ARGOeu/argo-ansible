@@ -64,7 +64,7 @@
 
 - name: Point swagger-ui to corresponding swagger definitions on host
   tags: swagger-update
-  replace: dest=/var/www/html/{{ item.name }}/index.html
+  replace: dest=/var/www/html/{{ item.name }}/swagger-initializer.js
            regexp='"https:\/\/petstore\.swagger\.io\/v2\/swagger\.json"'
            replace='"https://{{ inventory_hostname }}/{{ item.name }}/swagger.json"'
            backup=yes
