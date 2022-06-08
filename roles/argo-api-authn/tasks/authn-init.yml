@@ -33,7 +33,6 @@
   register: get_uuid_response
   until: get_uuid_response.status == 200
   tags:
-    - authn_install
     - authn_init
     - authn_init:get_service_type
 
@@ -41,7 +40,6 @@
   debug:
     msg: "{{ get_uuid_response.json.service_types[0].uuid }}"
   tags:
-    - authn_install
     - authn_init
     - authn_init:get_service_type
 
@@ -62,9 +60,5 @@
   register: creating_authn_call_response
   ignore_errors: true
   tags:
-    - authn_install
     - authn_init
     - authn_init:creating_authn
-
-
-
