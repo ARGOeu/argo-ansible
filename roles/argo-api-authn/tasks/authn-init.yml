@@ -15,7 +15,6 @@
   register: create_service_type_call_response
   failed_when: create_service_type_call_response.failed and 'ams already exists' not in create_service_type_call_response.json.error.message
   tags:
-    - authn_install
     - authn_init
     - authn_init:create_service_type
 
