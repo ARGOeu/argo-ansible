@@ -65,7 +65,7 @@
 - hosts: authn
   become: yes
   roles:
-    - { role: argo-api-authn,    task: authn-setup                                                         }
+    - { role: argo-api-authn,    task: authn-setup,                         tags: authn_install            }
     - { role: argo-api-authn,    task: python-env-setup                                                    }
     - { role: argo-api-authn,    task: scripts_cert,                        tags: authn-scripts-cert       }
     - { role: argo-api-authn,    task: authn-init,                          tags: init_checks              }

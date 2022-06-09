@@ -9,20 +9,23 @@
   tags: authn_install
   notify: restart argo-api-authn
 
-- name: permissions for authn cert
-  file:
-    path: /etc/grid-security/hostcert.pem
+- name: configure authn cert
+  copy:
+    remote_src: yes
+    src: /etc/grid-security/hostcert.pem
+    dest: /var/www/argo-api-authn/hostcert.pem
     owner: argo-api-authn
     group: argo-api-authn
     mode: 0644
   tags:
     - authn_install
-    - authn-scripts-cert
   notify: restart argo-api-authn
 
-- name: permissions for authn cert key
-  file:
-    path: /etc/grid-security/hostkey.pem
+- name: configure authn cert key
+  copy:
+    remote_src: yes
+    src: /etc/grid-security/hostkey.pem
+    dest: /var/www/argo-api-authn/hostkey.pem
     owner: argo-api-authn
     group: argo-api-authn
     mode: 0644
@@ -37,7 +40,6 @@
     group: argo-api-authn
     mode: 0644
   tags: authn_install
-
 
 - name: Configure argo-api-authn log(rsyslog)
   template:
@@ -55,4 +57,3 @@
     enabled: true
     state: started
   tags: authn_install
-
