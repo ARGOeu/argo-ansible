@@ -49,7 +49,7 @@
 
 - name: Maven (mvn) symbolic link
   file:
-    src: /opt/apache-maven-3.8.4/bin/mvn 
+    src: /opt/apache-maven-3.8.4/bin/mvn
     dest: '/usr/local/bin/mvn'
     owner: "{{ accounting_user }}"
     group: "{{ accounting_group }}"
@@ -75,6 +75,7 @@
     - Wait a few seconds for the service to wake up
   tags:
     - accounting
+    - accounting:update
     - accounting:service_file
 
 
