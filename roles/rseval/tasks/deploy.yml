@@ -1,0 +1,164 @@
+---
+
+- name: Enable scl
+  yum:
+    name:  '{{ item }}' 
+  loop:
+   - centos-release-scl
+   - scl-utils 
+   - scl-utils-build
+
+- name: Install all needed packages including python3
+  yum:
+    name: '{{ item }}'
+    state: present
+  loop:
+   - rh-python38
+   - rh-python38-python-devel
+   - rh-python38-python-mod_wsgi
+   - httpd
+  tags: rseval
+
+- name: copy enable python script to profile.d 
+  copy: 
+    src: enable-python38.sh
+    dest: /etc/profile.d/enable-python38.sh
+
+- name: Enable python 3.8 by resetting ssh connection
+  meta: reset_connection
+
+- name: install the 'Development tools' package group
+  yum:
+    name: "@Development tools"
+    state: present
+
+
+
+- name: download rseval
+  tags: rseval
+  get_url:
+    url: 'https://github.com/argoeu/eosc-recommender-metrics/tarball/devel'
+    dest: /tmp/rseval.tar.gz
+
+- name: create folder /tmp/rseval
+  file: 
+    path: /tmp/rseval
+    owner: root
+    group: root
+    mode: '0774'
+    state: directory
+
+- name: create folder /opt/rseval
+  file: 
+    path: /opt/rseval
+    owner: root
+    group: root
+    mode: '0774'
+    state: directory
+
+
+- name: extract rseval
+  unarchive:
+    src: /tmp/rseval.tar.gz
+    dest: /tmp/rseval
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: Install Virtualenv
+  pip:
+    name: virtualenv
+    state: present
+    executable: pip3.8
+  tags: rseval
+
+- name: create virtualenv with specified requirements
+  pip:
+    requirements: /tmp/rseval/requirements.txt
+    virtualenv: /opt/rseval/venv
+
+- name: change ownership of virtualenv
+  file: dest=/opt/rseval owner=apache group=apache recurse=yes
+
+- name: create templates folder
+  file: 
+    path: /var/www/rseval/templates/
+    state: directory
+
+- name: copy report.html.prototype
+  copy: 
+    src: /tmp/rseval/report.html.prototype
+    dest: /var/www/rseval/templates/report.html.prototype
+    remote_src: true
+
+- name: copy webservice app.py file
+  copy: 
+    src: /tmp/rseval/webservice/app.py
+    dest: /var/www/rseval/app.py
+    remote_src: true
+
+- name: copy .env 
+  copy: 
+    src: .env
+    dest: /var/www/rseval/.env
+
+- name: copy app.wsgi
+  copy: 
+    src: app.wsgi
+    dest: /var/www/rseval/app.wsgi
+
+- name: create folder /var/www/rseval/data
+  file: 
+    path: /var/www/rseval/data
+    owner: apache
+    group: apache
+    mode: '0774'
+    state: directory
+
+- name: Set template folder in app.py
+  lineinfile:
+    path: /var/www/rseval/app.py
+    regexp: '^app.*Flask.*RS_EVALUATION'
+    line: "app = Flask('RS_EVALUATION',template_folder='/var/www/rseval/templates')"
+
+- name: create folder /var/run/default
+  file: 
+    path: /var/www/default
+    owner: apache
+    group: apache
+    mode: '0774'
+    state: directory
+
+- name: update apache wsgi conf
+  blockinfile:
+    path: "/etc/httpd/conf.d/{{inventory_hostname}}.conf"
+    insertafter: "#WSGI Params"
+    block: |
+          WSGIDaemonProcess flaskapp python-home=/opt/rseval/venv user=apache group=apache threads=5
+          WSGIScriptAlias / /var/www/rseval/app.wsgi
+          <Location />
+            AuthUserFile /etc/httpd/.htpasswd
+            AuthName "authorization"
+            AuthType Basic
+            Require valid-user
+          </Location>
+         
+          <Directory /var/www/rseval>
+            WSGIProcessGroup flaskapp
+            WSGIApplicationGroup %{GLOBAL}
+            Order deny,allow
+            Allow from all
+          </Directory>
+
+- name: Remove document root from virtualhost file 
+  lineinfile:
+    path: /etc/httpd/conf.d/{{inventory_hostname}}.conf
+    regexp: '^DocumentRoot'
+    line: ''
+
+- name: copy load mod-wsgi
+  copy: 
+    src: 00-wsgi.conf
+    dest: /etc/httpd/conf.modules.d
+  notify: restart httpd
+
+# vim: syntax=yaml ts=4 sw=4 sts=4 sr noet
