@@ -1,0 +1,27 @@
+[DEFAULT]
+timezone = Europe/Athens
+output = json
+endpoint = https://{{alerta_www_alias}}/api
+key = {{alerta_token}}
+sslverify = off
+timeout = 10.0
+debug = false
+color = yes
+
+[alerta-mailer]
+key = {{alerta_token}}
+mail_to = {{alerta_main_mail}}
+mail_from = {{alerta_mail_from}}
+smtp_host = {{alerta_smtp_host}}
+smtp_port = {{alerta_smtp_port}}
+amqp_url = mongodb://localhost:27017/amqp
+dashboard_url = https://{{alerta_www_alias}}
+smtp_use_ssl = False
+debug = {{ alerta_mail_debug }}
+skip_mta = True
+{% raw %}
+mail_subject = {{alert.text}}
+{% endraw %}
+mail_template_html = {{ item.value.mail_template_html}}
+mail_template = {{ item.value.mail_template }}
+email_type = {{ item.value.mail_type }}
