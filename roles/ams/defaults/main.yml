@@ -9,6 +9,7 @@ ams_zookeeper_hosts: "localhost:2181"
 ams_kafka_znode: ''
 ams_per_resource_auth: 'true'
 ams_log_level: 'INFO'
+# ams_auth_option has 3 possible values, key, header, both
 ams_auth_option: 'both'
 repo_argo_disabled: "*cloudera*"
 # ams_metrics_token: 'secret_key' this should be overridden in host vars

@@ -94,3 +94,51 @@
   tags:
     - ams_install
     - ams_config
+
+
+- name: AMS check - Version (1/3)
+  uri:
+    url: "https://localhost/v1/version"
+    method: GET
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: ams_version_response
+  tags:
+    - ams_install
+    - ams_check
+    - ams_check:version
+
+- name: AMS check - Health status (2/3)
+  uri:
+    url: "https://localhost/v1/status"
+    method: GET
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: ams_status_response
+  tags:
+    - ams_install
+    - ams_check
+    - ams_check:stats
+
+- name: AMS check - All projects (3/3)
+  uri:
+    url: "https://localhost/v1/projects"
+    method: GET
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+    headers:
+      x-api-key: "{{ ams_service_token }}"
+  retries: 3
+  delay: 3
+  register: ams_projects_response
+  tags:
+    - ams_install
+    - ams_check
+    - ams_check:projects
