@@ -1,0 +1,53 @@
+# {{ ansible_managed }}
+
+
+# accounting templates
+template(name="accounting-logs"  type="string"  string="/var/log/accounting/accounting.log")
+
+# Local logs
+if ($programname contains "accounting") then {
+  action(type="omfile"
+  name="accounting"
+  dynaFile="accounting-logs"
+  queue.type="LinkedList"
+  queue.filename="queue_accounting_backend"
+  queue.size="100000"
+  action.resumeRetryCount="-1"
+  queue.saveonshutdown="on"
+  )
+  & stop
+}
+
+
+# Send accounting logs.
+## https://www.rsyslog.com/doc/master/configuration/modules/imfile.html
+## https://www.rsyslog.com/doc/master/configuration/actions.html
+## https://www.rsyslog.com/doc/master/configuration/templates.html
+## https://www.rsyslog.com/doc/master/concepts/queues.html
+## https://www.rsyslog.com/doc/master/rainerscript/queue_parameters.html
+
+
+ruleset(name="fwdaccountingtocentrallog"){
+            action(type="omfwd"
+            name="accounting"
+            template="RSYSLOG_TraditionalForwardFormat"
+            queue.type="LinkedList" # In Memory Queue
+            queue.filename="fwd_q_accounting" # File name to be used for the queue files.
+            queue.size="100000" # The maximum size of the queue in number of messages.
+            action.resumeRetryCount="-1" # Sets how often an action is retried before it is considered to have failed. Failed actions discard messages. (-1 means eternal)
+            queue.saveonshutdown="on" # This parameter specifies if data should be saved at shutdown.
+            Target="{{ central_rsyslog.hostname }}" Port="{{ central_rsyslog.port }}" Protocol="tcp"
+            StreamDriver="gtls"
+            StreamDriverMode="1" # run driver in TLS-only mode
+            StreamDriverAuthMode="x509/name"
+            StreamDriverPermittedPeers="{{ central_rsyslog.permittedPeers }}"
+            )
+}
+
+input(type="imfile"
+      File="/var/log/accounting/*log"
+      Tag="accounting:"
+      ruleset="fwdaccountingtocentrallog"
+)
+
+
