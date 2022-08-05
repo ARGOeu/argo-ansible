@@ -94,3 +94,12 @@
     gpgcheck: yes
     gpgkey: "http://rpms.adiscon.com/RPM-GPG-KEY-Adiscon"
 
+- name: Install MariaDB repo
+  tags: repo_mariadb
+  copy: src=etc/yum.repos.d/mariadb.repo
+    dest=/etc/yum.repos.d/mariadb.repo backup=no
+    owner=root group=root mode=0644
+  when: repo_mariadb
+
+
+
