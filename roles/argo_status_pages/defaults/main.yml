@@ -1,0 +1,5 @@
+---
+# defaults file for argo_status_page
+git_repo_url: https://github.com/ARGOeu/argo-status-pages.git
+repo_path: /tmp/argo-status-pages
+repo_branch: devel
