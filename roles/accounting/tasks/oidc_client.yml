@@ -1,0 +1,73 @@
+---
+# tasks file for oidc client installation
+
+- name: Clear any previous installations
+  file:
+    path: "{{ oidc_client_directory }}"
+    state: absent
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Install git
+  yum:
+   name: git
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Git clone the simple-oidc-client-php repo
+  git:
+    repo: https://github.com/rciam/simple-oidc-client-php.git
+    dest: "{{ oidc_client_directory }}"
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Create oidc client php config file
+  template:
+   src: oidc_client_config.php.j2
+   dest: "{{ oidc_client_directory }}/config.php"
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Install remi repo for php
+  yum:
+   name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Install php 7.4
+  yum:
+   name: php
+   enablerepo: remi-php74
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Install php xml
+  yum:
+   name: php-xml
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Download php composer
+  command:  php -r "copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');"
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Add php composer to system path
+  command: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool
+
+- name: Run php composer for the oidc client repo
+  command: "composer install --working-dir={{ oidc_client_directory }}"
+  tags:
+    - accounting:oidc-client
+  when:  has_oidc_client | bool

@@ -26,5 +26,14 @@ accounting_logs_dir: /var/log/accounting
 #  url: https://login-example.com/auth
 #  realm: example
 #  client_id: example-system-public
+#
+#quarkus:
+#  mongodb_uri: mongodb://localhost:27017"
 
 quarkus_authorization: false
+
+has_oidc_client: false
+
+oidc_client_version: 2.2.0
+
+oidc_client_directory: /var/www/oidc-client

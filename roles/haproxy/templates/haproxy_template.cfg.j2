@@ -143,8 +143,16 @@ frontend  {{haproxy_frontend | default(inventory_hostname) }}
     timeout         http-request  {{haproxy_frontend_timeout_http_request}}
 
 
+
+{% if haproxy_acl_conf is defined %}
 #---------------------------------------------------------------------
-# round robin balancing between the various msg backends
+# ACL rules
+#---------------------------------------------------------------------
+  {{ haproxy_acl_conf | indent(width=2) }}
+{% endif %}
+
+#---------------------------------------------------------------------
+# round robin balancing between the various backends
 #---------------------------------------------------------------------
 
 default_backend {{haproxy_default_backend}}
