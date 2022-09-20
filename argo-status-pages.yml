@@ -6,6 +6,6 @@
     - { role: commons, task: sshd, tags: argo_status_pages}
     - { role: commons, task: timezone, tags: argo_status_pages}
     - { role: commons, task: cert, tags: argo_status_pages}
-    - { role: argo_status_pages, task: deploy, tags: argo_status_pages}
     - { role: apache, task: main, tags: argo_status_pages}
+    - { role: argo_status_pages, task: deploy, tags: argo_status_pages}
   

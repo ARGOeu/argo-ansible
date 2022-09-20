@@ -67,18 +67,24 @@
     chdir: "{{ repo_path }}"
 
 - name: Copy folder to /var/www
+  notify:
+    - restart httpd
   copy:
     src: "{{ repo_path }}/build/"
     dest: "/var/www/{{inventory_hostname}}/"
     remote_src: true
 
 - name: Copy logo
+  notify:
+    - restart httpd
   copy:
     src: "private_files/{{ inventory_hostname }}/logo.svg"
     dest: "/var/www/{{ inventory_hostname }}/logo.svg"
     remote_src: false
 
 - name: Copy footer logo
+  notify:
+    - restart httpd
   copy:
     src: "private_files/{{ inventory_hostname }}/footer_logo.svg"
     dest: "/var/www/{{ inventory_hostname }}/footer_logo.svg"
