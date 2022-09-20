@@ -1,3 +1,8 @@
 ---
 # handlers file for argo_status_pages
 
+- name: restart httpd
+  service:
+    name: httpd
+    enabled: yes
+    state: restarted
