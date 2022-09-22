@@ -14,10 +14,13 @@ Restart=on-failure
 RestartSec=5s
 SuccessExitStatus=143
 #KillMode=mixed
-Environment="QUARKUS_MONGODB_CONNECTION_STRING=mongodb://127.0.0.1:27017"
+Environment="QUARKUS_MONGODB_CONNECTION_STRING={{ quarkus.mongodb_uri }}"
 Environment="UNIT_TYPES_FILE={{ accounting_conf_dir }}/unit_type.conf"
 Environment="METRIC_TYPES_FILE={{ accounting_conf_dir }}/metric_type.conf"
 Environment="SERVER_URL=https://{{ inventory_hostname }}"
+Environment="SYSTEM_ADMIN_VOPERSONID={{ system_admin_vopersonids | join(',')}}"
+Environment="SYSTEM_ADMIN_EMAIL={{ system_admin_emails | join(',')}}"
+Environment="SYSTEM_ADMIN_NAME={{ system_admin_names | join(',')}}"
 
 Environment="QUARKUS_OIDC_AUTH_SERVER_URL={{ quarkus_oidc.auth_server_url }}"
 Environment="QUARKUS_OIDC_CREDENTIALS_SECRET={{ quarkus_oidc.credentials_secret }}"
@@ -29,6 +32,7 @@ Environment="KEYCLOAK_SERVER_CLIENT_ID={{ keycloak_server.client_id }}"
 
 Environment="DISABLE_AUTHORIZATION={{ quarkus_authorization | lower }}"
 
+Environment="AAI_PROXY_CLIENT_URL={{ aai_proxy_client_url }}"
 
 [Install]
 WantedBy=multi-user.target

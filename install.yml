@@ -44,12 +44,16 @@
 - hosts: ams
   become: yes
   roles:
-    - { role: private_hosts }
     - { role: zookeeper, tags: zookeeper_install }
     - { role: kafka, tags: kafka_install }
     - { role: ams, task: deploy, tags: ams_install }
     - { role: ams, task: deploy_metrics, tags: ams_install }
     - { role: ams, task: init_db }
+
+- hosts: mongo_devel_private_network
+  become: yes
+  roles:
+    - { role: private_hosts, tags: private_hosts }
 
 - hosts: ams_push_server
   become: yes

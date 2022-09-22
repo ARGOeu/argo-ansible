@@ -43,9 +43,7 @@
   pip:
     requirements: "{{ haproxy_probe.installation_dir }}/requirements.txt"
     virtualenv: "{{ haproxy_probe.venv_dir }}"
-    #virtualenv: "{{ virtual_env_installation }}/authn-env"
     virtualenv_python: python3.6
-    #state: forcereinstall
   tags:
     - haproxy_probe
     - haproxy_probe:git
@@ -61,5 +59,3 @@
   tags:
     - haproxy_probe
     - haproxy_probe:privileges
-
-

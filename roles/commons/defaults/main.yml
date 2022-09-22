@@ -51,6 +51,7 @@ repo_rocci: false
 repo_cloudera: false
 repo_cloudera_kafka: false
 repo_nagios: false
+repo_mariadb: false
 
 # defaults file for fail2ban
 

@@ -1,0 +1,31 @@
+<?php
+
+// index.php interface configuration
+$title = "Accounting System OIDC Client";
+$img = "https://clickhelp.co/images/feeds/blog/2016.05/keys.jpg";
+$scopeInfo = "This service requires the following permissions for your account:";
+
+// Client configuration
+$issuer = "{{ oidc_client.issuer }}";
+$clientId = "{{ oidc_client.id }}";
+$clientSecret = "{{ oidc_client.secret }}";
+// $pkceCodeChallengeMethod = "S256";   // uncomment to use PKCE
+$redirectUrl = "https://{{ inventory_hostname }}/oidc-client/refreshtoken.php";
+$redirectPage = "https://{{ inventory_hostname }}/oidc-client/refreshtoken.php";
+// add scopes as keys and a friendly message of the scope as value
+$scopesDefine = array(
+    'openid' => 'log in using your identity',
+    'email' => 'read your email address',
+    'profile' => 'read your basic profile info',
+    'voperson_id' => 'read your unique id',
+    'eduperson_entitlement' => 'read your entitlement'
+);
+// refreshtoken.php interface configuration
+$refreshTokenNote = "NOTE: New refresh tokens expire in 12 months.";
+$accessTokenNote = "NOTE: New access tokens expire in 1 hour.";
+$manageTokenNote = "You can manage your refresh tokens in the following link: ";
+$manageTokens = $issuer . "manage/user/services";
+$sessionName = "oidc-client";
+$sessionLifetime = 60 * 60;  // must be equal to access token validation time in seconds
+$allowIntrospection = true;
+$enableActiveTokensTable = false;
