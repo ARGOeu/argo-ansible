@@ -61,6 +61,18 @@
     dest: "{{ repo_path }}/public/favicon.ico"
     remote_src: false
 
+- name: Copy logo
+  copy:
+    src: "private_files/{{ inventory_hostname }}/logo.svg"
+    dest: "{{ repo_path }}/src/assets/logo.svg"
+    remote_src: false
+
+- name: Copy footer logo
+  copy:
+    src: "private_files/{{ inventory_hostname }}/footer_logo.svg"
+    dest: "{{ repo_path }}/src/assets/footer_logo.svg"
+    remote_src: false
+
 - name: Build app
   command: npm run build
   args:
@@ -73,19 +85,3 @@
     src: "{{ repo_path }}/build/"
     dest: "/var/www/{{inventory_hostname}}/"
     remote_src: true
-
-- name: Copy logo
-  notify:
-    - restart httpd
-  copy:
-    src: "private_files/{{ inventory_hostname }}/logo.svg"
-    dest: "/var/www/{{ inventory_hostname }}/logo.svg"
-    remote_src: false
-
-- name: Copy footer logo
-  notify:
-    - restart httpd
-  copy:
-    src: "private_files/{{ inventory_hostname }}/footer_logo.svg"
-    dest: "/var/www/{{ inventory_hostname }}/footer_logo.svg"
-    remote_src: false
