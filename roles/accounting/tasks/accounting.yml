@@ -8,7 +8,7 @@
     state: present
   tags:
     - accounting
-    - accounting:user
+    - accounting-user
 
 - name: Add user "{{ accounting_user }}"
   user:
@@ -20,7 +20,7 @@
     comment: accounting nologin user
   tags:
     - accounting
-    - accounting:user
+    - accounting-user
 
 
 - name: Install Java 11
@@ -33,9 +33,9 @@
     - java-11-openjdk-devel
   tags:
     - accounting
-    - accounting:packages
-    - accounting:java
-    - accounting:maven
+    - accounting-packages
+    - accounting-java
+    - accounting-maven
 
 - name: Create systemd file for Accounting
   template:
@@ -50,8 +50,8 @@
     - Wait a few seconds for the service to wake up
   tags:
     - accounting
-    - accounting:update
-    - accounting:service_file
+    - accounting-update
+    - accounting-service_file
 
 
 - name: "Create {{ accounting_root_dir }}, {{ accounting_conf_dir }} directories if it does not exist"
@@ -66,7 +66,7 @@
     - "{{ accounting_conf_dir }}"
   tags:
     - accounting
-    - accounting:directories
+    - accounting-directories
 
 - name: "Create Accounting logs directory if it doesn't exist"
   file:
@@ -77,7 +77,7 @@
     mode: '0700'
   tags:
     - accounting
-    - accounting:directories
+    - accounting-directories
 
 
 - name: Find the artifact of the last successful build
@@ -91,9 +91,9 @@
   register: _jenkins_results
   tags:
     - accounting
-    - accounting:jenkins
-    - accounting:jar
-    - accounting:update
+    - accounting-jenkins
+    - accounting-jar
+    - accounting-update
 
 - name: Download the latest Jenkins artifact
   get_url:
@@ -111,8 +111,8 @@
     - Wait a few seconds for the service to wake up
   tags:
     - accounting
-    - accounting:jar
-    - accounting:update
+    - accounting-jar
+    - accounting-update
 
 
 - name: Download config fies ( unit_type & metric_type ).
@@ -124,8 +124,8 @@
     - https://raw.githubusercontent.com/ARGOeu/ARGO-accounting/devel/files/metric_type.conf
   tags:
     - accounting
-    - accounting:config
-    - accounting:update
+    - accounting-config
+    - accounting-update
 
 
 - name: Recursively change ownership of the Accounting directories
@@ -140,8 +140,8 @@
     - "{{ accounting_conf_dir }}"
   tags:
     - accounting
-    - accounting:directories
-    - accounting:update
+    - accounting-directories
+    - accounting-update
 
 
 - name: Create rsyslog filter for Accounting logs
@@ -156,8 +156,8 @@
     - restart rsyslog
   tags:
     - accounting
-    - accounting:logs
-    - accounting:rsyslog
+    - accounting-logs
+    - accounting-rsyslog
 
 
 - meta: flush_handlers
@@ -169,4 +169,4 @@
     - https://github.com/ARGOeu/ARGO-accounting/tree/devel
   tags:
     - accounting
-    - accounting:check
+    - accounting-check
