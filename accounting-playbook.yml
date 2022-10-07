@@ -26,7 +26,7 @@
 - hosts: accounting_oidc_client
   become: yes
   roles:
-    - { role: accounting, task: oidc_client, tags: accounting:oidc-client   }
+    - { role: accounting, task: oidc_client, tags: accounting-oidc-client   }
 
 - hosts: haproxy
   become: yes
