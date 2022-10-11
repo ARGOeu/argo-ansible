@@ -1,0 +1,32 @@
+---
+
+- hosts: all
+  become: yes
+  roles:
+    - { role: commons,                 task: timezone,        tags: timezone              }
+    - { role: commons,                 task: repos,           tags: repos                 }
+    - { role: commons,                 task: basic_utils,     tags: basic_utils           }
+    - { role: commons,                 task: users,           tags: groups_users_sshKeys  }
+    - { role: commons,                 task: sshd,            tags: sshd                  }
+    - { role: commons,                 task: firewall,        tags: firewall              }
+    - { role: commons,                 task: fail2ban,        tags: fail2ban_conf         }
+    - { role: commons,                 task: cert,            tags: cert                  }
+
+
+- hosts: mongo
+  tags: deploy
+  become: yes
+  roles:
+    - { role: mongodb,    task: main,     tags: mongodb }
+
+- hosts: apache
+  tags: deploy
+  become: yes
+  roles:
+    - { role: apache, task: main, tags: argo_status_pages}
+
+- hosts: rseval
+  tags: deploy
+  become: yes
+  roles:
+    - { role: rseval,    task: deploy }
