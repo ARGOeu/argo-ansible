@@ -32,8 +32,6 @@
     name: "@Development tools"
     state: present
 
-
-
 - name: download rseval
   tags: rseval
   get_url:
@@ -79,15 +77,21 @@
 - name: change ownership of virtualenv
   file: dest=/opt/rseval owner=apache group=apache recurse=yes
 
+- name: copy rseval to /opt/rseval
+  copy:
+    src: /tmp/rseval/
+    dest: /opt/rseval/
+    remote_src: true
+
 - name: create templates folder
   file: 
     path: /var/www/rseval/templates/
     state: directory
 
-- name: copy report.html.prototype
+- name: copy templates
   copy: 
-    src: /tmp/rseval/report.html.prototype
-    dest: /var/www/rseval/templates/report.html.prototype
+    src: /tmp/rseval/webservice/templates/
+    dest: /var/www/rseval/templates/
     remote_src: true
 
 - name: copy webservice app.py file
@@ -95,16 +99,19 @@
     src: /tmp/rseval/webservice/app.py
     dest: /var/www/rseval/app.py
     remote_src: true
+  notify: restart httpd
 
 - name: copy .env 
   copy: 
     src: .env
     dest: /var/www/rseval/.env
+  notify: restart httpd
 
 - name: copy app.wsgi
   copy: 
     src: app.wsgi
     dest: /var/www/rseval/app.wsgi
+  notify: restart httpd
 
 - name: create folder /var/www/rseval/data
   file: 
@@ -113,12 +120,21 @@
     group: apache
     mode: '0774'
     state: directory
+  notify: restart httpd
+
+- name: copy metric_descriptions
+  copy: 
+    src: /tmp/rseval/metric_descriptions/
+    dest: /var/www/rseval/data/metric_descriptions
+    remote_src: true
+  with_fileglob: "*.yml"
 
 - name: Set template folder in app.py
   lineinfile:
     path: /var/www/rseval/app.py
     regexp: '^app.*Flask.*RS_EVALUATION'
-    line: "app = Flask('RS_EVALUATION',template_folder='/var/www/rseval/templates')"
+    line: "app = Flask('RS_EVALUATION',template_folder='/var/www/rseval/templates', static_folder='/var/www/rseval/static')"
+  notify: restart httpd
 
 - name: create folder /var/run/default
   file: 
@@ -127,33 +143,13 @@
     group: apache
     mode: '0774'
     state: directory
-
-- name: update apache wsgi conf
-  blockinfile:
-    path: "/etc/httpd/conf.d/{{inventory_hostname}}.conf"
-    insertafter: "#WSGI Params"
-    block: |
-          WSGIDaemonProcess flaskapp python-home=/opt/rseval/venv user=apache group=apache threads=5
-          WSGIScriptAlias / /var/www/rseval/app.wsgi
-          <Location />
-            AuthUserFile /etc/httpd/.htpasswd
-            AuthName "authorization"
-            AuthType Basic
-            Require valid-user
-          </Location>
-         
-          <Directory /var/www/rseval>
-            WSGIProcessGroup flaskapp
-            WSGIApplicationGroup %{GLOBAL}
-            Order deny,allow
-            Allow from all
-          </Directory>
-
+  
 - name: Remove document root from virtualhost file 
   lineinfile:
     path: /etc/httpd/conf.d/{{inventory_hostname}}.conf
     regexp: '^DocumentRoot'
     line: ''
+  notify: restart httpd
 
 - name: copy load mod-wsgi
   copy: 
