@@ -19,8 +19,8 @@ RPATH="$RPARENTDIR"/"$HOSTNAME"/
 #
 # local directories to be rsynced
 #
-DIRECTORY="/root/{{inventory_hostname}}-mongo-data/{{MONGOBACKUP_APP_NAME}}"
-LPATH="/root/{{inventory_hostname}}-mongo-data/{{MONGOBACKUP_APP_NAME}}"
+DIRECTORY="/root/{{inventory_hostname}}-mongo-data"
+LPATH="/root/{{inventory_hostname}}-mongo-data"
 
 # use rsync for copy
 COPYCMD=(/usr/bin/rsync -e "/usr/bin/ssh -i $SSHKEY" -va)

@@ -13,3 +13,4 @@ mongo_replica_set_name: rs0
 mongo_backup_dbs:
   - argo_auth
   - argo_msg
+  - accounting-system

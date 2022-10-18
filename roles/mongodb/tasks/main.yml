@@ -158,3 +158,35 @@
     - mongo_backup
   when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
 
+- name: Move aris authorised key for rsync script
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/auth_key/aris_rsa'
+    dest: /root/.ssh/aris_rsa
+    owner: root
+    group: root
+    mode: 0600
+  tags:
+    - mongo_backup_aris
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Move MongoDB rsync script
+  template:
+    src: 'rsync-mongod-backup.sh.j2'
+    dest: "{{ mongo_backup_scripts_location }}rsync-mongod-backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - mongo_backup_aris
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Add cronjob for rsync script
+  cron:
+    cron_file: mongodb_backup
+    name: "Set up cron job for mongo backup script"
+    user: root
+    special_time: daily
+    job: "{{ mongo_backup_scripts_location }}rsync-mongod-backup.sh"
+  tags:
+    - mongo_backup_aris
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
