@@ -13,8 +13,8 @@
     extra_opts: [--strip-components=1]
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:download
+    - zookeeper_install
+    - zookeeper_download
 
 
 - name: Apache Zookeeper configuration
@@ -30,9 +30,9 @@
     - Wait Zookeeper to startup
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
-    - zookeeper:new_node
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_new_node
 
 
 - name: Apache Zookeeper log4j configuration
@@ -48,15 +48,15 @@
     - Wait Zookeeper to startup
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
+    - zookeeper_install
+    - zookeeper_config
 
 #- name: set myid
 #  shell: sudo su -s /bin/bash zookeeper -c " zookeeper-server-initialize  --force --myid={{ private.id }}"
 #  tags:
 #    - zookeeper
-#    - zookeeper:install
-#    - zookeeper:config
+#    - zookeeper_install
+#    - zookeeper_config
 
 
 - name: Setup myid (1/2)
@@ -72,12 +72,12 @@
     - Wait Zookeeper to startup
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
-    - zookeeper:new_node
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_new_node
 
 - name: Setup myid (2/2)
-  template: 
+  template:
     src: myid.j2
     dest: "{{ zookeeper_data }}/myid"
     owner: "{{ zookeeper_user }}"
@@ -89,10 +89,10 @@
     - Wait Zookeeper to startup
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
-    - zookeeper:new_node
-  
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_new_node
+
 
 - name: Setup environment
   template:
@@ -107,11 +107,11 @@
     - Wait Zookeeper to startup
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
+    - zookeeper_install
+    - zookeeper_config
 
 - name: Setup java.env
-  template: 
+  template:
     src: java.env.j2
     dest: "{{zookeeper_conf_dir}}/java.env"
     owner: "{{ zookeeper_user }}"
@@ -123,16 +123,16 @@
     - Wait Zookeeper to startup
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
+    - zookeeper_install
+    - zookeeper_config
 
 
 - name: "mv {{ zookeeper_conf_dir }}/* --> /etc/zookeeper/conf"
   shell: "mv {{ zookeeper_conf_dir }}/* /etc/zookeeper/conf"
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
+    - zookeeper_install
+    - zookeeper_config
 
 - name: "Create symbolic link {{ zookeeper_conf_dir }} --> /etc/zookeeper/conf"
   file:
@@ -144,15 +144,15 @@
     group: "{{ zookeeper_group }}"
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
+    - zookeeper_install
+    - zookeeper_config
 
 
 - name: Apache Zookeeper systemd service file
   template:
     src: etc/systemd/system/zookeeper.service.j2
     dest: /etc/systemd/system/zookeeper.service
-    owner: root 
+    owner: root
     group: root
     mode: 0644
     backup: yes
@@ -161,11 +161,11 @@
     - Wait Zookeeper to startup
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:system
-    - zookeeper:daemon
-    - zookeeper:initd
-    - zookeeper:service
+    - zookeeper_install
+    - zookeeper_system
+    - zookeeper_daemon
+    - zookeeper_initd
+    - zookeeper_service
 
 
 - meta: flush_handlers
@@ -177,7 +177,7 @@
   changed_when: "'Mode: ' not in zookeeper_server_status.stdout"
   tags:
     - zookeeper
-    - zookeeper:check
+    - zookeeper_check
 
 
 - name: Check Apache Zookeeper local (2/2)
@@ -187,9 +187,9 @@
   changed_when: zookeeper_check.changed and 'imok' not in zookeeper_check.stdout
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
-    - zookeeper:check
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_check
 
 
 - name: Check Apache Zookeeper cluster
@@ -203,8 +203,17 @@
   when: "( groups[cluster_group] | count > 1 ) and ( hostvars[item]['is_zoo_host'] is defined and hostvars[item]['is_zoo_host'] |  bool == True )"
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:config
-    - zookeeper:check
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_check
 
-
+- name: "Set up cron for cleaning up zookeeper txn logs and snapshots"
+  cron:
+    cron_file: zookeeper_clean-up
+    name: "Set up cron for cleaning up zookeeper txn logs and snapshots"
+    user: zookeeper
+    special_time: daily
+    job: "{{ zookeeper_root }}/bin/zkCleanup.sh -n 3"
+  tags:
+    - zookeeper
+    - zookeeper_clean

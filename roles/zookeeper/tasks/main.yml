@@ -8,16 +8,16 @@
     state: present
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:java
+    - zookeeper_install
+    - zookeeper_java
 
 - name: Install zktop
   pip:
     name: zktop
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:utills
+    - zookeeper_install
+    - zookeeper_utills
 
 
 - name: Install some utilities
@@ -31,20 +31,19 @@
     state: latest
   tags:
     - zookeeper
-    - zookeeper:install
-    - zookeeper:utills
+    - zookeeper_install
+    - zookeeper_utills
 
 
 - name: Include configuration tasks
   include: "config.yml"
   tags:
     - zookeeper
-    - zookeeper:config
+    - zookeeper_config
 
 
 - name: Include Apache Zookeeper tasks
   include: "zookeeper.yml"
   tags:
     - zookeeper
-    - zookeeper:install
-
+    - zookeeper_install
