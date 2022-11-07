@@ -34,7 +34,12 @@
       - nodejs
   tags:
     - pcc-ui
-    
+
+- name: Check clone repo dest directory is absent
+  file:
+      state: absent
+      path: "{{ repo_path }}/"
+
 - name: Clone a private repository
   git:
     repo: "{{ git_repo_url }}"
@@ -77,6 +82,8 @@
     - pcc-ui
     
 - name: Copy folder to /var/www
+  notify:
+    - restart httpd
   copy:
     src: "{{ repo_path }}/build/"
     dest: "/var/www/{{inventory_hostname}}/"
