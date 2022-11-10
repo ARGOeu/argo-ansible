@@ -19,3 +19,7 @@ mysql:
   password: pcc_api_admin
   host: localhost
   db: pccdb
+
+hrls:
+  username: user
+  password: password
