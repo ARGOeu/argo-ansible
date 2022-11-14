@@ -2,15 +2,15 @@
 
 
 # accounting templates
-template(name="accounting-logs"  type="string"  string="/var/log/accounting/accounting.log")
+template(name="pcc-logs"  type="string"  string="/var/log/pcc-api/pcc-api.log")
 
 # Local logs
-if ($programname contains "accounting") then {
+if ($programname contains "pcc") then {
   action(type="omfile"
   name="accounting"
-  dynaFile="accounting-logs"
+  dynaFile="pcc-logs"
   queue.type="LinkedList"
-  queue.filename="queue_accounting_backend"
+  queue.filename="queue_pcc_backend"
   queue.size="100000"
   action.resumeRetryCount="-1"
   queue.saveonshutdown="on"
@@ -29,7 +29,7 @@ if ($programname contains "accounting") then {
 
 ruleset(name="fwdaccountingtocentrallog"){
             action(type="omfwd"
-            name="accounting"
+            name="pcc-api"
             template="RSYSLOG_TraditionalForwardFormat"
             queue.type="LinkedList" # In Memory Queue
             queue.filename="fwd_q_accounting" # File name to be used for the queue files.
@@ -45,9 +45,7 @@ ruleset(name="fwdaccountingtocentrallog"){
 }
 
 input(type="imfile"
-      File="/var/log/accounting/*log"
+      File="/var/log/pcc-api/*log"
       Tag="accounting:"
       ruleset="fwdaccountingtocentrallog"
 )
-
-

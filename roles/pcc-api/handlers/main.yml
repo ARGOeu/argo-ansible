@@ -16,7 +16,7 @@
 
 - name: pcc api service restart and enable
   service:
-   name: pcc_api.service
+   name: pcc-api.service
    state: restarted
    enabled: true
 
@@ -28,4 +28,3 @@
 
 - name: restart mysql
   service: name=mysqld state=restarted
-
