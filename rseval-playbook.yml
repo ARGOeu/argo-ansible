@@ -29,4 +29,4 @@
   tags: deploy
   become: yes
   roles:
-    - { role: rseval,    task: deploy,     tags: deploy }
+    - { role: rseval,    task: deploy }
