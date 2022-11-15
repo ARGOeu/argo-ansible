@@ -8,7 +8,7 @@
     state: present
   tags:
     - pcc-api
-    - pcc-api:user
+    - pcc-api-user
 
 - name: Add user "{{ pcc_api_user }}"
   user:
@@ -20,8 +20,7 @@
     comment: pcc api nologin user
   tags:
     - pcc-api
-    - pcc-api:user
-
+    - pcc-api-user
 
 - name: Install Java 11
   yum:
@@ -33,9 +32,9 @@
     - java-11-openjdk-devel
   tags:
     - pcc-api
-    - pcc-api:packages
-    - pcc-api:java
-    - pcc-api:maven
+    - pcc-api-packages
+    - pcc-api-java
+    - pcc-api-maven
 
 - name: Download maven 3.8.6 and unarchive in /opt/
   unarchive:
@@ -45,7 +44,7 @@
     validate_certs: no
   tags:
     - pcc-api
-    - pcc-api:maven
+    - pcc-api-maven
 
 - name: Maven (mvn) symbolic link
   file:
@@ -57,25 +56,27 @@
     force: yes
   tags:
     - pcc-api
-    - pcc-api:maven
-    - pcc-api:maven
-    - pcc-api:maven:link
+    - pcc-api-maven
+    - pcc-api-maven
+    - pcc-api-maven-link
 
 - name: install MariaDB client
   yum:
     name: MariaDB-client
     state: latest
   tags:
-    - mysql
-    - mysql:install
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-install
 
 - name: install MariaDB Server
   yum:
     name: MariaDB-server
     state: latest
   tags:
-    - mysql
-    - mysql:install
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-install
 
 - name: run MySQL
   service:
@@ -83,8 +84,9 @@
     state: started
     enabled: yes
   tags:
-    - mysql
-    - mysql:service
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-service
 
 - name: install required python MySQLdb lib to create databases and users
   yum:
@@ -94,25 +96,28 @@
     - gcc-c++
     - MySQL-python
   tags:
-    - mysql
-    - xf
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-xf
 
 - name: create db user
   mysql_user: name={{mysql.user}} password={{mysql.password}} priv=*.*:ALL host={{mysql.host}} state=present
   tags:
-    - mysql
-    - mysql:user
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-user
 
 - name: create mysql database
   mysql_db: name={{mysql.db}} state=present
   tags:
-    - mysql
-    - mysql:db
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-db
 
 - name: Create systemd file for PCC API
   template:
    src: pcc_api.service.j2
-   dest: /etc/systemd/system/pcc_api.service
+   dest: /etc/systemd/system/pcc-api.service
    owner: root
    group: root
    mode: '0644'
@@ -121,8 +126,8 @@
     - pcc api service restart and enable
     - Wait a few seconds for the service to wake up
   tags:
-    - pcc
-    - pcc:service_file
+    - pcc-api
+    - pcc-api-service-file
 
 
 - name: "Create {{ pcc_api_root_dir }}, {{ pcc_api_conf_dir }} directories if it does not exist"
@@ -137,7 +142,7 @@
     - "{{ pcc_api_conf_dir }}"
   tags:
     - pcc-api
-    - pcc-api:directories
+    - pcc-api-directories
 
 - name: "Create PCC API logs directory if it doesn't exist"
   file:
@@ -148,8 +153,25 @@
     mode: '0700'
   tags:
     - pcc-api
-    - pcc-api:directories
+    - pcc-api-directories
 
+- name: Create rsyslog filter for PCC-API logs
+  template:
+    src: etc/rsyslog.d/71_pcc_api.conf.j2
+    dest: /etc/rsyslog.d/71_pcc_api.conf
+    backup: yes
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart rsyslog
+  tags:
+    - pcc-api
+    - pcc-api-logs
+    - pcc-api-rsyslog
+
+
+- meta: flush_handlers
 
 - name: Find the artifact of the last successful build
   uri:
@@ -162,9 +184,9 @@
   register: _jenkins_results
   tags:
     - pcc-api
-    - pcc-api:jenkins
-    - pcc-api:jar
-    - pcc-api:update
+    - pcc-api-jenkins
+    - pcc-api-jar
+    - pcc-api-update
 
 - name: Download the latest Jenkins artifact
   get_url:
@@ -182,8 +204,8 @@
     - Wait a few seconds for the service to wake up
   tags:
     - pcc-api
-    - pcc-api:jar
-    - pcc-api:update
+    - pcc-api-jar
+    - pcc-api-update
 
 - name: Recursively change ownership of the PCC directories
   file:
@@ -197,19 +219,19 @@
     - "{{ pcc_api_conf_dir }}"
   tags:
     - pcc-api
-    - pcc-api:directories
-    - pcc-api:update
+    - pcc-api-directories
+    - pcc-api-update
 
 - meta: flush_handlers
 
 - name: Restart pcc api
   service:
-    name: pcc_api.service
+    name: pcc-api.service
     state: restarted
     enabled: true
   tags:
     - pcc-api
-    - pcc-api:update
+    - pcc-api-update
 
 - name: More about PCC project.
   debug:
@@ -217,4 +239,4 @@
     - https://github.com/ARGOeu/pcc-api/tree/devel
   tags:
     - pcc-api
-    - pcc-api:check
+    - pcc-api-check
