@@ -38,7 +38,7 @@
 
 - name: Download maven 3.8.6 and unarchive in /opt/
   unarchive:
-    src: https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
+    src: https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.8.6/apache-maven-3.8.6-bin.tar.gz
     dest: /opt
     remote_src: yes
     validate_certs: no
