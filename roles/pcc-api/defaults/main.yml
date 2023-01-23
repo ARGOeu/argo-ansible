@@ -23,3 +23,8 @@ mysql:
 hrls:
   username: user
   password: password
+  database_ip: database_ip
+  database_port: database_port
+  database_name: database_name
+  database_username: database_username
+  database_password: database_password
