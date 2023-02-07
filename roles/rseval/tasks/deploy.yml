@@ -132,8 +132,8 @@
 - name: Set template folder in app.py
   lineinfile:
     path: /var/www/rseval/app.py
-    regexp: '^app.*Flask.*RS_EVALUATION'
-    line: "app = Flask('RS_EVALUATION',template_folder='/var/www/rseval/templates', static_folder='/var/www/rseval/static')"
+    regexp: '^app.*Flask.*RSEVAL'
+    line: "app = Flask('RSEVAL',template_folder='/var/www/rseval/templates', static_folder='/var/www/rseval/static')"
   notify: restart httpd
 
 - name: create folder /var/run/default
