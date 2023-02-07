@@ -77,6 +77,44 @@
 - name: change ownership of virtualenv
   file: dest=/opt/rseval owner=apache group=apache recurse=yes
 
+- name: Install Supervisor
+  pip:
+    name: supervisor
+    state: present
+    executable: pip3.8
+  tags: rseval
+  notify: restart supervisord
+
+- name: Create supervisord symlink 
+  file:
+    src: "/opt/rh/rh-python38/root/usr/local/bin/supervisord"
+    dest: "/usr/bin/supervisord"
+    state: link
+  notify: restart supervisord
+
+- name: copy supervisor.service file
+  copy: 
+    src: supervisor.service
+    dest: /etc/systemd/system/supervisor.service
+  notify: 
+   - reload systemctl daemon
+   - restart supervisord
+
+- name: configure supervisord
+  template:
+    src: supervisord.conf.j2
+    dest: /etc/supervisord.conf
+    mode: 0444
+  notify: restart supervisord
+
+- name: copy supervisor.service file
+  copy: 
+    src: supervisor.service
+    dest: /etc/systemd/system/supervisor.service
+  notify: 
+   - reload systemctl daemon
+   - restart supervisord
+
 - name: copy rseval to /opt/rseval
   copy:
     src: /tmp/rseval/
@@ -143,6 +181,13 @@
     group: apache
     mode: '0774'
     state: directory
+
+- name: enable and start supervisord
+  systemd:
+    name: supervisor
+    enabled: yes
+    state: started
+    masked: no
   
 - name: Remove document root from virtualhost file 
   lineinfile:
