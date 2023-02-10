@@ -175,7 +175,7 @@ serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
 command={{item.command}}
 autostart=false
 autorestart=true
-stderr_logfile=/var/log/argo-alert/{{item.name}}.err.log
-stdout_logfile=/var/log/argo-alert/{{item.name}}.out.log
+stderr_logfile=/var/log/rseval-stream/{{item.name}}.err.log
+stdout_logfile=/var/log/rseval-stream/{{item.name}}.out.log
 
 {% endfor %}
