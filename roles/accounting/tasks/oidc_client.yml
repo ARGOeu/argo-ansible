@@ -68,6 +68,8 @@
 
 - name: Run php composer for the oidc client repo
   command: "composer install --working-dir={{ oidc_client_directory }}"
+  environment:
+    COMPOSER_NO_INTERACTION: "1"
   tags:
     - accounting-oidc-client
   when:  has_oidc_client | bool

@@ -114,7 +114,6 @@
     - accounting-jar
     - accounting-update
 
-
 - name: Download config fies ( unit_type & metric_type ).
   get_url:
     url: "{{ item }}"

@@ -17,6 +17,16 @@
     #- { role: commons,                 task: is_monitored,    tags: monitored             }
     #- { role: commons,                 task: backupamsmongo,  tags: rsyslog_conf          }
 
+- hosts: mongo
+  become: yes
+  roles:
+    - { role: mongodb,       task: main,    tags: mongodb       }
+
+- hosts: apache
+  become: yes
+  roles:
+    - { role: commons,    task: cert,    tags: apache_certs      }
+    - { role: apache,     task: main,    tags: apache_install    }
 
 - hosts: accounting
   become: yes
@@ -37,9 +47,3 @@
   become: yes
   roles:
     - { role: icinga_agent, tags: deploy_icinga_agent }
-
-- hosts: apache
-  become: yes
-  roles:
-    - { role: commons,    task: cert,    tags: apache_certs      }
-    - { role: apache,     task: main,    tags: apache_install    }
