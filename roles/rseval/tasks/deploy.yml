@@ -182,6 +182,15 @@
     mode: '0774'
     state: directory
 
+- name: create folder /var/logs/rseval-stream
+  file: 
+    path: /var/log/rseval-stream/
+    owner: root
+    group: root
+    mode: '0775'
+    state: directory
+
+
 - name: enable and start supervisord
   systemd:
     name: supervisor
