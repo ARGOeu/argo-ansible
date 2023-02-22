@@ -8,5 +8,5 @@
 - name: reload systemctl daemon
   shell: systemctl daemon-reload
 
-- name: restart supervisord
-  shell: systemctl restart supervisord
+- name: restart supervisor
+  shell: systemctl restart supervisor
