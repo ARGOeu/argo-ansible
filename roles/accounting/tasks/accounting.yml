@@ -54,7 +54,7 @@
     - accounting-service_file
 
 
-- name: "Create {{ accounting_root_dir }}, {{ accounting_conf_dir }} directories if it does not exist"
+- name: "Create {{ accounting_root_dir }} directory if it does not exist"
   file:
     path: "{{ item }}"
     state: directory
@@ -63,7 +63,6 @@
     mode: '0755'
   loop:
     - "{{ accounting_root_dir }}"
-    - "{{ accounting_conf_dir }}"
   tags:
     - accounting
     - accounting-directories
@@ -114,19 +113,6 @@
     - accounting-jar
     - accounting-update
 
-- name: Download config fies ( unit_type & metric_type ).
-  get_url:
-    url: "{{ item }}"
-    dest: "{{ accounting_conf_dir }}"
-  loop:
-    - https://raw.githubusercontent.com/ARGOeu/ARGO-accounting/devel/files/unit_type.conf
-    - https://raw.githubusercontent.com/ARGOeu/ARGO-accounting/devel/files/metric_type.conf
-  tags:
-    - accounting
-    - accounting-config
-    - accounting-update
-
-
 - name: Recursively change ownership of the Accounting directories
   file:
     path: "{{ item }}"
@@ -136,7 +122,6 @@
     group: "{{ accounting_group }}"
   loop:
     - "{{ accounting_root_dir }}"
-    - "{{ accounting_conf_dir }}"
   tags:
     - accounting
     - accounting-directories
