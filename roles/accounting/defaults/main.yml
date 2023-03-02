@@ -11,7 +11,6 @@ accounting_group: accounting
 # Directories
 #
 accounting_root_dir: /opt/accounting
-accounting_conf_dir: /etc/accounting/conf.d
 accounting_logs_dir: /var/log/accounting
 
 
@@ -29,8 +28,6 @@ accounting_logs_dir: /var/log/accounting
 #
 #quarkus:
 #  mongodb_uri: mongodb://localhost:27017"
-
-quarkus_authorization: false
 
 has_oidc_client: false
 
