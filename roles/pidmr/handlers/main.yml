@@ -1,0 +1,28 @@
+---
+# handlers file for pid metaresolver service
+
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+
+
+- name: Reload the systemd daemon
+  systemd:
+   daemon_reload: yes
+
+
+- name: pidmr service restart and enable
+  service:
+   name: pidmr.service
+   state: restarted
+   enabled: true
+
+- name: Wait a few seconds for the service to wake up
+  become: no
+  wait_for:
+    timeout: 10
+  delegate_to: localhost
+
