@@ -1,0 +1,28 @@
+---
+# handlers file for quarkus api
+
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+
+
+- name: Reload the systemd daemon
+  systemd:
+   daemon_reload: yes
+
+
+- name: quarkus api restart and enable
+  service:
+   name: "{{ quarkus_api.service_name }}"
+   state: restarted
+   enabled: true
+
+- name: Wait a few seconds for the service to wake up
+  become: no
+  wait_for:
+    timeout: 10
+  delegate_to: localhost
+

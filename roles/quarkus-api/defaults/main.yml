@@ -1,0 +1,14 @@
+---
+# defaults file for quarkus api
+
+
+## Privileged user quarkus api
+#
+quarkus_api_user: quarkus_api
+quarkus_api_group: quarkus_api
+
+
+# Directories
+#
+quarkus_api_root_dir: /opt/quarkus-api
+quarkus_api_logs_dir: /var/log/quarkus-api

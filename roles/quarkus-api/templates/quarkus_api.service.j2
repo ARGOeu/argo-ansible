@@ -1,0 +1,23 @@
+[Unit]
+Description={{ quarkus_api.description }}
+After=network.target remote-fs.target nss-lookup.target
+Documentation={{ quarkus_api.doc_url }}
+
+[Service]
+#Type=simple
+User={{ quarkus_api_user }}
+Group={{ quarkus_api_group }}
+WorkingDirectory={{ quarkus_api_root_dir }}
+ExecStart=/usr/bin/java -jar {{ quarkus_api_root_dir }}/{{ quarkus_api.jar_name }}
+SyslogIdentifier=quarkus-api
+Restart=on-failure
+RestartSec=5s
+SuccessExitStatus=143
+#KillMode=mixed
+{% for var in environment_variables -%}
+Environment="{{ var }}={{ environment_variables[var] }}"
+{% endfor %}
+
+[Install]
+WantedBy=multi-user.target
+#Alias={{ quarkus_api.service_name }}
