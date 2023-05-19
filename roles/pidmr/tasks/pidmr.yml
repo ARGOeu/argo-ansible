@@ -123,8 +123,8 @@
     - https://raw.githubusercontent.com/ARGOeu/fc4eosc-PIDMR-api/devel/files/providers.conf
   tags:
     - pidmr
-    - pidmr:config
-    - pidmr:update
+    - pidmr-config
+    - pidmr-update
 
 - name: Recursively change ownership of the pid metaresolver service directories
   file:
