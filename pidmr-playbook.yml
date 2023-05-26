@@ -23,10 +23,10 @@
     - { role: commons,    task: cert,    tags: apache_certs      }
     - { role: apache,     task: main,    tags: apache_install    }
 
-- hosts: pidmr
+- hosts: quarkus-api
   become: yes
   roles:
-    - { role: pidmr,  task: pidmr, tags: pidmr }
+    - { role: quarkus-api,  task: quarkus-api, tags: quarkus-api }
 
 - hosts: icinga_agent
   become: yes

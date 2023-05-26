@@ -1,4 +1,0 @@
----
-# tasks file for pidmr service
-
-- include: "{{task}}.yml"
