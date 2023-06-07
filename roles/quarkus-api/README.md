@@ -23,6 +23,10 @@ Role Variables
 
 * `environment_variables` : The environment variables that API needs to run.
 
+* `files` : You can use the following parameters to download a file from a specific URL and place it in a directory. 
+     - `directory` : The directory where the file will be placed.
+        - `url` : The URL where the file is located.
+
 Example Playbook
 ----------------
 

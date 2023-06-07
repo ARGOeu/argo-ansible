@@ -78,6 +78,18 @@
     - quarkus-api
     - quarkus-api-directories
 
+- name: Create additional directories if they do not exist
+  file:
+    path: "{{ item.directory }}"
+    state: directory
+    owner: "{{ quarkus_api_user }}"
+    group: "{{ quarkus_api_group }}"
+    mode: '0755'
+  with_items: "{{ files }}"
+  when: files is defined
+  tags:
+    - quarkus-api
+    - quarkus-api-directories
 
 - name: Find the artifact of the last successful build
   uri:
@@ -111,6 +123,19 @@
   tags:
     - quarkus-api
     - quarkus-api-jar
+    - quarkus-api-update
+
+- name: Download config files.
+  get_url:
+    url: "{{ item.1 }}"
+    dest: "{{ item.0.directory }}"
+  with_subelements:
+    - "{{ files }}"
+    - url
+  when: files is defined
+  tags:
+    - quarkus-api
+    - quarkus-api-config
     - quarkus-api-update
 
 - name: Recursively change ownership of the quarkus api directories
