@@ -1,0 +1,49 @@
+---
+
+- name: install MariaDB client
+  yum:
+    name: MariaDB-client
+    state: latest
+  tags:
+    - mariadb
+    - mariadb-install
+
+- name: install MariaDB Server
+  yum:
+    name: MariaDB-server
+    state: latest
+  tags:
+    - mariadb
+    - mariadb-install
+
+- name: run MySQL
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+  tags:
+    - mariadb
+    - mariadb-service
+
+- name: install required python MySQLdb lib to create databases and users
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - gcc-c++
+    - MySQL-python
+  tags:
+    - mariadb
+    - mariadb-xf
+
+- name: create db user
+  mysql_user: name={{mysql.user}} password={{mysql.password}} priv=*.*:ALL host={{mysql.host}} state=present
+  tags:
+    - mariadb
+    - mariadb-user
+
+- name: create mysql database
+  mysql_db: name={{mysql.db}} state=present
+  tags:
+    - mariadb
+    - mariadb-db
