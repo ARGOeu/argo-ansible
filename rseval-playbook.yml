@@ -13,11 +13,11 @@
     - { role: commons,                 task: cert,            tags: cert                  }
 
 
-- hosts: mongo
-  tags: deploy
-  become: yes
-  roles:
-    - { role: mongodb,    task: main,     tags: mongodb }
+# - hosts: mongo
+#   tags: deploy
+#   become: yes
+#   roles:
+#     - { role: mongodb,    task: main,     tags: mongodb }
 
 - hosts: apache
   tags: deploy
