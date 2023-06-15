@@ -83,7 +83,7 @@
     state: present
     executable: pip3.8
   tags: rseval
-  notify: restart supervisord
+  notify: restart supervisor
 
 - name: Create supervisord symlink 
   file:
