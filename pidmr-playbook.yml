@@ -32,3 +32,8 @@
   become: yes
   roles:
     - { role: icinga_agent, tags: deploy_icinga_agent }
+
+- hosts: icinga_agent
+  become: yes
+  roles:
+    - { role: icinga_agent, tags: deploy_icinga_agent }
