@@ -1,0 +1,81 @@
+---
+# tasks file for frontend react
+
+- name: update yum cache
+  yum:
+    update_cache: true
+
+- name: Install reqired packages
+  yum:
+    name:
+      - git
+      - curl
+      - wget
+
+- name: Add nodejs repo 
+  yum:
+    name: "{{ nodejs_yum_repo_url }}"
+    state: present
+
+- name: Install NodeJs
+  yum:
+    name:
+      - nodejs
+
+- name: Check clone repo dest directory is absent
+  file:
+      state: absent
+      path: "{{ checkout_path }}/"
+  tags:
+    - update-frontend
+    - update
+
+- name: Clone a private repository
+  git:
+    repo: "{{ checkout_url }}"
+    dest: "{{ checkout_path }}"
+    version: "{{ checkout_branch }}"
+    force: true
+    accept_hostkey: true
+  tags:
+    - update-frontend
+    - update
+
+    
+- name: Install packages based on package.json using the npm
+  npm:
+    path: "{{ checkout_path }}"
+    state: present
+  tags:
+    - update-frontend
+    - update
+    
+- name: Copy config files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    remote_src: false
+  loop: "{{ config_files }}"
+  tags:
+    - update-frontend
+    - update
+    
+
+- name: Build app
+  command: npm run build
+  args:
+    chdir: "{{ checkout_path }}"
+  tags:
+    - update-frontend
+    - update
+    
+- name: Copy folder to a www folder destination
+  copy:
+    src: "{{ checkout_path }}/build/"
+    dest: "{{ www_path }}"
+    remote_src: true
+  notify:
+    - restart httpd
+  tags:
+    - update-frontend
+    - update
