@@ -33,7 +33,7 @@
   roles:
     - { role: icinga_agent, tags: deploy_icinga_agent }
 
-- hosts: icinga_agent
-  become: yes
+- hosts: frontend
+  become: true
   roles:
-    - { role: icinga_agent, tags: deploy_icinga_agent }
+    - { role: frontend, task: react-based, tags: frontend}
