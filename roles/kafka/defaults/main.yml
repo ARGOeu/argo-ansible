@@ -51,7 +51,10 @@ default_replication_factor: 2
 # Separated list of kafka folders
 kafka_log_dirs: "/var/lib/kafka" # Apache Kafka **data**
 kafka_logs: "/var/log/kafka"
+kafka_rotated_logs_dir_name: "rotated_logs"
+kafka_monthly_archives_dir_name: "monthly_archives"
 kafka_conf_dir: "{{ kafka_root }}/config"
+kafka_scripts_dir: "/usr/local/bin"
 
 # Graceful shutdown
 controlled_shutdown_enable: "true"
@@ -79,7 +82,3 @@ kafka_log_cleanup_interval_mins: 1
 kafka_heap_opts: "-Xmx1G -Xms1G"
 kafka_log_level: WARN
 kafka_auto_create_topics: "true"
-
-
-
-

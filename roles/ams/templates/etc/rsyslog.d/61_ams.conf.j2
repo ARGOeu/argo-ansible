@@ -1,52 +1,8 @@
 # {{ ansible_managed }}
 
- 
+
 # AMS templates
 template(name="ams-logs"           type="string"  string="/var/log/argo_messaging/ams.log")
-template(name="ams-traffic-logs"   type="string"  string="/var/log/argo_messaging/ams-traffic.log")
-template(name="ams-backend-logs"   type="string"  string="/var/log/argo_messaging/ams-backend.log")
-template(name="ams-error-logs"     type="string"  string="/var/log/argo_messaging/ams-error.log")
-
-
-# Local logs
-if ($programname contains "argo_messaging" and $msg contains "type=backend_log") then {
-  action(type="omfile"
-  name="AMS-Backend"
-  dynaFile="ams-backend-logs"
-  queue.type="LinkedList"
-  queue.filename="queue_AMS_backend"
-  queue.size="100000"
-  action.resumeRetryCount="-1"
-  queue.saveonshutdown="on"
-  )
-  & stop
-}
-
-if ($programname contains "argo_messaging" and $msg contains "type=request_log" and $msg contains 'level=error') then {
-  action(type="omfile"
-  name="AMS-Error"
-  dynaFile="ams-error-logs"
-  queue.type="LinkedList"
-  queue.filename="queue_AMS_error"
-  queue.size="100000"
-  action.resumeRetryCount="-1"
-  queue.saveonshutdown="on"
-  )
-  & stop
-}
-
-if ($programname contains "argo_messaging" and $msg contains "type=request_log" ) then {
-  action(type="omfile"
-  name="AMS-Traffic"
-  dynaFile="ams-traffic-logs"
-  queue.type="LinkedList"
-  queue.filename="queue_AMS_traffic"
-  queue.size="100000"
-  action.resumeRetryCount="-1"
-  queue.saveonshutdown="on"
-  )
-  & stop
-}
 
 if ($programname contains "argo_messaging") then {
   action(type="omfile"
@@ -88,9 +44,7 @@ ruleset(name="fwdamstocentrallog"){
 }
 
 input(type="imfile"
-      File="/var/log/argo_messaging/*log"
+      File="/var/log/argo_messaging/ams.log"
       Tag="ams:"
       ruleset="fwdamstocentrallog"
 )
-
-

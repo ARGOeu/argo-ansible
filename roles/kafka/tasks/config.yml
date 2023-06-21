@@ -10,10 +10,10 @@
     system: yes
   tags:
     - kafka
-    - kafka:config
-    - kafka:install
-    - kafka:system
-    - kafka:group
+    - kafka-config
+    - kafka-install
+    - kafka-system
+    - kafka-group
 
 - name: "Ensure user '{{ kafka_user }}' exists"
   user:
@@ -24,10 +24,10 @@
     comment: Apache Kafka user
   tags:
     - kafka
-    - kafka:config
-    - kafka:install
-    - kafka:system
-    - kafka:user
+    - kafka-config
+    - kafka-install
+    - kafka-system
+    - kafka-user
 
 
 # Directories
@@ -42,12 +42,12 @@
     recurse: yes
   tags:
     - kafka
-    - kafka:config
-    - kafka:install
-    - kafka:system
-    - kafka:disk
-    - kafka:data_directory
-    - kafka:create_data_directory
+    - kafka-config
+    - kafka-install
+    - kafka-system
+    - kafka-disk
+    - kafka-data_directory
+    - kafka-create-data-directory
 
 
 - name: "Create  /etc/kafka/   directory for Apache config files if it does not exist"
@@ -60,10 +60,10 @@
     recurse: yes
   tags:
     - kafka
-    - kafka:config
-    - kafka:install
-    - kafka:system
-    - kafka:config_directory
+    - kafka-config
+    - kafka-install
+    - kafka-system
+    - kafka-config-directory
 
 
 - name: "Set appropriate ownership, group and permissions in {{ kafka_root }}"
@@ -76,13 +76,13 @@
     recurse: yes
   tags:
     - kafka
-    - kafka:config
-    - kafka:install
-    - kafka:system
-    - kafka:disk
+    - kafka-config
+    - kafka-install
+    - kafka-system
+    - kafka-disk
 
 
-- name: "Create {{ kafka_logs }} directory for Apache Kafka LOGs if it does not exist"
+- name: "Create {{ kafka_logs }} directory for Apache Kafka logs if it does not exist"
   file:
     path: "{{ kafka_logs }}"
     state: directory
@@ -91,15 +91,86 @@
     mode: '0755'
   tags:
     - kafka
-    - kafka:config
-    - kafka:install
-    - kafka:logs
+    - kafka-config
+    - kafka-install
+    - kafka-logs
 
+- name: Script for daily housekeeping of the logs directory
+  template:
+    src: kafka-logs-daily-housekeeping.sh.j2
+    dest: "{{ kafka_scripts_dir }}/kafka-logs-daily-housekeeping.sh"
+    owner: root
+    group: root
+    mode: '0755'
+    backup: yes
+  tags:
+    - kafka
+    - kafka-logs-scripts
+    - kafka-logs-scripts-daily-housekeeping
 
+- name: "Set up daily cron for kafka-logs-daily-housekeeping.sh"
+  cron:
+    cron_file: kafka-logs-daily-housekeeping
+    name: "Set up daily cron for kafka-logs-daily-housekeeping.sh"
+    user: root
+    special_time: daily
+    job: "{{ kafka_scripts_dir }}/kafka-logs-daily-housekeeping.sh"
+  tags:
+    - kafka
+    - kafka-logs-scripts-cron
+    - kafka-logs-scripts-daily-housekeeping-cron
 
+- name: Script for monthly archival of the rotated logs
+  template:
+    src: kafka-logs-monthly-archive.sh.j2
+    dest: "{{ kafka_scripts_dir }}/kafka-logs-monthly-archive.sh"
+    owner: root
+    group: root
+    mode: '0755'
+    backup: yes
+  tags:
+    - kafka
+    - kafka-logs-scripts
+    - kafka-logs-monthly-archive
+
+- name: "Set up monthly cron for kafka-logs-monthly-archive.sh"
+  cron:
+    cron_file: kafka-logs-monthly-archive
+    name: "Set up monthly cron for kafka-logs-monthly-archive.sh"
+    user: root
+    special_time: monthly
+    job: "{{ kafka_scripts_dir }}/kafka-logs-monthly-archive.sh"
+  tags:
+    - kafka
+    - kafka-logs-scripts-cron
+    - kafka-logs-scripts-monthly-archive-cron
+
+- name: Script for 6 months logs removal
+  template:
+    src: kafka-logs-6-months-remove.sh.j2
+    dest: "{{ kafka_scripts_dir }}/kafka-logs-6-months-remove.sh"
+    owner: root
+    group: root
+    mode: '0755'
+    backup: yes
+  tags:
+    - kafka
+    - kafka-logs-scripts
+    - kafka-logs-remove
+
+- name: "Set up monthly cron for kafka-logs-6-months-remove.sh"
+  cron:
+    cron_file: kafka-logs-6-months-remove
+    name: "Set up monthly cron for kafka-logs-6-months-remove.sh"
+    user: root
+    special_time: monthly
+    job: "{{ kafka_scripts_dir }}/kafka-logs-6-months-remove.sh"
+  tags:
+    - kafka
+    - kafka-logs-scripts-cron
+    - kafka-logs-scripts-remove-cron
 
 # System heap
 
 
 # System SWAP
-

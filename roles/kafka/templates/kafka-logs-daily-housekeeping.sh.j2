@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Define the common path for source files
+source_path="{{ kafka_logs }}"
+
+# Define the destination path for the archives
+destination_path="{{ kafka_logs }}/{{ kafka_rotated_logs_dir_name }}"
+
+# Create the destination directory if it doesn't exist
+echo "Creating destination directory: ${destination_path}"
+mkdir -p "${destination_path}"
+
+# Declare an array of log file patterns
+declare -a log_patterns=(
+  "controller"
+  "kafka-request"
+  "server"
+  "state-change"
+  "kafka-authorizer"
+  "log-cleaner"
+)
+
+
+# Iterate over each location
+for location in "${log_patterns[@]}"; do
+  # Define the pattern for file matching
+  pattern="${location}.log.*"
+
+  # Step 2: Check if any files matching the pattern exist
+  if compgen -G "${source_path}/${pattern}" > /dev/null; then
+    # Step 3: Archive and compress files matching the pattern
+    echo "Moving files from: ${source_path}/${pattern}"
+    echo "Executing mv command:"
+    echo "mv ${source_path}/${pattern} ${destination_path}"
+    mv ${source_path}/${pattern} ${destination_path}
+  else
+    echo "No files found matching the pattern ${pattern} in ${source_path}. Skipping..."
+  fi
+
+  echo "----------------------------------------"
+done
