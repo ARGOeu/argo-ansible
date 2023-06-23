@@ -53,7 +53,7 @@
 - name: Copy config files
   copy:
     src: "{{ item.src }}"
-    dest: "{{ item.dst }}"
+    dest: "{{ item.dest }}"
     remote_src: false
   loop: "{{ config_files }}"
   tags:
