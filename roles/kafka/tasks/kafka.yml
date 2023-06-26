@@ -13,7 +13,7 @@
     remote_src: yes
   tags:
     - kafka
-    - kafka:install
+    - kafka-install
 
 
 - name: Apache Kafka configuration
@@ -24,15 +24,15 @@
     group: "{{ kafka_group }}"
     mode: 0644
     backup: yes
-  notify: 
+  notify:
     - Restart Kafka
     - Wait Kafka to startup
   tags:
     - kafka
-    - kafka:install
-    - kafka:config
-    - kafka:server:properties
-    - kafka:new_node
+    - kafka-install
+    - kafka-config
+    - kafka-server-properties
+    - kafka-new-node
 
 
 - name: Apache Kafka log4j configuration
@@ -43,22 +43,22 @@
     group: "{{ kafka_group }}"
     mode: '0644'
     backup: yes
-  notify: 
+  notify:
     - Restart Kafka
     - Wait Kafka to startup
   tags:
     - kafka
-    - kafka:install
-    - kafka:config
-    - kafka:server:properties
+    - kafka-install
+    - kafka-config
+    - kafka-logs-properties
 
 
 - name: "mv {{ kafka_conf_dir }}/* --> /etc/kafka/conf"
   shell: "mv {{ kafka_conf_dir }}/* /etc/kafka/conf"
   tags:
     - kafka
-    - kafka:install
-    - kafka:config
+    - kafka-install
+    - kafka-config
 
 - name: "Create symbolic link {{ kafka_conf_dir }} --> /etc/kafka/conf"
   file:
@@ -70,26 +70,26 @@
     group: "{{ kafka_group }}"
   tags:
     - kafka
-    - kafka:install
-    - kafka:config
+    - kafka-install
+    - kafka-config
 
 
 - name: Apache Kafka systemd service file
   template:
     src: etc/systemd/system/kafka.service.j2
     dest: /etc/systemd/system/kafka.service
-    owner: root 
+    owner: root
     group: root
     mode: 0644
     backup: yes
-  notify: 
+  notify:
     - Restart Kafka
     - Wait Kafka to startup
   tags:
     - kafka
-    - kafka:install
-    - kafka:config
-    - kafka:service
+    - kafka-install
+    - kafka-config
+    - kafka-service
 
 
 - meta: flush_handlers
@@ -102,7 +102,7 @@
   failed_when: "kafka_create_topic_status.failed and 'already exists' not in kafka_create_topic_status.stdout"
   tags:
     - kafka
-    - kafka:check
+    - kafka-check
 
 
 - name: Check Apache Kafka local [List of topics] (2/3)
@@ -111,7 +111,7 @@
   changed_when: "kafka_topics_list.changed and 'ansible' not in kafka_topics_list.stdout"
   tags:
     - kafka
-    - kafka:check
+    - kafka-check
 
 
 - name: Check Apache Kafka local [Delete topic] (3/3)
@@ -121,5 +121,4 @@
   failed_when: "kafka_topic_delete.failed and 'does not exist' not in kafka_topic_delete.stdout"
   tags:
     - kafka
-    - kafka:check
-
+    - kafka-check
