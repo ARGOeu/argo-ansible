@@ -46,6 +46,9 @@
     repo: "{{ checkout_path }}"
     rev: HEAD
   register: git_repo_info
+  tags:
+    - update-frontend
+    - update
 
 - name: Set build_commit_hash variable
   set_fact:
