@@ -41,18 +41,19 @@
     - update-frontend
     - update
 
-- name: Get Git repo info
-  git:
-    repo: "{{ checkout_path }}"
-    rev: HEAD
-  register: git_repo_info
+- name: Get Commit hash from git repo
+  command: "git rev-parse HEAD"
+  args:
+    chdir: "{{ checkout_path }}"
+  register: git_repo_result
   tags:
     - update-frontend
     - update
 
+
 - name: Set build_commit_hash variable
   set_fact:
-    build_commit_hash: "{{ git_repo_info.after }}"
+    build_commit_hash: "{{ git_repo_result.stdout }}"
   tags:
     - update-frontend
     - update
