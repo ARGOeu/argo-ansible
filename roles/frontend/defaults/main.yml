@@ -3,6 +3,8 @@
 checkout_url: "" # point to a github repo: https://github.com/argoeu/example.git
 checkout_branch: devel # which branch will be checked out
 checkout_path: /tmp/frontend # where the project will be downloaded locally
+build_date: ""
+build_commit_hash: ""
 
 
 # default url to add nodejs repo in centos 7
