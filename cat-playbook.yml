@@ -37,4 +37,4 @@
 - hosts: frontend
   become: true
   roles:
-    - { role: frontend, task: react-based, tags: frontend}
+    - { role: frontend, task: vite-react-ts-based, tags: frontend}
