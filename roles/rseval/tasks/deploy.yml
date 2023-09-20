@@ -113,7 +113,7 @@
     dest: /etc/systemd/system/supervisor.service
   notify: 
    - reload systemctl daemon
-   - restart supervisord
+   - restart supervisor
 
 - name: copy rseval to /opt/rseval
   copy:
