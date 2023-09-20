@@ -85,12 +85,12 @@
   tags: rseval
   notify: restart supervisor
 
-- name: Create supervisord symlink 
+- name: Create supervisor symlink 
   file:
     src: "/opt/rh/rh-python38/root/usr/local/bin/supervisord"
     dest: "/usr/bin/supervisord"
     state: link
-  notify: restart supervisord
+  notify: restart supervisor
 
 - name: copy supervisor.service file
   copy: 
@@ -98,14 +98,14 @@
     dest: /etc/systemd/system/supervisor.service
   notify: 
    - reload systemctl daemon
-   - restart supervisord
+   - restart supervisor
 
-- name: configure supervisord
+- name: configure supervisor
   template:
     src: supervisord.conf.j2
     dest: /etc/supervisord.conf
     mode: 0444
-  notify: restart supervisord
+  notify: restart supervisor
 
 - name: copy supervisor.service file
   copy: 
@@ -191,7 +191,7 @@
     state: directory
 
 
-- name: enable and start supervisord
+- name: enable and start supervisor
   systemd:
     name: supervisor
     enabled: yes
