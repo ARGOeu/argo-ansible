@@ -82,6 +82,6 @@
   notify:
     - restart httpd
   copy:
-    src: "{{ repo_path }}/build/"
+    src: "{{ repo_path }}/dist/"
     dest: "/var/www/{{inventory_hostname}}/"
     remote_src: true
