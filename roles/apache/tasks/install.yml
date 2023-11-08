@@ -1,0 +1,65 @@
+---
+
+- name: install httpd
+  yum:
+    name:
+      - httpd
+      - mod_ssl
+    state: latest
+  tags: apache
+
+
+- name: Install Apache (httpd) extra system packages
+  yum:
+    name: "{{ httpd_extra_system_packages }}"
+    state: latest
+  when: httpd_extra_system_packages is defined
+  notify:
+    - restart httpd
+  tags:
+    - apache
+    - apache_extra
+
+
+## Disable modules
+
+- name: Disable Apache (httpd) modules
+  apache2_module:
+    state: absent
+    name: "{{ item }}"
+    ignore_configcheck: True
+  with_items: "{{ httpd_mods_disabled }}"
+  when: httpd_mods_disabled is defined
+  notify:
+    - restart httpd
+  tags:
+    - apache
+    - apache_extra
+    - apache_modules_disabled
+
+
+## Enable modules
+
+- name: Enable Apache (httpd) modules
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+    ignore_configcheck: True
+  register: enable_module
+  with_items: "{{ httpd_mods_enabled }}"
+  when: httpd_mods_enabled is defined
+  notify:
+    - restart httpd
+  ignore_errors: yes
+  tags:
+    - apache
+    - apache_extra
+    - apache_modules_enabled
+
+
+#- name: "Ensure DocumentRoot {{ httpd_document_root }} directory exists"
+#  file:
+#    path: "{{ httpd_document_root }}"
+#    state: directory
+
+

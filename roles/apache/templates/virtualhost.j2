@@ -1,0 +1,33 @@
+{% if httpd_global_conf is defined %}
+  {{ httpd_global_conf | indent(width=2) }}
+{% endif %}
+
+<VirtualHost *:80>
+  ServerName {{ inventory_hostname }}
+  Redirect permanent / https://{{ inventory_hostname }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName {{ inventory_hostname }}
+
+  SSLEngine on
+  SSLCertificateFile {{cert_path}}
+  SSLCertificateKeyFile {{cert_key_path}}
+{% if is_chain_file %}
+  SSLCertificateChainFile {{ca_path}}chain-{{inventory_hostname}}.pem
+{% endif %}
+
+{% if httpd_extra_conf is defined %}
+  {{ httpd_extra_conf | indent(width=2) }}
+{% endif %}
+
+{% if httpd_rev_proxy is defined %}
+  ProxyPass / http://{{httpd_rev_proxy.ip}}:{{httpd_rev_proxy.port}}/
+  ProxyPassReverse / http://{{httpd_rev_proxy.ip}}:{{httpd_rev_proxy.port}}/
+{% endif %}
+
+{% if httpd_document_root is defined %}
+  DocumentRoot {{httpd_document_root}}
+{% endif %}
+
+</VirtualHost>

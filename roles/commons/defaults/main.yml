@@ -1,16 +1,25 @@
 ---
 # defaults file for commons
 
+
+# SELinux
+disable_selinux: yes
+
+
 # sshd config path
-sshd_config_path: /etc/ssh/sshd_config 
+sshd_config_path: /etc/ssh/sshd_config
 
 # firewall default vars
 firewall_private_interfaces: []
-firewall_sources: []
+firewall_sources_base: []
+firewall_sources_extra: []
 firewall_interfaces: []
-firewall_zones: []
-firewall_services: []
-firewall_services_zones: []
+firewall_zones_base: []
+firewall_zones_extra: []
+firewall_services_base: []
+firewall_services_extra: []
+firewall_services_zones_base: []
+firewall_services_zones_extra: []
 
 # firewall
 cert_dir: /etc/grid-security/
@@ -18,7 +27,16 @@ cert_path: /etc/grid-security/hostcert.pem
 cert_key_path: /etc/grid-security/hostkey.pem
 ca_path: /etc/pki/tls/certs/
 ca_path_bundle: /etc/pki/tls/certs/ca-bundle.crt
+# create the cert dir and move the cert and key
+# can be set to false if no cert/key is needed
+requires_cert: true
 
+# Rsyslog
+#central_rsyslog:
+#  hostname: "rsyslog.example.com"
+#  port: "6514"
+rsyslog_cert_dir: "{{ cert_dir }}rsyslog-client-certs/"
+rsyslog_fail2ban_logs: true
 
 # defaults for role repos
 repo_enabled_argo: argo-devel  # from which repo to get the packages (argo-devel or argo-prod)
@@ -33,6 +51,7 @@ repo_rocci: false
 repo_cloudera: false
 repo_cloudera_kafka: false
 repo_nagios: false
+repo_mariadb: false
 
 # defaults file for fail2ban
 

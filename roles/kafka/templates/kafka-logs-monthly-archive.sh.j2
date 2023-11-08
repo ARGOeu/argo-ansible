@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Define the source of the logs that should be archived
+logs_location="{{ kafka_logs }}/{{ kafka_rotated_logs_dir_name }}"
+
+# Define the destination location of the archived logs
+logs_archive_dir="{{ kafka_logs }}/{{ kafka_monthly_archives_dir_name }}"
+
+# Declare an array of log file patterns
+declare -a log_patterns=(
+  "controller"
+  "kafka-request"
+  "server"
+  "state-change"
+  "kafka-authorizer"
+  "log-cleaner"
+)
+
+current_date=$( date +%Y-%m )
+
+echo "Creating directory for monthly archives at ${logs_archive_dir} . . ."
+mkdir -p ${logs_archive_dir}
+
+for i in "${log_patterns[@]}"; do
+
+  pattern="${i}.log.*"
+
+  if compgen -G "${logs_location}/${pattern}" > /dev/null; then
+    echo "Archiving ${logs_location}/${pattern}. . ."
+    echo "Executing tar command: "
+    echo "tar -cvzf ${logs_archive_dir}/${i}.${current_date}.tar -C${logs_location} $( cd ${logs_location}; echo ${pattern})"
+    tar -cvzf ${logs_archive_dir}/${i}.${current_date}.tar -C${logs_location} $( cd ${logs_location}; echo ${pattern})
+    echo "Removing ${logs_location}/${pattern} logs . . ."
+    echo "Executing rm command: "
+    echo "rm -rf ${logs_location}/${pattern}"
+    rm -rf ${logs_location}/${pattern}
+  else
+    echo "No files found matching the pattern ${pattern} in ${logs_location}. Skipping..."
+  fi
+  echo "----------------------------------------"
+done

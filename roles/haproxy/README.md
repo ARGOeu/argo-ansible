@@ -36,6 +36,11 @@ passed in as parameters) is always nice for users too:
       roles:
          - { role: haproxy, x: 42 }
 
+### HAProxy probe installation only
+```
+ansible-playbook -i production --limit="haproxy" argo-ansible/install.yml -vv --tags="haproxy_install:icinga_group_id, haproxy_config, haproxy_probe" --list-hosts --list-tasks
+```
+
 License
 -------
 

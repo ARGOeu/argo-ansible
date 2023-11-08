@@ -1,6 +1,17 @@
 ---
-# handlers file for zookeeper
+# handlers file for Apache Zookeeper
 
-- name: restart zookeeper
-  service: name=zookeeper-server state=restarted
+
+- name: Restart Zookeeper
+  systemd:
+    daemon_reload: true
+    name: zookeeper
+    state: restarted
+    enabled: true
   become: true
+
+- name: Wait Zookeeper to startup
+  wait_for:
+    timeout: "{{ zookeeper_health_check_delay }}"
+
+

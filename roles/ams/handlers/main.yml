@@ -3,3 +3,10 @@
 
 - name: restart argo-messaging
   service: name=argo-messaging state=restarted
+
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+

@@ -3,6 +3,7 @@
 - hosts: all
   become: yes
   roles:
+    - { role: commons, task: selinux,         tags: disable_selinux       }
     - { role: commons, task: timezone,        tags: timezone              }
     - { role: commons, task: repos,           tags: repos                 }
     - { role: commons, task: basic_utils,     tags: basic_utils           }
@@ -38,39 +39,42 @@
 - hosts: haproxy
   become: yes
   roles:
-    - { role: haproxy, task: rsyslog }
     - { role: haproxy, task: haproxy , tags: haproxy_install }
-
-- hosts: ams_store
-  become: yes
-  roles:
-    - { role: private_hosts }
-    - { role: mongodb }
-    - { role: ams, task: init_db, tags: ams_install }
 
 - hosts: ams
   become: yes
   roles:
-    - { role: private_hosts }
     - { role: zookeeper, tags: zookeeper_install }
     - { role: kafka, tags: kafka_install }
     - { role: ams, task: deploy, tags: ams_install }
     - { role: ams, task: deploy_metrics, tags: ams_install }
+    - { role: ams, task: init_db }
+
+- hosts: mongo_devel_private_network
+  become: yes
+  roles:
+    - { role: private_hosts, tags: private_hosts }
 
 - hosts: ams_push_server
   become: yes
   roles:
     - { role: push-server, task: push-server-setup, tags: push_install }
 
-- hosts: authn
+- hosts: mongo_private_cluster
   become: yes
   roles:
     - { role: mongodb }
-    - { role: argo-api-authn, task: authn-setup }
-    - { role: argo-api-authn, task: python-env-setup }
-    - { role: argo-api-authn, task: ams-create-users-gocdb-script }
-    - { role: argo-api-authn, task: ams-create-users-cloud-info-script }
-    - { role: argo-api-authn, task: scripts_cert }
+
+- hosts: authn
+  become: yes
+  roles:
+    - { role: argo-api-authn,    task: authn-setup,                         tags: authn_install            }
+    - { role: argo-api-authn,    task: python-env-setup                                                    }
+    - { role: argo-api-authn,    task: scripts_cert,                        tags: authn-scripts-cert       }
+    - { role: argo-api-authn,    task: authn-init,                          tags: init_checks              }
+    - { role: argo-api-authn,    task: ams-create-users-gocdb-script,       tags: authn_ams_create_users   }
+    - { role: argo-api-authn,    task: ams-create-users-cloud-info-script,  tags: authn_ams_create_users   }
+
 
 - hosts: metrics
   become: yes
@@ -100,8 +104,9 @@
 - hosts: swagger
   become: yes
   roles:
-    - { role: httpd, tags: httpd }
-    - { role: swagger }
+    - { role: commons, task: cert, tags: swagger_deploy }
+    - { role: apache, tags: swagger_deploy }
+    - { role: swagger, tags: [swagger_deploy, swagger_update] }
 
 - hosts: c_cluster
   become: yes
@@ -134,4 +139,26 @@
 - hosts: icinga_agent
   become: yes
   roles:
-     - { role: icinga_agent, tags: deploy_icinga_agent }
+    - { role: icinga_agent, tags: deploy_icinga_agent }
+
+- hosts: apache
+  become: yes
+  roles:
+    - { role: commons, task: cert, tags: apache_certs }
+    - { role: apache,  task: main, tags: apache_install }
+
+- hosts: eseal
+  become: yes
+  remote_user: root
+  roles:
+    - { role: commons,  task: firewall,  tags: firewall         }
+    - { role: commons,  task: cert,      tags: cert             }
+    - { role: commons,  task: rsyslog,   tags: rsyslog_conf     }
+    - { role: apache,   task: main,      tags: apache_install   }
+    - { role: eseal,    task: main,      tags: eseal            }
+
+
+- hosts: gocdb
+  become: yes
+  roles:
+    - { role: backup_mysql,  task: backup,  tags: mysql-backup   }

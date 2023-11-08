@@ -1,0 +1,30 @@
+---
+# defaults file for pcc
+
+
+## Privileged user for pcc
+#
+pcc_api_user: pcc_api
+pcc_api_group: pcc_api
+
+# Directories
+#
+pcc_api_root_dir: /opt/pcc-api
+pcc_api_conf_dir: /etc/pcc-api/conf.d
+pcc_api_logs_dir: /var/log/pcc-api
+
+# MySQL Database
+mysql:
+  user: pcc_api_admin
+  password: pcc_api_admin
+  host: localhost
+  db: pccdb
+
+hrls:
+  username: user
+  password: password
+  database_ip: database_ip
+  database_port: database_port
+  database_name: database_name
+  database_username: database_username
+  database_password: database_password

@@ -1,0 +1,87 @@
+---
+# tasks file for Apache Zookeeper system configurations
+
+
+# System groups & users.
+
+- name: "Ensure group '{{ zookeeper_group }}' exists"
+  group:
+    name: "{{ zookeeper_group }}"
+    system: yes
+  tags:
+    - zookeeper
+    - zookeeper_config
+    - zookeeper_install
+    - zookeeper_system
+    - zookeeper_group
+
+- name: "Ensure user '{{ zookeeper_user }}' exists"
+  user:
+    name: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    create_home: no
+    system: yes
+    comment: Apache Zookeeper user
+  tags:
+    - zookeeper
+    - zookeeper_config
+    - zookeeper_install
+    - zookeeper_system
+    - zookeeper_user
+
+
+# Directories
+
+- name: "Create {{ zookeeper_root }} directory for Apache Zookeeper if it does not exist"
+  file:
+    path: "{{ zookeeper_root }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_root
+
+
+- name: "Create {{ zookeeper_data }} directory for Apache Zookeeper DATA if it does not exist"
+  file:
+    path: "{{ zookeeper_data }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_data
+
+
+- name: "Create  /etc/zookeeper/conf   directory for Apache Zookeeper config files if it does not exist"
+  file:
+    path: "/etc/zookeeper/conf"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_data
+
+- name: "Create {{ zookeeper_logs }} directory for Apache Zookeeper LOGs if it does not exist"
+  file:
+    path: "{{ zookeeper_logs }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0755'
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_logs

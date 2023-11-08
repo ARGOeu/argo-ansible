@@ -44,11 +44,14 @@ Role Variables
 
 firewall related:
 - firewall_private_interfaces: a list of interfaces to be in private networks
-- firewall_sources: a list of sources to be created
+- firewall_sources_base: a list of basic sources to be created
+- firewall_sources_extra: a list of extra sources to be created
 - firewall_interfaces: a list of interfaces to be added to zones (items: {"interface":"ethX", "zone":"zone to map to"})
-- firewall_zones: a list of zones to be created
-- firewall_services: a list of services to be created (items: {"name": "service name", "port": "port_num/tcp"})
-- firewall_services_zones: a list that maps services to zones (items: {"service":"service name", "zone": "zone to map to"})
+- firewall_zones_base: a list of basic zones to be created
+- firewall_zones_extra: a list of extra zones to be created
+- firewall_services_base: a list of basic services to be created (items: {"name": "service name", "port": "port_num/tcp"})
+- firewall_services_extra: a list of extra services to be created (items: {"name": "service name", "port": "port_num/tcp"})
+- firewall_services_zones_extra: a list that maps services to zones (items: {"service":"service name", "zone": "zone to map to"})
 
 sshd related:
 - sshd_config_path: path to configuration file of ssh daemon (default: /etc/ssh/sshd_config)
@@ -79,6 +82,45 @@ repo related
 - repo_cloudera: false
 - repo_cloudera_kafka: false
 - repo_nagios: false
+
+
+Firewall
+------------
+This role uses 2 types of variables, first the basic variables that contain zones and
+services that all vms need such as vpn access or monitoring checks.
+Second, the specific variables that a host need for it's services.
+
+For example:
+The generic services are saved in the *base variable.
+  firewall_services_base:
+  - name: icinga_agent
+    port: "{{ icinga_master_port }}"
+
+For a specific domain we need ntp so we add it in the *extra field.
+  firewall_services_extra:
+  - name: ntp
+    port: 123/udp
+
+
+
+If you want to just **add** some new sources to your firewall and some services
+to them, but you don't want ( or afraid ) to change anything else in the firewall
+configuration you already have, you can run the role with the following tags:
+```bash
+ansible-playbook -i test-intentory argo-ansible/install.yml -vv --tags="create_new_zones, add_services_to_zones, add_sources_to_zones, remove_ssh_from_public"
+```
+
+If you just want to **remove** public ssh access:
+```bash
+ansible-playbook -i test-intentory argo-ansible/install.yml -vv --tags="remove_ssh_from_public"
+```
+
+or all together:
+```bash
+ansible-playbook -i test-intentory argo-ansible/install.yml -vv  --tags="create_new_zones, add_services_to_zones, add_sources_to_zones, remove_ssh_from_public"
+```
+
+So you can change only the essentials and nothing else!
 
 
 Dependencies

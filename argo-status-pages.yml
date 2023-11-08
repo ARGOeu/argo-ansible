@@ -1,0 +1,16 @@
+---
+- hosts: argo_status_pages
+  become: true
+  serial: 1
+  roles:
+    - { role: commons, task: sshd, tags: argo_status_pages}
+    - { role: commons, task: repos, tags: argo_status_pages}
+    - { role: commons, task: timezone, tags: argo_status_pages}
+    - { role: commons, task: cert, tags: argo_status_pages}
+    - { role: apache, task: main, tags: argo_status_pages}
+    - { role: argo_status_pages, task: deploy, tags: argo_status_pages}
+  
+- hosts: icinga_agent
+  become: yes
+  roles:
+    - { role: icinga_agent, tags: deploy_icinga_agent }

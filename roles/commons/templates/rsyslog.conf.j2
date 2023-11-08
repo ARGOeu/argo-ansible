@@ -1,3 +1,5 @@
+## {{ ansible_managed }}
+
 $LocalHostName {{ inventory_hostname }}
 
 # For more information see /usr/share/doc/rsyslog-*/rsyslog_conf.html
@@ -10,6 +12,7 @@ $ModLoad imuxsock # provides support for local system logging (e.g. via logger c
 $ModLoad imjournal # provides access to the systemd journal
 #$ModLoad imklog # reads kernel messages (the same are read from journald)
 #$ModLoad immark  # provides --MARK-- message capability
+Module(load="imfile" mode="inotify")
 
 # Provides UDP syslog reception
 #$ModLoad imudp
@@ -51,7 +54,7 @@ $IMJournalStateFile imjournal.state
 
 # Log anything (except mail) of level info or higher.
 # Don't log private authentication messages!
-*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+*.info;mail.none;authpriv.none;cron.none;local0.none    /var/log/messages
 
 # The authpriv file has restricted access.
 authpriv.*                                              /var/log/secure

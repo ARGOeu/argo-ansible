@@ -1,4 +1,5 @@
 ---
+
 - name: install haproxy
   yum:
    name: '{{ item }}'
@@ -38,6 +39,7 @@
 - name: Bundle x509 crt and key in a single pem file
   shell: cat {{ cert_dir }}hostcert.pem {{cert_dir}}hostkey.pem > {{cert_dir}}{{inventory_hostname}}.crt
   tags: haproxy_install, msg_certificate
+  notify: restart haproxy
 
 - name: Change owner and group for bundled cert
   file:
@@ -46,20 +48,37 @@
    group: haproxy
   tags: haproxy_install
 
+
+- name: Find icinga group id
+  shell: id -g icinga
+  register: icinga_group_id
+  when: haproxy_monitoring_agent | default(false) | bool
+  tags:
+    - haproxy_install
+    - haproxy_install:icinga_group_id
+
+
 - name: configure haproxy
   template:
    src: haproxy_template.cfg.j2
    dest: /etc/opt/rh/rh-haproxy18/haproxy/haproxy.cfg
    backup: true
-  tags: haproxy_install
+  tags:
+    - haproxy
+    - haproxy_install
+    - haproxy_config
+  notify: restart haproxy
 
 - name: configure haproxy log(rsyslog)
   template:
-   src: rsyslog_haproxy.conf.j2
-   dest: /etc/rsyslog.d/haproxy.conf
+   src: etc/rsyslog.d/60_haproxy.conf.j2
+   dest: /etc/rsyslog.d/60_haproxy.conf
    backup: true
   notify: restart rsyslog
-  tags: haproxy_install
+  tags:
+    - haproxy
+    - haproxy_install
+    - haproxy_rsyslog
 
 - name: start haproxy
   service:
@@ -73,3 +92,14 @@
    name: rh-haproxy18-haproxy
    enabled: true
   tags: haproxy_install
+
+
+- name: Add HAProxy monitoring agent probe
+  include: haproxy-probe.yml
+  when: haproxy_monitoring_agent | default(false) | bool
+  tags:
+    - haproxy_install
+    - haproxy_probe
+
+
+

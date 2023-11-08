@@ -14,8 +14,8 @@
         owner=root group=root mode=0644
   when: repo_mongo
 
-- name: Install mongodb 4.2 repo 
-  tags: repo_mongodb 
+- name: Install mongodb 4.0 repo
+  tags: repo_mongodb
   copy: src=etc/yum.repos.d/mongodb-org-4.0.repo
         dest=/etc/yum.repos.d/mongodb-org-4.0.repo backup=no
         owner=root group=root mode=0644
@@ -82,3 +82,24 @@
         dest=/etc/yum.repos.d/unicore-7.repo backup=no
         owner=root group=root mode=0644
   when: repo_unicore
+
+- name: Install rsyslog stable official repo
+  tags: repo_rsyslog
+  yum_repository:
+    name: rsyslog_v8
+    description: "Adiscon CentOS-$releasever - local packages for $basearch"
+    baseurl: "http://rpms.adiscon.com/v8-stable/epel-$releasever/$basearch"
+    enabled: yes
+    protect: yes
+    gpgcheck: yes
+    gpgkey: "http://rpms.adiscon.com/RPM-GPG-KEY-Adiscon"
+
+- name: Install MariaDB repo
+  tags: repo_mariadb
+  copy: src=etc/yum.repos.d/mariadb.repo
+    dest=/etc/yum.repos.d/mariadb.repo backup=no
+    owner=root group=root mode=0644
+  when: repo_mariadb
+
+
+

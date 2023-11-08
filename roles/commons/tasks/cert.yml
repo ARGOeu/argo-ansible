@@ -3,17 +3,39 @@
 - name: Create cert_dir if not exists
   file: dest={{ cert_dir }} state=directory
         owner=root group=root mode=0755
-  when: cert_dir is defined
+  when: cert_dir is defined and requires_cert | default(True) | bool == True
   tags: cert
 
 - name: Copy host x509 certificate onto host
   copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.pem
         dest={{ cert_path }} backup=yes
         owner=root group=root mode=0644
+  when: cert_dir is defined and requires_cert | default(True) | bool == True
   tags: cert
 
 - name: Copy host x509 key onto host
   copy: src=private_files/{{ inventory_hostname }}/{{ inventory_hostname }}.key
         dest={{ cert_key_path }} backup=yes
         owner=root group=root mode=0400
+  when: cert_dir is defined and requires_cert | default(True) | bool == True
+  tags: cert
+
+- name: Check if chain file exists in private_files
+  become: no
+  local_action:
+    module: stat
+    path: private_files/{{ inventory_hostname }}/chain-{{ inventory_hostname }}.pem
+  register: chain_file
+
+- name: Create ca_path if not exists
+  file: dest={{ ca_path }} state=directory
+        owner=root group=root mode=0755
+  when: chain_file.stat.exists
+  tags: cert
+
+- name: Copy chain file to host
+  copy: src=private_files/{{ inventory_hostname }}/chain-{{ inventory_hostname }}.pem
+        dest={{ ca_path }}/chain-{{inventory_hostname}}.pem backup=yes
+        owner=root group=root mode=0400
+  when: chain_file.stat.exists
   tags: cert

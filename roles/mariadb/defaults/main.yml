@@ -1,0 +1,7 @@
+---
+# MySQL Database
+mysql:
+  user: mariadb_admin
+  password: mariadb_admin
+  host: localhost
+  db: mariadb

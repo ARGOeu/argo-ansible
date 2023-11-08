@@ -1,0 +1,25 @@
+## {{ ansible_managed }}
+
+global(
+DefaultNetstreamDriver="gtls"
+DefaultNetstreamDriverCAFile="{{ rsyslog_cert_dir }}rsyslog_ca.crt"
+DefaultNetstreamDriverCertFile="{{ rsyslog_cert_dir }}rsyslog.crt"
+DefaultNetstreamDriverKeyFile="{{ rsyslog_cert_dir }}rsyslog.key"
+)
+
+
+# set up the action for all messages
+
+action(
+type="omfwd"
+target="rsyslog.argo.grnet.gr"
+protocol="tcp"
+port="6514"
+StreamDriver="gtls"
+StreamDriverMode="1" # run driver in TLS-only mode
+StreamDriverAuthMode="x509/name"
+StreamDriverPermittedPeers="rsyslog.argo.grnet.gr"
+)
+
+
+

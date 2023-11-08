@@ -1,7 +1,6 @@
 ---
 # handlers file for commons
 
-# handlers file for fail2ban
 - name: restart fail2ban
   service:
     name: fail2ban
@@ -24,3 +23,10 @@
   service:
     name: nrpe
     state: restarted
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+

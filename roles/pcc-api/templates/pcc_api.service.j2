@@ -1,0 +1,33 @@
+[Unit]
+Description=PCC API.
+After=network.target remote-fs.target nss-lookup.target
+Documentation=https://github.com/ARGOeu/pcc-api/tree/devel
+
+[Service]
+#Type=simple
+User={{ pcc_api_user }}
+Group={{ pcc_api_group }}
+WorkingDirectory={{ pcc_api_root_dir }}
+ExecStart=/usr/bin/java -jar {{ pcc_api_root_dir }}/pcc-api.jar
+SyslogIdentifier=pcc-api
+Restart=on-failure
+RestartSec=5s
+SuccessExitStatus=143
+#KillMode=mixed
+Environment="QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://localhost:3306/pccdb"
+Environment="QUARKUS_FLYWAY_SCHEMAS={{mysql.db}}"
+Environment="QUARKUS_DATASOURCE_USERNAME={{mysql.user}}"
+Environment="QUARKUS_DATASOURCE_PASSWORD={{mysql.password}}"
+Environment="HRLS_PASSWORD={{hrls.password}}"
+Environment="HRLS_USERNAME={{hrls.username}}"
+Environment="HRLS_DATABASE_IP={{hrls.database_ip}}"
+Environment="HRLS_DATABASE_PORT={{hrls.database_port}}"
+Environment="HRLS_DATABASE_NAME={{hrls.database_name}}"
+Environment="HRLS_DATABASE_USERNAME={{hrls.database_username}}"
+Environment="HRLS_DATABASE_PASSWORD={{hrls.database_password}}"
+Environment="PCC_API_PROFILE=prod"
+
+[Install]
+WantedBy=multi-user.target
+#Alias=pcc_api.service
+#Alias=pcc_apid.service

@@ -12,6 +12,10 @@
   apt:
     name: 
       - apt-transport-https
+  tags:
+    - icinga_agent
+    - debian
+    - packages
 
 
 
@@ -20,6 +24,11 @@
   apt_key:
     url: https://packages.icinga.com/icinga.key
     state: present
+  tags:
+    - icinga_agent
+    - debian
+    - repository
+
 
 - name: Add Icinga repository.
   apt_repository:
@@ -29,6 +38,11 @@
   with_items:
     - "deb http://packages.icinga.com/{{ ansible_distribution | lower }} icinga-{{ ansible_distribution_release }} main"
     - "deb-src http://packages.icinga.com/{{ ansible_distribution | lower }} icinga-{{ ansible_distribution_release }} main"
+  tags:
+    - icinga_agent
+    - debian
+    - repository
+
 
 - name: Enable {{ ansible_distribution_release }} Backports.
   apt_repository:
@@ -38,7 +52,12 @@
   with_items:
     - "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free"
     - "deb-src http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free"
-  when: ansible_distribution_release == 'stretch'
+  when: ansible_distribution_release == 'stretch' or ansible_distribution_release == 'buster'
+  tags:
+    - icinga_agent
+    - debian
+    - repository
+    - backports
 
 
 
@@ -56,20 +75,41 @@
     name:
       - icinga2
       - monitoring-plugins
+      #- monitoring-plugins-basic
+      #- monitoring-plugins-common
+      #- monitoring-plugins-standard
+      #- nagios-plugins
+      #- nagios-plugins-basic
+      #- nagios-plugins-common
+      #- nagios-plugins-contrib
+      #- nagios-plugins-standard
       - vim-icinga2
       - vim-addon-manager
     state: latest
     update_cache: yes
+  tags:
+    - icinga_agent
+    - debian
+    - packages
 
 
+- name: Get check_mem.pl external probe
+  get_url:
+    url: https://raw.githubusercontent.com/ARGOeu/argo-external-tools/master/src/check_mem.pl
+    dest: /usr/lib/nagios/plugins
+    mode: 0755
+  tags:
+    - icinga_agent
+    - debian
+    - packages
+    - icinga_external_tools
 
 
 - name: Configuration Syntax Highlighting using Vim.
   shell: vim-addon-manager -w install icinga2
-  notify: Restart Icinga 2 service.
-
-
-
-
+  notify: Restart Icinga 2 service
+  tags:
+    - icinga_agent
+    - debian
 
 

@@ -11,10 +11,45 @@
     - mongodb-org
     - mongodb-org-server
     - git
-    
+
+
+- name: Instsall python2-pip
+  package:
+    name: python2-pip
+    state: latest
+  tags:
+    - python2
+    - python2-pip
+
+- name: Set specific version of pip
+  pip:
+    name:
+      - pip>10,<21.0
+    state: forcereinstall
+    executable: pip2
+    extra_args: --upgrade
+  tags:
+    - python2
+    - python2-pip
+    - python2-pip-fix
+
+- name: install pymongo==3.12.3
+  pip:
+    name: pymongo==3.12.3
+    state: present
+    executable: pip2.7
+  tags:
+    - pymongo
+    - motop
+
 - name: install motop
   pip:
     name: git+https://github.com/tart/motop.git
+    state: present
+    executable: pip2.7
+  tags:
+    - motop
+
 
 - name: create mongo replicated folder
   file:
@@ -32,8 +67,6 @@
   tags:
     - mongo_install
   notify: restart mongo
-
-
 
 - name: Increase soft nproc limits
   copy:
@@ -55,25 +88,25 @@
   template: dest="/tmp/db_init_rs.js" owner=root group=root mode=640 src=db_init_rs.js.j2
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Run init roles script
   shell: mongo < /tmp/db_init_rs.js
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Move rs add members script
   template: dest="/tmp/db_rs_members.js" owner=root group=root mode=640 src=db_rs_members.js.j2
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Run rs add members script
   shell: mongo < /tmp/db_rs_members.js
   tags:
     - mongo_replication
-  when: mongo_replicated == true and groups[cluster_group][0] == inventory_hostname
+  when: mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname
 
 - name: Transfer mongo rotate bash script
   copy:
@@ -94,3 +127,69 @@
     job: "/root/mongo_rotate.sh"
     cron_file: mongo_rotate
   when: mongo_log_rotate == true
+
+- name: Ensures mongodb backup directory for script(s) exists
+  file:
+    path: "{{mongo_backup_scripts_location}}"
+    state: directory
+  tags:
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Move MongoDB backup script
+  template:
+    dest: "{{ mongo_backup_scripts_location }}mongo_backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+    src: mongodb_backup.sh.j2
+  tags:
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Set up cron job for mongo backup script
+  cron:
+    cron_file: mongodb_backup
+    name: "Set up cron job for mongo backup script"
+    user: root
+    special_time: daily
+    job: "{{ mongo_backup_scripts_location }}mongo_backup.sh"
+  tags:
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Move aris authorised key for rsync script
+  copy:
+    src: 'private_files/{{ inventory_hostname }}/auth_key/aris_rsa'
+    dest: /root/.ssh/aris_rsa
+    owner: root
+    group: root
+    mode: 0600
+  tags:
+    - mongo_backup_aris
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Move MongoDB rsync script
+  template:
+    src: 'rsync-mongod-backup.sh.j2'
+    dest: "{{ mongo_backup_scripts_location }}rsync-mongod-backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - mongo_backup_aris
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false
+
+- name: Add cronjob for rsync script
+  cron:
+    cron_file: mongodb_backup
+    name: "Set up cron job for mongo backup script"
+    user: root
+    special_time: daily
+    job: "{{ mongo_backup_scripts_location }}rsync-mongod-backup.sh"
+  tags:
+    - mongo_backup_aris
+    - mongo_backup
+  when: (mongo_replicated == true and groups[mongo_cluster_group][0] == inventory_hostname) or mongo_replicated == false

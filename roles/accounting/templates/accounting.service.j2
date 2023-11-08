@@ -1,0 +1,32 @@
+[Unit]
+Description=ARGO Accounting.
+After=network.target remote-fs.target nss-lookup.target
+Documentation=https://github.com/ARGOeu/ARGO-accounting/tree/devel
+
+[Service]
+#Type=simple
+User={{ accounting_user }}
+Group={{ accounting_group }}
+WorkingDirectory={{ accounting_root_dir }}
+ExecStart=/usr/bin/java -jar {{ accounting_root_dir }}/accounting.jar
+SyslogIdentifier=accounting
+Restart=on-failure
+RestartSec=5s
+SuccessExitStatus=143
+#KillMode=mixed
+Environment="QUARKUS_MONGODB_CONNECTION_STRING={{ quarkus.mongodb_uri }}"
+Environment="SERVER_URL=https://{{ inventory_hostname }}"
+Environment="SYSTEM_ADMIN_VOPERSONID={{ system_admin_vopersonids | join(',')}}"
+Environment="SYSTEM_ADMIN_EMAIL={{ system_admin_emails | join(',')}}"
+Environment="SYSTEM_ADMIN_NAME={{ system_admin_names | join(',')}}"
+
+Environment="QUARKUS_OIDC_AUTH_SERVER_URL={{ quarkus_oidc.auth_server_url }}"
+Environment="QUARKUS_OIDC_CREDENTIALS_SECRET={{ quarkus_oidc.credentials_secret }}"
+Environment="QUARKUS_OIDC_CLIENT_ID={{ quarkus_oidc.client_id }}"
+
+Environment="AAI_PROXY_CLIENT_URL={{ aai_proxy_client_url }}"
+
+[Install]
+WantedBy=multi-user.target
+#Alias=accounting.service
+#Alias=accountingd.service

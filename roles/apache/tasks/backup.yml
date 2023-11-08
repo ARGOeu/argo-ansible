@@ -1,0 +1,17 @@
+---
+
+- name: Ansible check /etc/httpd exists
+  stat:
+    path: /etc/httpd
+  register: httpd_folder
+
+- name: Ensure "{{ backup_dir }}" directory exists
+  file:
+    path: "{{ backup_dir }}"
+    state: directory
+
+- name: Compress backup directory
+  archive:
+    path: "/etc/httpd/"
+    dest: "{{ backup_dir }}/httpd_{{ansible_date_time.iso8601_basic_short}}.tgz"
+  when: httpd_folder.stat.exists and httpd_folder.stat.isdir

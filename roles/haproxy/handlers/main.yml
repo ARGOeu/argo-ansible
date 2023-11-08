@@ -7,7 +7,9 @@
     state: restarted
     enabled: true
 
-- name: restart rsyslog
+- name: restart haproxy
   service:
-    name: rsyslog
-    state: restared
+    name: haproxy
+    state: restarted
+    enabled: true
+

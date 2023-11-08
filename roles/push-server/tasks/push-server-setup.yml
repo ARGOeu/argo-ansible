@@ -28,8 +28,8 @@
   notify: restart ams-push-server
 
 - name: Copy CA file
-  copy: src=private_files/{{ inventory_hostname }}/DigiCertCA.crt
-        dest=/var/www/ams-push-server/cas/DigiCertCA.pem
+  copy: src=private_files/{{ inventory_hostname }}/CA.crt
+        dest=/var/www/ams-push-server/cas/CA.pem
         backup=yes
         owner=ams-push-server group=ams-push-server mode=0644
   tags: push_install
@@ -44,6 +44,23 @@
     mode: 0644
   tags: push_install
   notify: restart ams-push-server
+
+
+- name: Allow bind port 443
+  shell: setcap 'cap_net_bind_service=+ep' /var/www/ams-push-server/ams-push-server
+  tags: push_install
+
+
+- name: Configure argo-ams-push log(rsyslog)
+  template:
+   src: rsyslog_ams-push.conf.j2
+   dest: /etc/rsyslog.d/ams-push.conf
+   backup: true
+  notify: restart rsyslog
+  tags:
+    - push_install
+    - push_rsyslog
+
 
 - name: Start the ams push server
   service:

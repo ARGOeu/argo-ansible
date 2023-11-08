@@ -1,7 +1,7 @@
 {
   "bind_ip":"{{ams_bind_ip}}",
   "port":{{ams_port}},
-  "zookeeper_hosts":[{% for host in groups[cluster_group] %}"{{hostvars[host]['private']['hostname']}}:2181"{% if not loop.last %},{% endif %}{% endfor %}],
+  "zookeeper_hosts":[{% for host in groups[zookeeper_cluster_group] %}{% if hostvars[host]['is_zoo_host'] is defined %}{% if hostvars[host]['is_zoo_host'] | bool == True %}"{{hostvars[host]['private']['hostname']}}:2181"{% if not loop.last %},{% endif %}{% endif %}{% endif %}{% endfor %} ],
   "kafka_znode":"{{ams_kafka_znode}}",
   "store_host":"{{ams_store_host}}",
   "store_db":"{{ams_store_db}}",
@@ -9,18 +9,24 @@
   "certificate_key":"/var/www/argo-messaging/hostkey.pem",
   "per_resource_auth":{{ams_per_resource_auth}},
   {% if ams_service_token %}
-  "service_token":"{{ams_service_token}}",
+"service_token":"{{ams_service_token}}",
   {% endif %}
-  "log_level": "{{ams_log_level}}",
   {% if ams_push_enabled %}
-  "push_enabled": {{ams_push_enabled}},
+"push_enabled": {{ams_push_enabled}},
   "push_server_host": "{{ams_push_server_host}}",
   "push_server_port": {{ams_push_server_port}},
   "push_worker_token": "{{ams_push_worker_token}}",
   {% if ams_push_tls_enabled %}
   "push_tls_enabled": {{ams_push_tls_enabled}},
   "verify_push_server": {{ams_verify_push_server}},
-  "certificate_authorities_dir": "/var/www/argo-messaging/cas"
+  "certificate_authorities_dir": "/var/www/argo-messaging/cas",
   {% endif %}
   {% endif %}
+  {% if ams_proxy_hostname %}
+  "proxy_hostname": "{{ams_proxy_hostname}}",
+  {% endif %}
+  {% if ams_auth_option %}
+  "auth_option": "{{ams_auth_option}}",
+  {% endif %}
+  "log_level": "{{ams_log_level}}"
 }

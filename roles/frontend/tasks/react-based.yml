@@ -1,0 +1,108 @@
+---
+# tasks file for frontend react
+
+- name: update yum cache
+  yum:
+    update_cache: true
+
+- name: Install reqired packages
+  yum:
+    name:
+      - git
+      - curl
+      - wget
+
+- name: Add nodejs repo 
+  yum:
+    name: "{{ nodejs_yum_repo_url }}"
+    state: present
+
+- name: Install NodeJs
+  yum:
+    name:
+      - nodejs
+
+- name: Check clone repo dest directory is absent
+  file:
+      state: absent
+      path: "{{ checkout_path }}/"
+  tags:
+    - update-frontend
+    - update
+
+- name: Clone a private repository
+  git:
+    repo: "{{ checkout_url }}"
+    dest: "{{ checkout_path }}"
+    version: "{{ checkout_branch }}"
+    force: true
+    accept_hostkey: true
+  tags:
+    - update-frontend
+    - update
+
+- name: Get Commit hash from git repo
+  command: "git rev-parse HEAD"
+  args:
+    chdir: "{{ checkout_path }}"
+  register: git_repo_result
+  tags:
+    - update-frontend
+    - update
+
+
+- name: Set build_commit_hash variable
+  set_fact:
+    build_commit_hash: "{{ git_repo_result.stdout }}"
+  tags:
+    - update-frontend
+    - update
+
+    
+- name: Install packages based on package.json using the npm
+  npm:
+    path: "{{ checkout_path }}"
+    state: present
+  tags:
+    - update-frontend
+    - update
+    
+- name: Copy config files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: false
+  loop: "{{ config_files }}"
+  tags:
+    - update-frontend
+    - update
+
+- name: set build_date
+  set_fact:
+    build_date: "{{ ansible_date_time.iso8601 }}"
+  tags:
+    - update-frontend
+    - update
+
+- name: Build app with additional build info from environment vars
+  command: npm run build
+  args:
+    chdir: "{{ checkout_path }}"
+  environment:
+    REACT_APP_BUILD_COMMIT_URL: '{{ checkout_url | regex_replace("\.git$", "/tree/" ~ build_commit_hash) }}'
+    REACT_APP_BUILD_COMMIT_HASH: '{{ build_commit_hash }}'
+    REACT_APP_BUILD_DATE: '{{build_date}}'
+  tags:
+    - update-frontend
+    - update
+    
+- name: Copy folder to a www folder destination
+  copy:
+    src: "{{ checkout_path }}/build/"
+    dest: "{{ www_path }}"
+    remote_src: true
+  notify:
+    - restart httpd
+  tags:
+    - update-frontend
+    - update

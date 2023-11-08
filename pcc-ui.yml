@@ -1,0 +1,7 @@
+---
+- hosts: pcc_ui
+  become: true
+  roles:
+    - { role: commons, task: cert}
+    - { role: pcc-ui, task: deploy, tags: pcc-ui}
+    - { role: apache, task: main}

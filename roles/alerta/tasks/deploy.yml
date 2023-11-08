@@ -1,19 +1,33 @@
 ---
 
+- name: Enable scl
+  yum:
+    name:  '{{ item }}' 
+  loop:
+   - centos-release-scl
+   - scl-utils 
+   - scl-utils-build
+
 - name: Install all needed packages including python3
   yum:
-   name: '{{ item }}'
-   state: present
+    name: '{{ item }}'
+    state: present
   loop:
-   - python36
-   - python36-devel
-   - python36-setuptools
-   - python36-pip
+   - rh-python38
+   - rh-python38-python-devel
    - git
    - supervisor
    - nginx
    - ssmtp
   tags: alerta
+
+- name: copy enable python script to profile.d 
+  copy: 
+    src: enable-python38.sh
+    dest: /etc/profile.d/enable-python38.sh
+
+- name: Enable python 3.8 by resetting ssh connection
+  meta: reset_connection
 
 - name: install the 'Development tools' package group
   yum:
@@ -24,7 +38,7 @@
   pip:
     name: virtualenv
     state: present
-    executable: pip3.6
+    executable: pip3.8
   tags: alerta
 
 - name: Install Alerta
@@ -33,7 +47,7 @@
     name: alerta
     version: '{{alerta_version}}'
     virtualenv: '{{ alerta_server_dir }}'
-    virtualenv_python: python3.6
+    virtualenv_python: python3.8
     state: forcereinstall
 
 - name: Install Alerta-server
@@ -42,6 +56,7 @@
     name: alerta-server
     version: '{{alerta_server_version}}'
     virtualenv: '{{ alerta_server_dir }}'
+
     state: forcereinstall
 
 - name: Install uswgi through pip
@@ -51,16 +66,12 @@
     virtualenv: '{{ alerta_server_dir }}'
     state: forcereinstall
 
-- name: (pip) Uninstall Werkzeug 1.0.0 [Fix 'werkzeug.contrib' problem (1/2)]
+- name: Install pymongo
+  tags: alerta
   pip:
-    name: werkzeug
-    state: absent
+    name: pymongo
     virtualenv: '{{ alerta_server_dir }}'
-
-- name: (pip) Install Werkzeug 0.16.1 [Fix 'werkzeug.contrib' problem (2/2)]
-  pip:
-    name: werkzeug==0.16.1
-    virtualenv: '{{ alerta_server_dir }}'
+    state: forcereinstall
 
 - name: Add www-data group 
   tags: alerta
@@ -178,7 +189,7 @@
 - name: download alerta dashboard 
   tags: alerta, dashboard
   get_url:
-    url: https://github.com/alerta/alerta-webui/releases/download/v7.2.11/alerta-webui.tar.gz
+    url: 'https://github.com/alerta/alerta-webui/releases/download/{{alerta_dashboard_release}}/alerta-webui.tar.gz'
     dest: /tmp/alerta_ui.tar.gz
 
 - name: extract alerta web ui 

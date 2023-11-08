@@ -1,11 +1,41 @@
 ---
 
 - name: Update argo-api-authn package
-  yum: name=argo-api-authn state=latest enablerepo={{ repo_enabled_argo }} update_cache=yes
-  notify: restart argo-api-authn
+  yum:
+    name: argo-api-authn
+    state: latest
+    enablerepo: "{{ repo_enabled_argo }}"
+    update_cache: yes
   tags: authn_update
 
 - name: Reload the systemd daemon
   systemd:
     daemon_reload: yes
-  tags: authn_update 
+  tags: authn_update
+
+- name: restart argo-api-authn
+  service:
+    name: argo-api-authn
+    state: restarted
+  tags: authn_update
+
+
+- name: Get the uuid of ams service type
+  uri:
+    url: "https://{{ authn_host_domain_name }}:{{ authn_service_port }}/v1/service-types?key={{ authn_service_token }}"
+    method: GET
+    body: "{{ lookup('template', 'authn_create_service_type_body.j2') }}"
+    body_format: json
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+  retries: 5
+  delay: 10
+  register: get_uuid_response
+  until: get_uuid_response.status == 200
+  tags:
+    - authn_update
+    - authn_init:get_service_type
+
+
+

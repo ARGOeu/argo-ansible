@@ -1,0 +1,30 @@
+---
+# handlers file for pcc
+
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+
+
+- name: Reload the systemd daemon
+  systemd:
+   daemon_reload: yes
+
+
+- name: pcc api service restart and enable
+  service:
+   name: pcc-api.service
+   state: restarted
+   enabled: true
+
+- name: Wait a few seconds for the service to wake up
+  become: no
+  wait_for:
+    timeout: 10
+  delegate_to: localhost
+
+- name: restart mysql
+  service: name=mysqld state=restarted

@@ -1,0 +1,61 @@
+---
+# tasks file for haproxy probe
+
+
+- name: Install all needed packages for probe including python3
+  yum:
+    name:
+      - python36
+      - python36-devel
+      - python36-setuptools
+      - python36-pip
+      - git
+    state: present
+  tags:
+    - haproxy_probe
+    - haproxy_probe:python
+
+
+- name: Install Virtualenv (with pip)
+  pip:
+    name: virtualenv
+    state: present
+    executable: pip3.6
+  tags:
+    - haproxy_probe
+    - haproxy_probe:python
+    - haproxy_probe:python:venv
+
+
+- name: Git clone check_haproxy_health - Nagios plugin to check HAProxy stats
+  git:
+    repo: "{{ haproxy_probe.git_url }}"
+    version: "{{ haproxy_probe.git_version }}"
+    dest: "{{ haproxy_probe.installation_dir }}"
+    force: yes
+  tags:
+    - haproxy_probe
+    - haproxy_probe:git
+    - haproxy_probe:install
+
+
+- name: Create a virtualenv and install the requirements
+  pip:
+    requirements: "{{ haproxy_probe.installation_dir }}/requirements.txt"
+    virtualenv: "{{ haproxy_probe.venv_dir }}"
+    virtualenv_python: python3.6
+  tags:
+    - haproxy_probe
+    - haproxy_probe:git
+    - haproxy_probe:install
+
+
+- name: Ensure the bash script have execution privileges
+  file:
+    path: "{{ haproxy_probe.installation_dir }}/check_haproxy_health.py"
+    mode: '0755'
+    owner: root
+    group: nagios
+  tags:
+    - haproxy_probe
+    - haproxy_probe:privileges

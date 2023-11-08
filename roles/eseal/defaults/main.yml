@@ -1,0 +1,135 @@
+---
+# defaults file for eseal
+
+
+## Privileged user for ESEAL
+#
+eseal_user: eseal
+eseal_group: eseal
+
+
+# Directories
+#
+eseal_root_dir: /opt/eseal
+eseal_conf_dir: /etc/eseal/conf.d
+
+
+# Jenkins CI/CD
+#jenkins:
+#  host: jenkins.ci.example.gr
+#  job: jobName
+#  repository: repo
+#  branch: devel
+#  user: ci
+#  password: 123
+
+
+####################################
+#     Application properties       #
+####################################
+
+
+# Filesystem configuration path, for the application properties file
+eseal_spring_config_import: optional:file:/etc/eseal/conf.d/application.properties
+
+# Configuration values that are needed for the remote provider's http client
+# remote provider rest api endpoint
+eseal_remote_provider_endpoint: test.provider.com
+# remote provider enable retry on failed requests
+eseal_remote_provider_retry_enabled: true
+# remote provider how many times we should retry failed requests
+eseal_remote_provider_retry_counter: 3
+# remote provider how much time should the client wait before the next retry in seconds
+eseal_remote_provider_retry_interval: 5
+# remote provider time threshold that indicates that we should generate a new totp token
+# for time values lower than the threshold
+eseal_remote_provider_totp_refresh_seconds_wait: 5
+# remote provider verify the API certs
+eseal_remote_provider_tls_verify: true
+# remote provider client truststore that contains the API certs
+eseal_remote_provider_truststore_file: remote_provider_http_eseal_client.truststore.jks
+# remote provider client truststore password to access
+eseal_remote_provider_truststore_password: providerpass
+# remote provider client truststore type
+eseal_remote_provider_truststore_type: JKS
+
+
+####################################
+#      Validation properties       #
+####################################
+
+
+# official journal client keystore
+eseal_validation_oj_keystore_filename: oj.keystore.p12
+# official journal client keystore type
+eseal_validation_oj_keystore_type: PKCS12
+# official journal client keystore password
+eseal_validation_oj_keystore_password: dss-password
+# official journal url
+eseal_validation_oj_url: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG
+# european list of trusted lists URL
+eseal_validation_lotl_url: https://ec.europa.eu/tools/lotl/eu-lotl.xml
+# keep refreshing the lotl sources on a fixed interval
+eseal_validation_lotl_refresh_enable: true
+# initial delay for the lotl sources online refresh in milliseconds
+eseal_validation_lotl_refresh_initial_delay: 0
+# online refresh interval for the lotl sources in milliseconds
+eseal_validation_lotl_refresh_interval: 21600000
+# lotl trust sources filesystem cache
+eseal_validation_lotl_cache_dir: /etc/eseal/conf.d/
+
+
+####################################
+#      Truststore properties       #
+####################################
+
+
+# truststore containing extra trust certs needed during the initialization of the LOTL source
+eseal_validation_lotl_extra_truststore_file: extra-lotl.truststore.jks
+
+# extra lotl truststore password
+eseal_validation_lotl_extra_truststore_password: extra-tl
+# extra lotl truststore type
+eseal_validation_lotl_extra_truststore_type: JKS
+
+
+####################################
+# Timestamping Provider properties #
+####################################
+
+
+## APED
+
+# aped tsa url
+eseal_tsa_aped_url: https://timestamp.aped.gov.gr/qtss
+# aped tsa truststore type
+eseal_tsa_aped_truststore_type: JKS
+# aped tsa truststore file
+eseal_tsa_aped_truststore_file: aped.truststore.jks
+# aped tsa truststore password
+eseal_tsa_aped_truststore_password: apedts
+
+
+####################################
+#             HARICA               #
+####################################
+
+
+# harica tsa url
+eseal_tsa_harica_url: https://qts.harica.gr
+# harica tsa truststore type
+eseal_tsa_harica_truststore_type: JKS
+# harica tsa truststore file
+eseal_tsa_harica_truststore_file: harica.truststore.jks
+# harica tsa host
+eseal_tsa_harica_host: qts.harica.gr
+
+# harica tsa truststore password
+eseal_tsa_harica_truststore_password: harica-qtsa
+# harica tsa basic auth username
+#eseal_tsa_harica_username: -- secret --
+# harica tsa basic auth password
+#eseal_tsa_harica_password: -- secret --
+
+
+

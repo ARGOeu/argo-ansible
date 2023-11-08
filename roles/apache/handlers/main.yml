@@ -1,0 +1,15 @@
+---
+# handlers file for apache
+
+- name: restart httpd
+  service:
+    name: httpd
+    enabled: yes
+    state: restarted
+
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: true

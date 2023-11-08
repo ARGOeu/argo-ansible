@@ -1,0 +1,181 @@
+---
+# tasks file for quarkus api installation
+
+
+- name: Ensure group "{{ quarkus_api_group }}" exists
+  group:
+    name: "{{ quarkus_api_group }}"
+    state: present
+  tags:
+    - quarkus-api
+    - quarkus-api-user
+
+- name: Add user "{{ quarkus_api_user }}"
+  user:
+    name: "{{ quarkus_api_user }}"
+    groups: "{{ quarkus_api_group }}"
+    append: yes
+    create_home: no
+    shell: /sbin/nologin
+    comment: quarkus-api nologin user
+  tags:
+    - quarkus-api
+    - quarkus-api-user
+
+
+- name: Install Java 11
+  yum:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+    - java-11-openjdk
+    - java-11-openjdk-devel
+  tags:
+    - quarkus-api
+    - quarkus-api-packages
+    - quarkus-api-java
+    - quarkus-api-maven
+
+- name: Create systemd file for quarkus api
+  template:
+   src: quarkus_api.service.j2
+   dest: /etc/systemd/system/{{ quarkus_api.service_name }}
+   owner: root
+   group: root
+   mode: '0644'
+  notify:
+    - Reload the systemd daemon
+    - quarkus api restart and enable
+    - Wait a few seconds for the service to wake up
+  tags:
+    - quarkus-api
+    - quarkus-api-update
+    - quarkus-api-service_file
+
+
+- name: "Create {{ quarkus_api_root_dir }} directory if it does not exist"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ quarkus_api_user }}"
+    group: "{{ quarkus_api_group }}"
+    mode: '0755'
+  loop:
+    - "{{ quarkus_api_root_dir }}"
+  tags:
+    - quarkus-api
+    - quarkus-api-directories
+
+- name: "Create quarkus api logs directory if it doesn't exist"
+  file:
+    path: "{{ quarkus_api_logs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  tags:
+    - quarkus-api
+    - quarkus-api-directories
+
+- name: Create additional directories if they do not exist
+  file:
+    path: "{{ item.directory }}"
+    state: directory
+    owner: "{{ quarkus_api_user }}"
+    group: "{{ quarkus_api_group }}"
+    mode: '0755'
+  with_items: "{{ files }}"
+  when: files is defined
+  tags:
+    - quarkus-api
+    - quarkus-api-directories
+
+- name: Find the artifact of the last successful build
+  uri:
+    url: https://{{ jenkins.host }}/job/{{ jenkins.job }}/job/{{ jenkins.repository }}/job/{{ jenkins.branch }}/lastSuccessfulBuild/api/json
+    user: "{{ jenkins.user }}"
+    password: "{{ jenkins.password }}"
+    method: GET
+    force_basic_auth: yes
+    status_code: 200
+  register: _jenkins_results
+  tags:
+    - quarkus-api
+    - quarkus-api-jenkins
+    - quarkus-api-jar
+    - quarkus-api-update
+
+- name: Download the latest Jenkins artifact
+  get_url:
+    url: https://{{ jenkins.host }}/job/{{ jenkins.job }}/job/{{ jenkins.repository }}/job/{{ jenkins.branch }}/lastSuccessfulBuild/artifact/{{ _jenkins_results.json.artifacts[0].relativePath }}
+    dest: "{{ quarkus_api_root_dir }}/{{ quarkus_api.jar_name }}"
+    username: "{{ jenkins.user }}"
+    password: "{{ jenkins.password }}"
+    force_basic_auth: yes
+    owner: "{{ quarkus_api_user }}"
+    group: "{{ quarkus_api_group }}"
+    mode: '0744'
+    backup: yes
+  notify:
+    - quarkus api restart and enable
+    - Wait a few seconds for the service to wake up
+  tags:
+    - quarkus-api
+    - quarkus-api-jar
+    - quarkus-api-update
+
+- name: Download config files.
+  get_url:
+    url: "{{ item.1 }}"
+    dest: "{{ item.0.directory }}"
+  with_subelements:
+    - "{{ files }}"
+    - url
+  when: files is defined
+  tags:
+    - quarkus-api
+    - quarkus-api-config
+    - quarkus-api-update
+
+- name: Recursively change ownership of the quarkus api directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ quarkus_api_user }}"
+    group: "{{ quarkus_api_group }}"
+  loop:
+    - "{{ quarkus_api_root_dir }}"
+  tags:
+    - quarkus-api
+    - quarkus-api-directories
+    - quarkus-api-update
+
+
+- name: Create rsyslog filter for quarkus api logs
+  template:
+    src: etc/rsyslog.d/71_quarkus_api.conf.j2
+    dest: /etc/rsyslog.d/71_quarkus_api.conf
+    backup: yes
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart rsyslog
+  tags:
+    - quarkus-api
+    - quarkus-api-logs
+    - quarkus-api-rsyslog
+
+
+- meta: flush_handlers
+
+
+- name: More about quarkus api.
+  debug:
+    msg:
+    - "{{ quarkus_api.repo_url }}"
+  tags:
+    - quarkus-api
+    - quarkus-api-check

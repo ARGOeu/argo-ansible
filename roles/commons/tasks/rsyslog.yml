@@ -5,24 +5,104 @@
    name: rsyslog-gnutls
    state: present
   tags: rsyslog_conf
+  notify: restart rsyslog
+
 
 - name: Rsyslog conf file
   template:
     src=rsyslog.conf.j2
-    dest=/etc/rsyslog.conf backup=no
+    dest=/etc/rsyslog.conf backup=yes
     owner=root group=root mode=0644
   tags: rsyslog_conf
+  notify: restart rsyslog
 
 - name: Rsyslog remote conf file
   template:
-    src=50_client_remote.conf.j2
-    dest=/etc/rsyslog.d/50_client_remote.conf backup=no
+    src=etc/rsyslog.d/50_client_remote.conf.j2
+    dest=/etc/rsyslog.d/50_client_remote.conf backup=yes
     owner=root group=root mode=0644
   tags: rsyslog_conf
+  notify: restart rsyslog
 
-- name: Restart the rsyslog service
-  service:
-    name: rsyslog
-    state: restarted
-    enabled: true
+- name: Rsyslog Fail2Ban logs conf file
+  template:
+    src=etc/rsyslog.d/59_fail2ban.log.conf.j2
+    dest=/etc/rsyslog.d/59_fail2ban.log.conf backup=yes
+    owner=root group=root mode=0644
+  when: rsyslog_fail2ban_logs
   tags: rsyslog_conf
+  notify: restart rsyslog
+
+
+- name: Create {{ rsyslog_cert_dir }} if not exists
+  file: dest={{ rsyslog_cert_dir }} state=directory
+        owner=root group=root mode=0755
+  tags: rsyslog_conf
+
+
+- name: Copy rsyslog certificates [crt] (1/3)
+  copy:
+    src: "private_files/{{ inventory_hostname }}/rsyslog-gnutls/rsyslog-cert.pem"
+    dest: "{{ rsyslog_cert_dir }}rsyslog.crt"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart rsyslog
+  tags:
+    - rsyslog
+    - rsyslog_conf
+    - rsyslog_certs
+    - rsyslog_cert
+
+- name: Copy rsyslog certificates [key] (2/3)
+  copy:
+    src: "private_files/{{ inventory_hostname }}/rsyslog-gnutls/rsyslog-key.pem"
+    dest: "{{ rsyslog_cert_dir }}rsyslog.key"
+    owner: root
+    group: root
+    mode: 0400
+    backup: yes
+  notify: restart rsyslog
+  tags:
+    - rsyslog
+    - rsyslog_conf
+    - rsyslog_certs
+    - rsyslog_key
+
+- name: Copy rsyslog certificates [CA] (3/3)
+  copy:
+    src: "private_files/{{ inventory_hostname }}/rsyslog-gnutls/rsyslog-ca.pem"
+    dest: "{{ rsyslog_cert_dir }}rsyslog_ca.crt"
+    owner: root
+    group: root
+    mode: 0400
+    backup: yes
+  notify: restart rsyslog
+  tags:
+    - rsyslog
+    - rsyslog_conf
+    - rsyslog_certs
+    - rsyslog_ca
+
+
+- meta: flush_handlers
+
+
+- name: Connection check [client] (1/2)
+  syslogger:
+    msg: "[Ansible] Connection check from {{ inventory_hostname }}"
+  tags:
+    - rsyslog_conf
+    - rsyslog_check
+
+- name: Connection check [server] (2/2)
+  debug:
+    msg:
+    - To verify tha the rsyslog client works, go to the remote rsyslog server and check the following log file
+    - "/var/log/rsyslog_client/{{ inventory_hostname }}/ansible_syslogger.log"
+  tags:
+    - rsyslog_conf
+    - rsyslog_check
+
+

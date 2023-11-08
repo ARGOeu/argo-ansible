@@ -4,41 +4,141 @@
 - name: Install argo-messaging package
   yum: name=argo-messaging state=latest enablerepo={{ repo_argo_enabled }} update_cache=yes
   notify: restart argo-messaging
-  tags: ams_install
+  tags:
+    - ams_install
+    #- ams_update
+    - ams_package
+    - ams_config
 
 - name: copy cert to ams folder
   copy: remote_src=yes src=/etc/grid-security/hostcert.pem dest=/var/www/argo-messaging/hostcert.pem backup=yes
       owner=argo-messaging group=argo-messaging mode=0644
-  tags: ams_install
+  tags:
+    - ams_install
+    - ams_certs
+    - ams_config
   notify: restart argo-messaging
 
 - name: copy key to ams folder
   copy: remote_src=yes src=/etc/grid-security/hostkey.pem dest=/var/www/argo-messaging/hostkey.pem backup=yes
       owner=argo-messaging group=argo-messaging mode=0644
-  tags: ams_install
+  tags:
+    - ams_install
+    - ams_certs
+    - ams_config
   notify: restart argo-messaging
 
 - name: Create CA dir if not exists
   file: dest=/var/www/argo-messaging/cas state=directory
         owner=argo-messaging group=argo-messaging mode=0755
-  tags: ams_install
+  tags:
+    - ams_install
+    - ams_certs
+    - ams_config
   notify: restart argo-messaging
+  when: ams_push_enabled is defined and ams_push_enabled | default(false) | bool
 
-- name: Copy CA file
-  copy: src=private_files/{{ inventory_hostname }}/DigiCertCA.crt
-        dest=/var/www/argo-messaging/cas/DigiCertCA.pem
+- name: Copy CA file to validate push server
+  copy: src=private_files/{{ inventory_hostname }}/PushCA.crt
+        dest=/var/www/argo-messaging/cas/PushCA.pem
         backup=yes
         owner=argo-messaging group=argo-messaging mode=0644
-  tags: ams_install
+  tags:
+    - ams_install
+    - ams_certs
+    - ams_config
   notify: restart argo-messaging
+  when: ams_push_enabled is defined and ams_push_enabled | default(false) | bool
 
 - name: Configure argo-messaging api
   template: src=config.json.j2
             dest=/etc/argo-messaging/config.json backup=yes
             owner=root group=root mode=0644
-  tags: ams_install
+  tags:
+    - ams_install
+    - ams_config
+    - ams_config_json
   notify: restart argo-messaging
+
+
+- name: Configure argo-messaging log(rsyslog)
+  template:
+   src: etc/rsyslog.d/61_ams.conf.j2
+   dest: /etc/rsyslog.d/61_ams.conf
+   backup: true
+   owner: root
+   group: root
+  notify: restart rsyslog
+  tags:
+    - ams_install
+    - ams_config
+    - ams_rsyslog
+
+
+- name: Download Republisher ( ARGOeu/argo-messaging/devel )
+  get_url:
+    url: https://raw.githubusercontent.com/ARGOeu/argo-messaging/devel/tools/republisher.py
+    dest: /etc/argo-messaging/republisher.py
+    owner: argo-messaging
+    group: argo-messaging
+    mode: '0755'
+    backup: yes
+  tags:
+    - ams_install
+    - ams_config
+    - ams_republisher
+
 
 - name: Start argo-messaging service
   service: name=argo-messaging state=started enabled=true
-  tags: ams_install
+  tags:
+    - ams_install
+    - ams_config
+
+
+- name: AMS check - Version (1/3)
+  uri:
+    url: "https://localhost/v1/version"
+    method: GET
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: ams_version_response
+  tags:
+    - ams_install
+    - ams_check
+    - ams_check:version
+
+- name: AMS check - Health status (2/3)
+  uri:
+    url: "https://localhost/v1/status"
+    method: GET
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+  retries: 3
+  delay: 3
+  register: ams_status_response
+  tags:
+    - ams_install
+    - ams_check
+    - ams_check:stats
+
+- name: AMS check - All projects (3/3)
+  uri:
+    url: "https://localhost/v1/projects"
+    method: GET
+    return_content: yes
+    status_code: 200
+    validate_certs: no
+    headers:
+      x-api-key: "{{ ams_service_token }}"
+  retries: 3
+  delay: 3
+  register: ams_projects_response
+  tags:
+    - ams_install
+    - ams_check
+    - ams_check:projects

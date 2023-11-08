@@ -1,0 +1,36 @@
+---
+# defaults file for accounting
+
+
+## Privileged user for accounting
+#
+accounting_user: accounting
+accounting_group: accounting
+
+
+# Directories
+#
+accounting_root_dir: /opt/accounting
+accounting_logs_dir: /var/log/accounting
+
+
+# Parameters
+#
+#quarkus_oidc:
+#  client_id: example-system
+#  credentials_secret: 1234
+#  auth_server_url: https://login-example.com/auth/realms/
+#
+#keycloak_server:
+#  url: https://login-example.com/auth
+#  realm: example
+#  client_id: example-system-public
+#
+#quarkus:
+#  mongodb_uri: mongodb://localhost:27017"
+
+has_oidc_client: false
+
+oidc_client_version: 2.2.0
+
+oidc_client_directory: /var/www/oidc-client

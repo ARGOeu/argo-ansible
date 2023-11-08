@@ -23,13 +23,19 @@ initLimit={{zookeeper_initLimit}}
 # sending a request and getting an acknowledgement
 syncLimit={{zookeeper_syncLimit}}
 # the directory where the snapshot is stored.
-dataDir={{zookeeper_dataDir}}
+dataDir={{zookeeper_data}}
 # the port at which the clients will connect
 clientPort=2181
 # the directory where the transaction logs are stored.
-dataLogDir={{zookeeper_data_logDir}}
+dataLogDir={{zookeeper_data}}
 
-
+{% if cluster_group is defined %}
 {% for host in groups[cluster_group] %}
+{% if hostvars[host]['is_zoo_host'] is defined %}
+{% if hostvars[host]['is_zoo_host'] | default(True) | bool == True %}
 server.{{hostvars[host]['private']['id']}}={% if hostvars[host]['private']['ip'] is defined %}{{ hostvars[host]['private']['ip'] }}{% else %}{{ hostvars[host].ansible_default_ipv4.address }}{% endif %}:{{zookeeper_leaderPort}}:{{zookeeper_electionPort}}
+{% endif %}
+{% endif %}
 {% endfor %}
+{% endif %}
+

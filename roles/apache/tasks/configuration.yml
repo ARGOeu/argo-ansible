@@ -1,0 +1,60 @@
+---
+
+- name: Add httpd configuration file
+  copy:
+    src: httpd.conf
+    dest: /etc/httpd/conf/httpd.conf
+    mode: '0644'
+    backup: yes
+
+- name: Add ssl configuration file
+  copy:
+    src: ssl.conf
+    dest: /etc/httpd/conf.d/ssl.conf
+    mode: '0644'
+    backup: yes
+
+- name: Add strong_ssl configuration file
+  copy:
+    src: strong_ssl.conf
+    dest: /etc/httpd/conf.d/strong_ssl.conf
+    mode: '0644'
+    backup: yes
+
+- name: Check if chain file exists
+  become: no
+  local_action:
+    module: stat
+    path: private_files/{{ inventory_hostname }}/chain-{{ inventory_hostname }}.pem
+  register: chain_file
+
+- name: Configure Virtualhost
+  template:
+    src: virtualhost.j2
+    dest: /etc/httpd/conf.d/{{ inventory_hostname }}.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    force: yes
+  vars:
+    is_chain_file: chain_file.stat.exists | bool
+  tags:
+    - apache
+    - apache:configuration
+    - apache:configuration:vhost_file
+  notify:
+    - restart httpd
+
+
+- name: Configure apache log(rsyslog)
+  template:
+   src: etc/rsyslog.d/65_apache.conf.j2
+   dest: /etc/rsyslog.d/65_apache.conf
+   backup: true
+  notify: restart rsyslog
+  tags:
+    - apache
+    - apache_install
+    - apache_config
+    - apache_rsyslog

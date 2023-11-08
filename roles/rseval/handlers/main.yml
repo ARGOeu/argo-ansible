@@ -1,0 +1,12 @@
+---
+- name: restart httpd
+  service: name=httpd state=restarted enabled=yes
+
+- name: reload firewalld
+  shell: firewall-cmd --reload
+
+- name: reload systemctl daemon
+  shell: systemctl daemon-reload
+
+- name: restart supervisor
+  shell: systemctl restart supervisor

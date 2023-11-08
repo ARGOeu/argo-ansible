@@ -1,15 +1,69 @@
 ---
 # defaults file for haproxy
 
-haproxy_retries: 3
-haproxy_timeout_http_request: 5000
-haproxy_timeout_queue: 5000
-haproxy_timeout_connect: 5000
-haproxy_timeout_client: 10000
-haproxy_timeout_server: 10000
-haproxy_timeout_http_keep_alive: 10000
-haproxy_timeout_check: 10000
-haproxy_maxconn: 20
-haproxy_stats_port: 9000
-haproxy_port_bind_ssl: 443
-haproxy_port_bind: 80
+
+###############################################
+# ~~~~~~~~~~~~~~~~~ HAProxy ~~~~~~~~~~~~~~~~~ #
+###############################################
+
+## global
+haproxy_global_maxconn: 10000
+# Info --> https://cbonte.github.io/haproxy-dconv/1.8/configuration.html#maxconn
+# Info --> https://www.haproxy.com/documentation/hapee/1-8r2/onepage/intro/#3.5
+
+
+## defaults
+#haproxy_defaults_retries: 3
+haproxy_defaults_timeout_http_request: "10s"
+haproxy_defaults_timeout_queue: 5000
+haproxy_defaults_timeout_connect: "20s"
+haproxy_defaults_timeout_client: "10m"
+haproxy_defaults_timeout_server: "10m"
+haproxy_defaults_timeout_http_keep_alive: 10000
+haproxy_defaults_timeout_check: 10000
+haproxy_defaults_maxconn: 20
+
+
+## listen
+haproxy_listen_timeout_client: "5m"
+haproxy_listen_timeout_server: "5m"
+haproxy_listen_timeout_connect: "5m"
+haproxy_listen_timeout_queue: "5m"
+haproxy_listen_timeout_check: "5m"
+
+haproxy_listen_stats_username: hastats
+haproxy_listen_stats_password: hastats
+haproxy_listen_stats_port: 9000
+
+
+## frontend
+haproxy_frontend: "{{ inventory_hostname }}"
+haproxy_frontend_timeout_http_request: "10s"
+haproxy_frontend_port_bind_ssl: 443
+haproxy_frontend_port_bind: 80
+
+
+## backend
+#haproxy_default_backend: aBackend
+
+
+## HTTP/2: If you want to enable HTTP/2
+#haproxy_http2: "alpn h2,http/1.1"
+
+
+
+
+###############################################
+# ~~~~~~~~~~~~~~ HAProxy probe ~~~~~~~~~~~~~~ #
+###############################################
+
+haproxy_monitoring_agent: false
+
+haproxy_probe:
+  git_url: https://github.com/armondressler/check_haproxy_health.git
+  git_version: master
+  installation_dir: /usr/lib64/nagios/plugins/check_haproxy_health/
+  venv_dir: /usr/lib64/nagios/plugins/check_haproxy_health/haproxy-env
+
+
+

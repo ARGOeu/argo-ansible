@@ -1,0 +1,50 @@
+# {{ ansible_managed }}
+
+
+# AMS templates
+template(name="ams-logs"           type="string"  string="/var/log/argo_messaging/ams.log")
+
+if ($programname contains "argo_messaging") then {
+  action(type="omfile"
+  name="AMS"
+  dynaFile="ams-logs"
+  queue.type="LinkedList"
+  queue.filename="queue_AMS"
+  queue.size="100000"
+  action.resumeRetryCount="-1"
+  queue.saveonshutdown="on"
+  )
+  & stop
+}
+
+
+# Send ARGO-Messaging logs.
+## https://www.rsyslog.com/doc/master/configuration/modules/imfile.html
+## https://www.rsyslog.com/doc/master/configuration/actions.html
+## https://www.rsyslog.com/doc/master/configuration/templates.html
+## https://www.rsyslog.com/doc/master/concepts/queues.html
+## https://www.rsyslog.com/doc/master/rainerscript/queue_parameters.html
+
+
+ruleset(name="fwdamstocentrallog"){
+            action(type="omfwd"
+            name="ams"
+            template="RSYSLOG_TraditionalForwardFormat"
+            queue.type="LinkedList" # In Memory Queue
+            queue.filename="fwd_q_ams" # File name to be used for the queue files.
+            queue.size="100000" # The maximum size of the queue in number of messages.
+            action.resumeRetryCount="-1" # Sets how often an action is retried before it is considered to have failed. Failed actions discard messages. (-1 means eternal)
+            queue.saveonshutdown="on" # This parameter specifies if data should be saved at shutdown.
+            Target="{{ central_rsyslog.hostname }}" Port="{{ central_rsyslog.port }}" Protocol="tcp"
+            StreamDriver="gtls"
+            StreamDriverMode="1" # run driver in TLS-only mode
+            StreamDriverAuthMode="x509/name"
+            StreamDriverPermittedPeers="{{ central_rsyslog.permittedPeers }}"
+            )
+}
+
+input(type="imfile"
+      File="/var/log/argo_messaging/ams.log"
+      Tag="ams:"
+      ruleset="fwdamstocentrallog"
+)

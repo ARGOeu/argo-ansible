@@ -1,0 +1,92 @@
+---
+# tasks file for pcc-ui
+- name: Run the equivalent of "apt-get update" as a separate step
+  yum:
+    update_cache: true
+  tags:
+    - pcc-ui
+
+- name: Install reqired packages
+  yum:
+    name:
+      - git
+      - curl
+      - wget
+  tags:
+    - pcc-ui
+
+- name: Download npm
+  get_url:
+    url: https://rpm.nodesource.com/setup_17.x
+    dest: /tmp/setup_17.x
+  tags:
+    - pcc-ui
+    
+- name: Install npm
+  shell:
+    bash /tmp/setup_17.x
+  tags:
+    - pcc-ui
+
+- name: Install NodeJs
+  yum:
+    name:
+      - nodejs
+  tags:
+    - pcc-ui
+
+- name: Check clone repo dest directory is absent
+  file:
+      state: absent
+      path: "{{ repo_path }}/"
+
+- name: Clone a private repository
+  git:
+    repo: "{{ git_repo_url }}"
+    dest: "{{ repo_path }}"
+    version: "{{ repo_branch }}"
+    force: true
+    accept_hostkey: true
+  tags:
+    - pcc-ui
+    
+- name: Install packages based on package.json using the npm
+  npm:
+    path: "{{ repo_path }}"
+    state: present
+  tags:
+    - pcc-ui
+    
+- name: Copy config
+  copy:
+    src: "private_files/{{ inventory_hostname }}/config.js"
+    dest: "{{ repo_path }}/src/config.js"
+    remote_src: false
+  tags:
+    - pcc-ui
+    
+    
+- name: Copy config
+  copy:
+    src: "private_files/{{ inventory_hostname }}/.htpasswd"
+    dest: "/etc/httpd/.htpasswd"
+    remote_src: false
+  tags:
+    - pcc-ui
+
+- name: Build app
+  command: npm run build
+  args:
+    chdir: "{{ repo_path }}"
+  tags:
+    - pcc-ui
+    
+- name: Copy folder to /var/www
+  notify:
+    - restart httpd
+  copy:
+    src: "{{ repo_path }}/build/"
+    dest: "/var/www/{{inventory_hostname}}/"
+    remote_src: true
+  tags:
+    - pcc-ui

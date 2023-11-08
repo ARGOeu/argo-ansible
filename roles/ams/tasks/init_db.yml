@@ -1,14 +1,34 @@
 ---
 
+- name: Install mongodb 4.0 repo
+  copy: src=etc/yum.repos.d/mongodb-org-4.0.repo
+        dest=/etc/yum.repos.d/mongodb-org-4.0.repo backup=no
+        owner=root group=root mode=0644
+  when: groups[cluster_group][0] == inventory_hostname
+  tags:
+    - ams_install
+    - init_db
+
+- name: Install mongoDB shell
+  yum:
+    name: mongodb-org-shell
+    state: present
+  when: groups[cluster_group][0] == inventory_hostname
+  tags:
+    - ams_install
+    - init_db
+
 - name: Move init roles script
   template: dest="/tmp/db_init_roles.js" owner=root group=root mode=640 src=db_init_roles.js.j2
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db
     - init_roles
 
 - name: Run init roles script
-  shell: mongo < /tmp/db_init_roles.js
+  shell: mongo --host "rs0/{{ams_store_host}}" < /tmp/db_init_roles.js
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db
@@ -16,13 +36,15 @@
 
 - name: Move init projects script
   template: dest="/tmp/db_init_projects.js" owner=root group=root mode=640 src=db_init_projects.js.j2
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db
     - init_projects
 
 - name: Run init projects script
-  shell: mongo < /tmp/db_init_projects.js
+  shell: mongo --host "rs0/{{ams_store_host}}" < /tmp/db_init_projects.js
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db
@@ -30,13 +52,15 @@
 
 - name: Move init users script
   template: dest="/tmp/db_init_users.js" owner=root group=root mode=640 src=db_init_users.js.j2
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db
     - init_projects
 
 - name: Run init users script
-  shell: mongo < /tmp/db_init_users.js
+  shell: mongo --host "rs0/{{ams_store_host}}" < /tmp/db_init_users.js
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db
@@ -44,13 +68,15 @@
 
 - name: Move init push worker script
   template: dest="/tmp/db_init_pushworker.js" owner=root group=root mode=640 src=db_init_pushworker.js.j2
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db
     - init_push_worker
 
 - name: Run init push worker script
-  shell: mongo < /tmp/db_init_pushworker.js
+  shell: mongo --host "rs0/{{ams_store_host}}" < /tmp/db_init_pushworker.js
+  when: groups[cluster_group][0] == inventory_hostname
   tags:
     - ams_install
     - init_db

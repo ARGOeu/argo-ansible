@@ -1,0 +1,5 @@
+---
+# defaults file for pcc-ui
+git_repo_url: https://github.com/ARGOeu/pcc-ui.git
+repo_path: /tmp/pcc-ui
+repo_branch: devel

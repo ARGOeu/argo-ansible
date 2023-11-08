@@ -1,0 +1,219 @@
+---
+# tasks file for Apache Zookeeper
+
+
+- name: "Download Official Apache Zookeeper & unarchive to {{ zookeeper_root }}"
+  unarchive:
+    src: "https://archive.apache.org/dist/zookeeper/zookeeper-{{ zookeeper_version }}/zookeeper-{{ zookeeper_version }}.tar.gz"
+    dest: "{{ zookeeper_root }}"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    remote_src: yes
+    #creates: "{{ zookeeper_root }}"
+    extra_opts: [--strip-components=1]
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_download
+
+
+- name: Apache Zookeeper configuration
+  template:
+    src: zoo.cfg.j2
+    dest: "{{ zookeeper_conf_dir }}/zoo.cfg"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_new_node
+
+
+- name: Apache Zookeeper log4j configuration
+  template:
+    src: log4j.properties.j2
+    dest: "{{ zookeeper_conf_dir }}/log4j.properties"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+
+#- name: set myid
+#  shell: sudo su -s /bin/bash zookeeper -c " zookeeper-server-initialize  --force --myid={{ private.id }}"
+#  tags:
+#    - zookeeper
+#    - zookeeper_install
+#    - zookeeper_config
+
+
+- name: Setup myid (1/2)
+  template:
+    src: myid.j2
+    dest: "{{ zookeeper_conf_dir }}/myid"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_new_node
+
+- name: Setup myid (2/2)
+  template:
+    src: myid.j2
+    dest: "{{ zookeeper_data }}/myid"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_new_node
+
+
+- name: Setup environment
+  template:
+    src: environment.j2
+    dest: "{{ zookeeper_conf_dir }}/environment"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+
+- name: Setup java.env
+  template:
+    src: java.env.j2
+    dest: "{{zookeeper_conf_dir}}/java.env"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: '0644'
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+
+
+- name: "mv {{ zookeeper_conf_dir }}/* --> /etc/zookeeper/conf"
+  shell: "mv {{ zookeeper_conf_dir }}/* /etc/zookeeper/conf"
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+
+- name: "Create symbolic link {{ zookeeper_conf_dir }} --> /etc/zookeeper/conf"
+  file:
+    src: "/etc/zookeeper/conf"
+    path: "{{ zookeeper_conf_dir }}"
+    state: link
+    force: yes
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+
+
+- name: Apache Zookeeper systemd service file
+  template:
+    src: etc/systemd/system/zookeeper.service.j2
+    dest: /etc/systemd/system/zookeeper.service
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify:
+    - Restart Zookeeper
+    - Wait Zookeeper to startup
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_system
+    - zookeeper_daemon
+    - zookeeper_initd
+    - zookeeper_service
+
+
+- meta: flush_handlers
+
+
+- name: Check Apache Zookeeper local (1/2)
+  command: "{{ zookeeper_root }}/bin/zkServer.sh status {{ zookeeper_conf_dir }}/zoo.cfg"
+  register: zookeeper_server_status
+  changed_when: "'Mode: ' not in zookeeper_server_status.stdout"
+  tags:
+    - zookeeper
+    - zookeeper_check
+
+
+- name: Check Apache Zookeeper local (2/2)
+  shell: |
+    echo "ruok" | nc -N localhost 2181;
+  register: zookeeper_check
+  changed_when: zookeeper_check.changed and 'imok' not in zookeeper_check.stdout
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_check
+
+
+- name: Check Apache Zookeeper cluster
+  shell: |
+    echo "ruok" | nc -N {{ hostvars[item]['private']['hostname'] }} 2181;
+  register: zookeeper_cluster_check
+  changed_when: zookeeper_cluster_check.changed and 'imok' not in zookeeper_cluster_check.stdout
+  loop: "{{ groups[cluster_group] }}"
+  loop_control:
+    index_var: node_idx
+  when: "( groups[cluster_group] | count > 1 ) and ( hostvars[item]['is_zoo_host'] is defined and hostvars[item]['is_zoo_host'] |  bool == True )"
+  tags:
+    - zookeeper
+    - zookeeper_install
+    - zookeeper_config
+    - zookeeper_check
+
+- name: "Set up cron for cleaning up zookeeper txn logs and snapshots"
+  cron:
+    cron_file: zookeeper_clean-up
+    name: "Set up cron for cleaning up zookeeper txn logs and snapshots"
+    user: zookeeper
+    special_time: daily
+    job: "{{ zookeeper_root }}/bin/zkCleanup.sh -n 3"
+  tags:
+    - zookeeper
+    - zookeeper_clean

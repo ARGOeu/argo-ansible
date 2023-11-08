@@ -1,32 +1,42 @@
 ---
-# tasks file for kafka
+# tasks file for Apache Kafka
 
-- name: Install kafka package
+
+- name: "Install OpenJDK Runtime Environment {{ java_version }}"
   yum:
-    name: "{{item}}"
+    name: java-{{ java_version }}-openjdk
     state: present
-    enablerepo: cloudera-kafka
-  loop:
+  tags:
     - kafka
-    - kafka-server
-  tags: kafka_install
+    - kafka:install
+    - kafka:java
 
 
-- name: Update kafka configuration
-  template:
-    src: server.properties.j2
-    dest: /etc/kafka/conf/server.properties
-    owner: kafka
-    group: kafka
-    mode: 0644
-  notify: restart kafka
-  tags: kafka_install
+- name: Install some utilities
+  yum:
+    name:
+      - wget
+      - tar
+      - net-tools
+      - netcat
+      #- ca-certificates
+    state: latest
+  tags:
+    - kafka
+    - kafka:install
+    - kafka:utils
 
-- meta: flush_handlers
 
-- name: Start kafka service
-  service:
-    name: kafka-server
-    state: started
-    enabled: true
-  tags: kafka_install
+- name: Include configuration tasks
+  include: "config.yml"
+  tags:
+    - kafka
+    - kafka:config
+
+
+- name: Include Apache Kafka tasks
+  include: "kafka.yml"
+  tags:
+    - kafka
+    - kafka:install
+

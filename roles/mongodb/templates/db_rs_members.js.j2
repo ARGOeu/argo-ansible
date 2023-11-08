@@ -1,10 +1,13 @@
-{%- for host in groups[cluster_group] -%}
+{% for host in groups[mongo_cluster_group] %}
 
+{% if hostvars[host]["is_arbiter"] | default(is_arbiter) %}
 
-;
+rs.addArb("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
 
-rs.add("{{hostvars[host]['private']['hostname']}}:27017")
+{% else %}
 
+rs.add("{{hostvars[host]['private']['hostname']}}:{{mongo_port}}")
 
+{% endif %}
 
-{%- endfor -%}
+{% endfor %}

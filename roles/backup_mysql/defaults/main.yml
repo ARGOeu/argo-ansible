@@ -1,0 +1,30 @@
+---
+# defaults file for backup_mysql
+
+
+## Backup script.
+backup_repo: https://github.com/ARGOeu/argo-utils.git
+backup_branch: devel
+backup_repo_root: /opt/argo-utils
+backup_script_path: /opt/argo-utils/mysql_backup/backup-mysql-and-extras.sh
+
+
+## Rsync backups to remote VM.
+rsync_backup_script_path: /opt/argo-utils/rSync_data_with_dataCenter/rSyncBackups.sh
+archives: /var/backups/archives/$(date +\%F)*
+
+
+## Remote machine info
+#remote_ip: 192.168.1.1
+#remote_user: usernmae
+#remote_ssh_key: ~/.ssh/backup
+#remote_location: /var/backups/{{ inventory_hostname }}/
+
+
+## Database info ( different per host )
+#db_user: username
+#db_pass: password
+#db_name: database_name
+#more_directories_to_backup: "/etc/apache2/:/var/www/site1/:/var/www/site2/"
+
+

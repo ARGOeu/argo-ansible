@@ -1,0 +1,242 @@
+---
+# tasks file for pcc api
+
+
+- name: Ensure group "{{ pcc_api_group }}" exists
+  group:
+    name: "{{ pcc_api_group }}"
+    state: present
+  tags:
+    - pcc-api
+    - pcc-api-user
+
+- name: Add user "{{ pcc_api_user }}"
+  user:
+    name: "{{ pcc_api_user }}"
+    groups: "{{ pcc_api_group }}"
+    append: yes
+    create_home: no
+    shell: /sbin/nologin
+    comment: pcc api nologin user
+  tags:
+    - pcc-api
+    - pcc-api-user
+
+- name: Install Java 11
+  yum:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+    - java-11-openjdk
+    - java-11-openjdk-devel
+  tags:
+    - pcc-api
+    - pcc-api-packages
+    - pcc-api-java
+    - pcc-api-maven
+
+- name: Download maven 3.8.6 and unarchive in /opt/
+  unarchive:
+    src: https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.8.6/apache-maven-3.8.6-bin.tar.gz
+    dest: /opt
+    remote_src: yes
+    validate_certs: no
+  tags:
+    - pcc-api
+    - pcc-api-maven
+
+- name: Maven (mvn) symbolic link
+  file:
+    src: /opt/apache-maven-3.8.6/bin/mvn
+    dest: '/usr/local/bin/mvn'
+    owner: "{{ pcc_api_user }}"
+    group: "{{ pcc_api_group }}"
+    state: link
+    force: yes
+  tags:
+    - pcc-api
+    - pcc-api-maven
+    - pcc-api-maven
+    - pcc-api-maven-link
+
+- name: install MariaDB client
+  yum:
+    name: MariaDB-client
+    state: latest
+  tags:
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-install
+
+- name: install MariaDB Server
+  yum:
+    name: MariaDB-server
+    state: latest
+  tags:
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-install
+
+- name: run MySQL
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+  tags:
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-service
+
+- name: install required python MySQLdb lib to create databases and users
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - gcc-c++
+    - MySQL-python
+  tags:
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-xf
+
+- name: create db user
+  mysql_user: name={{mysql.user}} password={{mysql.password}} priv=*.*:ALL host={{mysql.host}} state=present
+  tags:
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-user
+
+- name: create mysql database
+  mysql_db: name={{mysql.db}} state=present
+  tags:
+    - pcc-api
+    - pcc-api-mysql
+    - pcc-api-mysql-db
+
+- name: Create systemd file for PCC API
+  template:
+   src: pcc_api.service.j2
+   dest: /etc/systemd/system/pcc-api.service
+   owner: root
+   group: root
+   mode: '0644'
+  notify:
+    - Reload the systemd daemon
+    - pcc api service restart and enable
+    - Wait a few seconds for the service to wake up
+  tags:
+    - pcc-api
+    - pcc-api-service-file
+
+
+- name: "Create {{ pcc_api_root_dir }}, {{ pcc_api_conf_dir }} directories if it does not exist"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ pcc_api_user }}"
+    group: "{{ pcc_api_group }}"
+    mode: '0755'
+  loop:
+    - "{{ pcc_api_root_dir }}"
+    - "{{ pcc_api_conf_dir }}"
+  tags:
+    - pcc-api
+    - pcc-api-directories
+
+- name: "Create PCC API logs directory if it doesn't exist"
+  file:
+    path: "{{ pcc_api_logs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  tags:
+    - pcc-api
+    - pcc-api-directories
+
+- name: Create rsyslog filter for PCC-API logs
+  template:
+    src: etc/rsyslog.d/71_pcc_api.conf.j2
+    dest: /etc/rsyslog.d/71_pcc_api.conf
+    backup: yes
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart rsyslog
+  tags:
+    - pcc-api
+    - pcc-api-logs
+    - pcc-api-rsyslog
+
+
+- meta: flush_handlers
+
+- name: Find the artifact of the last successful build
+  uri:
+    url: https://{{ jenkins.host }}/job/{{ jenkins.job }}/job/{{ jenkins.repository }}/job/{{ jenkins.branch }}/lastSuccessfulBuild/api/json
+    user: "{{ jenkins.user }}"
+    password: "{{ jenkins.password }}"
+    method: GET
+    force_basic_auth: yes
+    status_code: 200
+  register: _jenkins_results
+  tags:
+    - pcc-api
+    - pcc-api-jenkins
+    - pcc-api-jar
+    - pcc-api-update
+
+- name: Download the latest Jenkins artifact
+  get_url:
+    url: https://{{ jenkins.host }}/job/{{ jenkins.job }}/job/{{ jenkins.repository }}/job/{{ jenkins.branch }}/lastSuccessfulBuild/artifact/{{ _jenkins_results.json.artifacts[0].relativePath }}
+    dest: "{{ pcc_api_root_dir }}/pcc-api.jar"
+    username: "{{ jenkins.user }}"
+    password: "{{ jenkins.password }}"
+    force_basic_auth: yes
+    owner: "{{ pcc_api_user }}"
+    group: "{{ pcc_api_group }}"
+    mode: '0744'
+    backup: yes
+  notify:
+    - pcc api service restart and enable
+    - Wait a few seconds for the service to wake up
+  tags:
+    - pcc-api
+    - pcc-api-jar
+    - pcc-api-update
+
+- name: Recursively change ownership of the PCC directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ pcc_api_user }}"
+    group: "{{ pcc_api_group }}"
+  loop:
+    - "{{ pcc_api_root_dir }}"
+    - "{{ pcc_api_conf_dir }}"
+  tags:
+    - pcc-api
+    - pcc-api-directories
+    - pcc-api-update
+
+- meta: flush_handlers
+
+- name: Restart pcc api
+  service:
+    name: pcc-api.service
+    state: restarted
+    enabled: true
+  tags:
+    - pcc-api
+    - pcc-api-update
+
+- name: More about PCC project.
+  debug:
+    msg:
+    - https://github.com/ARGOeu/pcc-api/tree/devel
+  tags:
+    - pcc-api
+    - pcc-api-check

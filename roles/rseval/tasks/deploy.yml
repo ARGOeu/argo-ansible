@@ -1,0 +1,214 @@
+---
+
+- name: Enable scl
+  yum:
+    name:  '{{ item }}' 
+  loop:
+   - centos-release-scl
+   - scl-utils 
+   - scl-utils-build
+
+- name: Install all needed packages including python3
+  yum:
+    name: '{{ item }}'
+    state: present
+  loop:
+   - rh-python38
+   - rh-python38-python-devel
+   - rh-python38-python-mod_wsgi
+   - httpd
+  tags: rseval
+
+- name: copy enable python script to profile.d 
+  copy: 
+    src: enable-python38.sh
+    dest: /etc/profile.d/enable-python38.sh
+
+- name: Enable python 3.8 by resetting ssh connection
+  meta: reset_connection
+
+- name: install the 'Development tools' package group
+  yum:
+    name: "@Development tools"
+    state: present
+
+- name: download rseval
+  tags: rseval
+  get_url:
+    url: 'https://github.com/argoeu/eosc-recommender-metrics/tarball/devel'
+    dest: /tmp/rseval.tar.gz
+
+- name: create folder /tmp/rseval
+  file: 
+    path: /tmp/rseval
+    owner: root
+    group: root
+    mode: '0774'
+    state: directory
+
+- name: create folder /opt/rseval
+  file: 
+    path: /opt/rseval
+    owner: root
+    group: root
+    mode: '0774'
+    state: directory
+
+
+- name: extract rseval
+  unarchive:
+    src: /tmp/rseval.tar.gz
+    dest: /tmp/rseval
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: Install Virtualenv
+  pip:
+    name: virtualenv
+    state: present
+    executable: pip3.8
+  tags: rseval
+
+- name: create virtualenv with specified requirements
+  pip:
+    requirements: /tmp/rseval/requirements.txt
+    virtualenv: /opt/rseval/venv
+
+- name: change ownership of virtualenv
+  file: dest=/opt/rseval owner=apache group=apache recurse=yes
+
+- name: Install Supervisor
+  pip:
+    name: supervisor
+    state: present
+    executable: pip3.8
+  tags: rseval
+  notify: restart supervisor
+
+- name: Create supervisor symlink 
+  file:
+    src: "/opt/rh/rh-python38/root/usr/local/bin/supervisord"
+    dest: "/usr/bin/supervisord"
+    state: link
+  notify: restart supervisor
+
+- name: copy supervisor.service file
+  copy: 
+    src: supervisor.service
+    dest: /etc/systemd/system/supervisor.service
+  notify: 
+   - reload systemctl daemon
+   - restart supervisor
+
+- name: configure supervisor
+  template:
+    src: supervisord.conf.j2
+    dest: /etc/supervisord.conf
+    mode: 0444
+  notify: restart supervisor
+
+- name: copy supervisor.service file
+  copy: 
+    src: supervisor.service
+    dest: /etc/systemd/system/supervisor.service
+  notify: 
+   - reload systemctl daemon
+   - restart supervisor
+
+- name: copy rseval to /opt/rseval
+  copy:
+    src: /tmp/rseval/
+    dest: /opt/rseval/
+    remote_src: true
+
+- name: create templates folder
+  file: 
+    path: /var/www/rseval/templates/
+    state: directory
+
+- name: copy templates
+  copy: 
+    src: /tmp/rseval/webservice/templates/
+    dest: /var/www/rseval/templates/
+    remote_src: true
+
+- name: copy webservice app.py file
+  copy: 
+    src: /tmp/rseval/webservice/app.py
+    dest: /var/www/rseval/app.py
+    remote_src: true
+  notify: restart httpd
+
+- name: copy .env 
+  copy: 
+    src: .env
+    dest: /var/www/rseval/.env
+  notify: restart httpd
+
+- name: copy app.wsgi
+  copy: 
+    src: app.wsgi
+    dest: /var/www/rseval/app.wsgi
+  notify: restart httpd
+
+- name: create folder /var/www/rseval/data
+  file: 
+    path: /var/www/rseval/data
+    owner: apache
+    group: apache
+    mode: '0774'
+    state: directory
+  notify: restart httpd
+
+- name: copy metric_descriptions
+  copy: 
+    src: /tmp/rseval/metric_descriptions/
+    dest: /var/www/rseval/data/metric_descriptions
+    remote_src: true
+  with_fileglob: "*.yml"
+
+- name: Set template folder in app.py
+  lineinfile:
+    path: /var/www/rseval/app.py
+    regexp: '^app.*Flask.*RSEVAL'
+    line: "app = Flask('RSEVAL',template_folder='/var/www/rseval/templates', static_folder='/var/www/rseval/static')"
+  notify: restart httpd
+
+- name: create folder /var/run/default
+  file: 
+    path: /var/www/default
+    owner: apache
+    group: apache
+    mode: '0774'
+    state: directory
+
+- name: create folder /var/logs/rseval-stream
+  file: 
+    path: /var/log/rseval-stream/
+    owner: root
+    group: root
+    mode: '0775'
+    state: directory
+
+
+- name: enable and start supervisor
+  systemd:
+    name: supervisor
+    enabled: yes
+    state: started
+    masked: no
+  
+- name: Remove document root from virtualhost file 
+  lineinfile:
+    path: /etc/httpd/conf.d/{{inventory_hostname}}.conf
+    regexp: '^DocumentRoot'
+    line: ''
+  notify: restart httpd
+
+- name: copy load mod-wsgi
+  copy: 
+    src: 00-wsgi.conf
+    dest: /etc/httpd/conf.modules.d
+  notify: restart httpd
+
+# vim: syntax=yaml ts=4 sw=4 sts=4 sr noet

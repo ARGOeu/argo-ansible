@@ -1,0 +1,20 @@
+---
+# defaults file for frontend
+checkout_url: "" # point to a github repo: https://github.com/argoeu/example.git
+checkout_branch: devel # which branch will be checked out
+checkout_path: /tmp/frontend # where the project will be downloaded locally
+build_date: ""
+build_commit_hash: ""
+
+
+# default url to add nodejs repo in centos 7
+nodejs_yum_repo_url: 'https://rpm.nodesource.com/pub_16.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm'
+# config files might have a list of config files to be passed to the repo before building
+# config_files:
+#  - src: config.json # must have file at private files
+#    dest: '{{repo_path}}/src/config.json'
+config_files: []
+
+# folder for build to be placed and served
+www_path: "/var/www/{{inventory_hostname}}/"
+
