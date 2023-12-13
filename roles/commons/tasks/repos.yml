@@ -21,6 +21,27 @@
         owner=root group=root mode=0644
   when: repo_mongo_4x
 
+- name: Install mongodb 4.2 repo
+  tags: repo_mongodb
+  copy: src=etc/yum.repos.d/mongodb-org-4.2.repo
+        dest=/etc/yum.repos.d/mongodb-org-4.2.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_mongo_42x
+
+- name: Install mongodb 4.4 repo
+  tags: repo_mongodb
+  copy: src=etc/yum.repos.d/mongodb-org-4.4.repo
+        dest=/etc/yum.repos.d/mongodb-org-4.4.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_mongo_44x
+
+- name: Install mongodb 5.0 repo
+  tags: repo_mongodb
+  copy: src=etc/yum.repos.d/mongodb-org-5.0.repo
+        dest=/etc/yum.repos.d/mongodb-org-5.0.repo backup=no
+        owner=root group=root mode=0644
+  when: repo_mongo_5x
+
 - name: Install EGI-trustanchors repository definitions
   tags: repo_ca_bundle
   copy: src=etc/yum.repos.d/EGI-trustanchors.repo
@@ -100,6 +121,3 @@
     dest=/etc/yum.repos.d/mariadb.repo backup=no
     owner=root group=root mode=0644
   when: repo_mariadb
-
-
-

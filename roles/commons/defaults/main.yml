@@ -42,6 +42,9 @@ rsyslog_fail2ban_logs: true
 repo_enabled_argo: argo-devel  # from which repo to get the packages (argo-devel or argo-prod)
 repo_mongo: false  # if you want to install mongo repository (mongo 3.x)
 repo_mongo_4x: false # if you want to install mongodb 4.0 repository
+repo_mongo_42x: false # if you want to install mongodb 4.2 repository
+repo_mongo_44x: false # if you want to install mongodb 4.4 repository
+repo_mongo_5x: false # if you want to install mongodb 5.0 repository
 ca_bundle: false  # if you want to install EGI-trustanchors repository
 repo_qcg: false
 repo_unicore: false
