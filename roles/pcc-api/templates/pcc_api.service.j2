@@ -26,6 +26,9 @@ Environment="HRLS_DATABASE_NAME={{hrls.database_name}}"
 Environment="HRLS_DATABASE_USERNAME={{hrls.database_username}}"
 Environment="HRLS_DATABASE_PASSWORD={{hrls.database_password}}"
 Environment="PCC_API_PROFILE=prod"
+Environment="DAEMON_JAR_PATH=/opt/pcc-api/daemons.jar"
+Environment="DAEMON_LOG_PATH=/var/log/pcc-api/pcc-daemons.log"
+Environment="DAEMON_CRON_EXPR=0 0 * * * ?"
 
 [Install]
 WantedBy=multi-user.target
